@@ -9,6 +9,7 @@ import com.vaadin.flow.router.RouterLink;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import ru.hardy.udio.view.AdminView;
 import ru.hardy.udio.view.LogoutView;
 
 @Service
@@ -18,7 +19,7 @@ public class ServiceUtil{
         Tabs tabs = new Tabs();
         if (authentication.getAuthorities().stream()
                 .anyMatch(r -> r.getAuthority().equals("ROLE_ADMIN"))) {
-            tabs.add(createTab(VaadinIcon.DOCTOR, "Админка"));
+            tabs.add(createTab(VaadinIcon.TERMINAL, "Админка"));
         }
         if (authentication.getAuthorities().stream()
                 .anyMatch(r -> r.getAuthority().equals("ROLE_BUH")) ||
@@ -45,16 +46,10 @@ public class ServiceUtil{
         switch (viewName) {
             case "Выход" -> {
                 link.setRoute(LogoutView.class);
-                //link.setTabIndex(7);
             }
-//            case "Админка" -> {
-//                link.setRoute(AdminView.class);
-//                //link.setTabIndex(1);
-//            }
-//            case "Платежки" -> {
-//                link.setRoute(Pla.class);
-//                link.setTabIndex(7);
-//            }
+            case "Админка" -> {
+                link.setRoute(AdminView.class);
+            }
         }
         link.setTabIndex(-1);
         return new Tab(link);

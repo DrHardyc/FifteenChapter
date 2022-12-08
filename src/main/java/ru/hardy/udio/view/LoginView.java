@@ -57,22 +57,6 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver{
         i18nErrorMessage.setTitle("Ошибка ввода данных");
         i18nErrorMessage.setMessage("Неверные имя пользователя или пароль.");
         i18n.setErrorMessage(i18nErrorMessage);
-//        LoginI18n i18n = LoginI18n.createDefault();
-//        i18n.setHeader(new LoginI18n.Header());
-//        i18n.setForm(new LoginI18n.Form());
-//        i18n.setErrorMessage(new LoginI18n.ErrorMessage());
-//        i18n.getHeader().setTitle("Товаровед");
-//        i18n.getHeader().setDescription("создано \"IT Support\"");
-//        i18n.getForm().setUsername("Имя пользователя");
-//        i18n.getForm().setTitle("Введите имя пользователя и пароль");
-//        i18n.getForm().setSubmit("Войти");
-//        i18n.getForm().setPassword("Пароль");
-//        i18n.getForm().setForgotPassword("Забыли пароль?");
-//        i18n.getErrorMessage().setTitle("Ошибка ввода данных");
-//        i18n.getErrorMessage()
-//                .setMessage("Неверные имя пользователя или пароль");
-//        i18n.setAdditionalInformation(
-//                "Версия 2.0");
         return i18n;
     }
 }
