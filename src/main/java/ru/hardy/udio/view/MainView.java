@@ -16,7 +16,7 @@ public class MainView extends AppLayout {
     public MainView(){
         String authenticationName = SecurityContextHolder.getContext().getAuthentication().getName();
         DrawerToggle toggle = new DrawerToggle();
-        H3 title = new H3("Диспансеризация и онкология версия 1.1_gamma. Пользователь " + authenticationName);
+        H3 title = new H3("Диспансеризация и онкология версия v1.1_gamma. Пользователь " + authenticationName);
         title.getStyle().set("margin", "0");
         ServiceUtil su = new ServiceUtil();
         Tabs tabs = su.getTabs();

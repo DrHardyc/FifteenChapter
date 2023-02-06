@@ -1,6 +1,7 @@
 package ru.hardy.udio.domain;
 
 
+import com.vaadin.open.App;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,7 +12,7 @@ import java.util.Set;
 
 @Entity
 @Data
-@Table(name = "usr")
+@Table(name = "usr", schema = "udio_sec")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -21,9 +22,12 @@ public class User implements UserDetails {
     private String email;
     private boolean active;
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "user_role", schema = "udio_sec", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
+
+    @OneToMany(mappedBy = "user")
+    private Set<AppParam> appParams;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -11,7 +11,10 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
+import ru.hardy.udio.domain.Role;
 import ru.hardy.udio.service.UserService;
+
+import java.util.Collections;
 
 @Route("register")
 @AnonymousAllowed
@@ -45,7 +48,7 @@ public class RegisterView extends Composite {
         } else if (!password1.equals(password2)) {
             Notification.show("Введите пароль еще раз");
         } else {
-            userService.addUser(username, password1);
+            userService.addUser(username, password1, Collections.singleton(Role.ROLE_USER));
             Notification.show("Проверьте свой почтовый ящик.");
         }
     }

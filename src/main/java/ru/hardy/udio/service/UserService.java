@@ -16,6 +16,7 @@ import ru.hardy.udio.repo.UserRepo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Component
@@ -40,17 +41,21 @@ public class UserService implements UserDetailsService {
                 new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), grantList);
         return userDetails;
     }
-    public boolean addUser(String username, String password){
+    public boolean addUser(String username, String password, Set<Role> roles){
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
-        user.setRoles(Collections.singleton(Role.ROLE_USER));
+        user.setRoles(roles);
         user.setActive(true);
         User userFromDb = userRepo.findByUsername(username);
-        if (userFromDb != null) {
+        if (userFromDb != null || username.isEmpty() || password.isEmpty()) {
             return false;
         }
         userRepo.save(user);
         return true;
+    }
+
+    public List<User> getAll(){
+        return userRepo.findAll();
     }
 }
