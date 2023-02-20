@@ -1,79 +1,91 @@
 package ru.hardy.udio.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.freemarker.FreeMarkerTemplateAvailabilityProvider;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import ru.hardy.udio.config.DBJDBCConfig;
 import ru.hardy.udio.domain.struct.DataFile;
 import ru.hardy.udio.domain.struct.DataFilePatient;
 import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.repo.PeopleRepo;
+import ru.hardy.udio.service.SRZ.DBFSearchService;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @Component
 public class PeopleService {
+
+    @Autowired
+    private DataFileService dataFileService;
     @Autowired
     private PeopleRepo peopleRepo;
+
+    @Autowired
+    private DBFSearchService dbfSearchService;
+
+    @Autowired
+    private DataUdioRespService dataUdioRespService;
+
+    @Autowired
+    private DataUdioRespIdentyService dataUdioRespIdentyService;
 
     public List<People> getAll(){
         return peopleRepo.findAll();
     }
 
 
-    public People searchFromUdio(DataFilePatient dataFilePatient){
-        People people = peopleRepo.findPeopleByFamAndImAndOtAndDr(dataFilePatient.getFam().toUpperCase(), dataFilePatient.getIm().toUpperCase(),
-                dataFilePatient.getOt().toUpperCase(), dataFilePatient.getDr(), dataFilePatient.getEnp());
-        if (people == null){
-            people = peopleRepo.findPeopleByEnp(dataFilePatient.getEnp());
+    public List<People> searchFromUdio(List<DataFilePatient> dataFilePatientsFromSrz){
+        List<People> peoples = new ArrayList<>();
+        for (DataFilePatient dataFilePatient : dataFilePatientsFromSrz) {
+            if (dataFilePatient.getIdsrz() != null) {
+                People people = peopleRepo.findPeopleByFamAndImAndOtAndDr(dataFilePatient.getFam().toUpperCase(),
+                        dataFilePatient.getIm().toUpperCase(), dataFilePatient.getOt().toUpperCase(),
+                        dataFilePatient.getDr(), dataFilePatient.getEnp());
+                if (people != null) {
+                    peoples.add(people);
+                } else {
+                    people = peopleRepo.findPeopleByEnp(dataFilePatient.getEnp());
+                    if (people != null)
+                        peoples.add(update(dataFilePatient));
+                    else
+                        peoples.add(save(new People(dataFilePatient)));
+                }
+            } else peoples.add(new People(dataFilePatient));
         }
-        if (people != null){
-            return people;
-        }
-        return null;
+        return peoples;
     }
 
-    public People searchFromSRZ(DataFilePatient dataFilePatient) throws SQLException {
-        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
-        Statement statement = dbjdbcConfig.getSRZ();
-        ResultSet resultSet = statement.executeQuery("select count(*), p.id from PEOPLE p where p.fam = '" + dataFilePatient.getFam() +
-                "' and p.im = '" + dataFilePatient.getIm() + "' and p.ot = '" + dataFilePatient.getOt() +
-                "' and SUBSTRING(convert(varchar, p.dr, 23), 1, 10) = '" + dataFilePatient.getDr() +
-                "' and p.enp = '" + dataFilePatient.getEnp() + "' group by p.id");
-
-        resultSet.next();
-        if (resultSet.getInt(1) > 0) {
-            dataFilePatient.setIdsrz(resultSet.getLong(2));
-            return new People(dataFilePatient);
-        } else {
-            resultSet = statement.executeQuery("select count(*), p.id from PEOPLE p where p.enp = '" + dataFilePatient.getEnp() + "' group by p.id");
-            if (resultSet.getInt(1) > 0) {
-                dataFilePatient.setIdsrz(resultSet.getLong(2));
-                return new People(dataFilePatient);
-            }
-        } return null;
+    private List<DataFilePatient> searchFromSRZ(List<DataFilePatient> dataFilePatient) throws IOException, InterruptedException {
+        return dbfSearchService.getDataFromDBF(dataFilePatient);
     }
 
     public People save(People people){
         return peopleRepo.save(people);
     }
 
-    public People update(People peoplesrz){
-        People peopleUdio = peopleRepo.findPeopleByFamAndImAndOtAndDr(peoplesrz.getFam().toUpperCase(), peoplesrz.getIm().toUpperCase(),
-                peoplesrz.getOt().toUpperCase(), peoplesrz.getDr(), peoplesrz.getEnp());
-        peopleUdio.setEnp(peopleUdio.getEnp());
-        peopleUdio.setSex(peopleUdio.getSex());
-        peopleUdio.setNhistory(peoplesrz.getNhistory());
-        peopleUdio.setDr(peoplesrz.getDr());
-        peopleUdio.setOt(peoplesrz.getOt());
-        peopleUdio.setFam(peopleUdio.getFam());
-        peopleUdio.setIm(peopleUdio.getIm());
-        peopleUdio.setIdsrz(peopleUdio.getIdsrz());
+    public People update(DataFilePatient dataFilePatient){
+        People peopleUdio = peopleRepo.findPeopleByFamAndImAndOtAndDr(dataFilePatient.getFam().toUpperCase(), dataFilePatient.getIm().toUpperCase(),
+                dataFilePatient.getOt().toUpperCase(), dataFilePatient.getDr(), dataFilePatient.getEnp());
+        peopleUdio.setEnp(dataFilePatient.getEnp());
+        peopleUdio.setSex(dataFilePatient.getSex());
+        peopleUdio.getNhistory().clear();
+        peopleUdio.getNhistory().addAll(dataFilePatient.getNhistory());
+        peopleUdio.setDr(dataFilePatient.getDr());
+        peopleUdio.setOt(dataFilePatient.getOt());
+        peopleUdio.setFam(dataFilePatient.getFam());
+        peopleUdio.setIm(dataFilePatient.getIm());
+        peopleUdio.setIdsrz(dataFilePatient.getIdsrz());
         return peopleRepo.save(peopleUdio);
+    }
+
+    public void treatment(DataFile dataFile, Long id) throws IOException, InterruptedException {
+        dataFileService.save(dataFile);
+        dataUdioRespIdentyService.updateProcessEnd(
+        dataUdioRespService.getListDataUdioFromPeoples(
+                searchFromUdio(
+                searchFromSRZ(
+                dataFile.getDataFilePatient()))), id);
     }
 }

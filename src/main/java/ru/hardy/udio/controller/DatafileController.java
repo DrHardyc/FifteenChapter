@@ -1,20 +1,18 @@
 package ru.hardy.udio.controller;
 
 
-import lombok.Data;
-import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.hardy.udio.domain.ResponseAnswer;
-import ru.hardy.udio.domain.struct.DataFile;
-import ru.hardy.udio.domain.struct.DataFilePatient;
-import ru.hardy.udio.domain.struct.People;
+import ru.hardy.udio.domain.ResponseAnswerUdio;
+import ru.hardy.udio.domain.struct.*;
+import ru.hardy.udio.service.DataUdioRespIdentyGenService;
+import ru.hardy.udio.service.DataUdioRespIdentyService;
 import ru.hardy.udio.service.PeopleService;
+import ru.hardy.udio.service.TokenService;
 
-import java.sql.SQLException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,31 +20,49 @@ import java.util.List;
 public class DatafileController {
 
     @Autowired
+    private DataUdioRespIdentyService dataUdioRespIdentyService;
+
+    @Autowired
     private PeopleService peopleService;
 
+    @Autowired
+    private TokenService tokenService;
+
+    @Autowired
+    private DataUdioRespIdentyGenService dataUdioRespIdentyGenService;
+
     @PostMapping(value = "people")
-    public ResponseEntity<List<ResponseAnswer>> Search(@RequestBody DataFile dataFile,
-                       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) throws SQLException {
-        List<ResponseAnswer> responseAnswers = new ArrayList<>();
-        if (token.equals("Bearer 12345")) {
-            for (DataFilePatient dataFilePatient : dataFile.getDataFilePatient()) {
-                People peopleszr = peopleService.searchFromSRZ(dataFilePatient);
-                if (peopleszr != null){
-                    if (peopleService.searchFromUdio(dataFilePatient) != null){
-                        responseAnswers.add(new ResponseAnswer(ResponseAnswer.ResponseAnswerCode.ACCESS,
-                                "Данные успешно обновлены", peopleService.update(peopleszr)));
-                    } else {
-                        responseAnswers.add(new ResponseAnswer(ResponseAnswer.ResponseAnswerCode.ACCESS,
-                                "Данные успешно добавлены", peopleService.save(new People(peopleszr))));
-                    }
-                } else {
-                    responseAnswers.add(new ResponseAnswer(ResponseAnswer.ResponseAnswerCode.SEARCHERR,
-                            "В базе данных застрахованных лиц данные не найдены", new People(dataFilePatient)));
+    public ResponseEntity<ResponseAnswerUdio> Search(@RequestBody DataFile dataFile,
+                       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token,
+                       @RequestHeader(value = "codeReq") String codeReq) {
+
+        String newToken = "";
+        if (token.contains("Bearer")) newToken = token.substring(7);
+
+        if (tokenService.checkHashKey(dataFile.getLpu(), newToken)) {
+            switch (codeReq){
+                case "SETDATAUDIO" -> {
+                    DataUdioRespIdenty dataUdioRespIdenty = dataUdioRespIdentyService.add(new DataUdioRespIdenty(dataUdioRespIdentyGenService
+                            .add(new DataUdioRespIdentyGen())));
+
+                    new Thread(() -> {
+                        try {
+                            peopleService.treatment(dataFile, dataUdioRespIdenty.getId());
+                        } catch (InterruptedException | IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }).start();
+
+                    return ResponseEntity.ok(new ResponseAnswerUdio(ResponseAnswerUdio.ResponseAnswerCode.ACCESS,
+                            "Данные приняты в обработку",
+                            dataUdioRespIdentyService.add(dataUdioRespIdenty)));
+
+                }
+                case "TEST" -> {
                 }
             }
-        } else responseAnswers.add(new ResponseAnswer(ResponseAnswer.ResponseAnswerCode.TOKENERR,
-                    "Ключ не распознан"));
-        return ResponseEntity.ok(responseAnswers);
+        }
+        return null;
     }
 
     @GetMapping("/people")

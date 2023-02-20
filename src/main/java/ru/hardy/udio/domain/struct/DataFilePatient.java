@@ -1,6 +1,5 @@
 package ru.hardy.udio.domain.struct;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -26,25 +25,11 @@ public class DataFilePatient {
     private Date dbeg;
     private String iddokt;
     @ElementCollection
-    @CollectionTable(name = "nhistory_dfp", schema = "udio_util")
+    @CollectionTable(name = "nhistory_dfp", schema = "udio_tfoms")
     private List<String> nhistory;
     private Date date_1;
     private Date date_2;
     private String iddiag;
     private String enp;
 
-    private String eerp;
-
-
-    public DataFilePatient(String fam, String im, String ot, Date dr, String enp){
-        this.fam = fam;
-        this.im = im;
-        this.ot = ot;
-        this.dr = dr;
-        this.enp = enp;
-    }
-
-    public DataFilePatient() {
-
-    }
 }

@@ -2,9 +2,9 @@ package ru.hardy.udio.repo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import ru.hardy.udio.domain.struct.DataFilePatient;
+import ru.hardy.udio.domain.struct.DataFile;
 
 @Repository
-public interface DataFilePatientRepo extends JpaRepository<DataFilePatient, Long> {
+public interface DataFileRepo extends JpaRepository<DataFile, Long> {
 
 }

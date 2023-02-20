@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(schema = "udio_sec")
+@Table(schema = "udio_util")
 public class AppParam {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
