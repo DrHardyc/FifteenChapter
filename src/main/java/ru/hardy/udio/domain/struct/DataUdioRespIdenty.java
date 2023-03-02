@@ -2,9 +2,11 @@ package ru.hardy.udio.domain.struct;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import ru.hardy.udio.domain.ResponseAnswerUdio;
 
 import javax.persistence.*;
-import java.util.ArrayList;
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 
@@ -13,27 +15,30 @@ import java.util.List;
 @Table(schema = "udio_datacontrol")
 public class DataUdioRespIdenty {
 
-    public static final String PROCESSING = "В обработке";
-    public static final String PROCESSING_ERR = "Ошибка обработки";
-    public static final String PROCESSING_END = "Обработка завершена";
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
     private Long id;
 
-    private Long identy;
-
+    @JsonIgnore
     private String status;
+
+    private Long identy;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "dataudiorespidenty_id")
     private List<DataUdioResp> dataUdioResps;
 
+    @JsonIgnore
+    private Date date_beg;
+    @JsonIgnore
+    private Date date_edit;
+
     public DataUdioRespIdenty(DataUdioRespIdentyGen dataUdioRespIdentyGen) {
-        this.status = PROCESSING;
+        this.setStatus(ResponseAnswerUdio.PROCESSING);
         this.setIdenty(dataUdioRespIdentyGen.getGenId());
+        this.date_beg = Date.from(Instant.now());
+        this.date_edit = Date.from(Instant.now());
     }
 
     public DataUdioRespIdenty() {

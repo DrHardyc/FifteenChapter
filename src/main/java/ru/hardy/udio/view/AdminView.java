@@ -1,12 +1,10 @@
 package ru.hardy.udio.view;
 
 import com.linuxense.javadbf.DBFReader;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.textfield.PasswordField;
@@ -16,17 +14,15 @@ import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.hardy.udio.domain.Role;
-import ru.hardy.udio.domain.struct.DataUdioResp;
-import ru.hardy.udio.domain.struct.DataUdioRespIdenty;
-import ru.hardy.udio.domain.struct.People;
+import ru.hardy.udio.domain.struct.*;
 import ru.hardy.udio.service.*;
-import ru.hardy.udio.service.SRZ.DBFSearchService;
 import ru.hardy.udio.view.dialog.DialogView;
 
 import javax.annotation.security.RolesAllowed;
-import javax.xml.crypto.Data;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 @Route(layout = MainView.class)
@@ -37,18 +33,22 @@ public class AdminView extends VerticalLayout {
     private TokenService tokenService;
 
     @Autowired
-    private DBFSearchService dbfSearchService;
-    @Autowired
     private UserService userService;
 
     @Autowired
     private PeopleService peopleService;
 
     @Autowired
-    private DataUdioRespIdentyService dataUdioRespIdentyService;
+    private DNGetService dnGetService;
+
+    @Autowired
+    private DataFileService dataFileService;
+
+    @Autowired
+    private SexService sexService;
+
 
     public AdminView()  {
-
 
         TabSheet tabSheet = new TabSheet();
         Button btnTest = new UIUtil().InitButtonOK(new Button("Test"));
@@ -72,7 +72,6 @@ public class AdminView extends VerticalLayout {
             userService.addUser(tfUserName.getValue(), pfPassword.getValue(), Collections.singleton(Role.ROLE_USER));
         });
 
-
         //генерация ключей
         Dialog dGenKey = new Dialog();
         Button btnGetKey = new Button("Создать");
@@ -91,14 +90,10 @@ public class AdminView extends VerticalLayout {
 
         TextField tfHashKey = new TextField();
         tfHashKey.setPlaceholder("Введите hash");
-        Button btnGetHashForKey = new Button("Полчить ключ по hashу");
-        btnGetHashForKey.addClickListener(e -> {
-            //Notification.show(tokenService.getHashWithLpu(tfLpuKeyGen.getValue()));
-        });
 
         dGenKey.add(tfLpuKeyGen, lGenKey, btnGetKey);
 
-        vlKeyGen.add(btnGetHashForKey, btnKeyGen, dGenKey);
+        vlKeyGen.add(btnKeyGen, dGenKey);
         tsKeyGen.add("Генерация ключа", vlKeyGen);
         //
 
@@ -125,6 +120,34 @@ public class AdminView extends VerticalLayout {
 
 
         btnTest.addClickListener(event -> {
+            List<DataFilePatient> dataFilePatientList = new ArrayList<>();
+            DataFilePatient dataFilePatient = new DataFilePatient();
+            dataFilePatient.setIdsrz(152233L);
+            dataFilePatient.setEnp("23412342341234");
+            dataFilePatient.setFam("Чречесов");
+            dataFilePatient.setIm("Михаил");
+            dataFilePatient.setOt("Владимирович");
+            dataFilePatient.setSex(sexService.getById(1L));
+            dataFilePatient.setDate_1(Date.from(Instant.now()));
+            List<String> nhistory = new ArrayList<>();
+            nhistory.add("34234234");
+            nhistory.add("23456456");
+            dataFilePatient.setNhistory(nhistory);
+            DataFile dataFile = new DataFile();
+            dataFile.setDate_beg(Date.from(Instant.now()));
+            dataFile.setDate_edit(Date.from(Instant.now()));
+            dataFile.setLpu("150002");
+            dataFile.setName("testname");
+            dataFilePatientList.add(dataFilePatient);
+            dataFile.setDataFilePatient(dataFilePatientList);
+
+            People people = new People(dataFilePatient);
+            DNGet dnGet = new DNGet(dataFile, dataFilePatient, people);
+            dataFileService.save(dataFile);
+            peopleService.save(people);
+            dnGetService.save(dnGet);
+
+            System.out.println(dnGet);
 
 //            Token token = tokenService.genToken("150002");
 //            Notification.show(token.getKey());
@@ -225,14 +248,6 @@ public class AdminView extends VerticalLayout {
         add(tabSheet);
     }
 
-    public void testAsync(UI ui) throws InterruptedException {
-        for (int i = 0; i < 5; i++){
-            Thread.sleep(1000);
-            int finalI = i;
-            ui.access(() -> Notification.show(String.valueOf(finalI)));
-        }
-        System.out.println("Поток завершил работу");
-        ui.access(() -> Notification.show("Поток завершил работу"));
-    }
+
 
 }

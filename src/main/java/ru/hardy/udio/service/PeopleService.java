@@ -3,13 +3,17 @@ package ru.hardy.udio.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import ru.hardy.udio.domain.struct.DNGet;
 import ru.hardy.udio.domain.struct.DataFile;
 import ru.hardy.udio.domain.struct.DataFilePatient;
 import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.repo.PeopleRepo;
 import ru.hardy.udio.service.SRZ.DBFSearchService;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
+import java.sql.Date;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,61 +35,68 @@ public class PeopleService {
     @Autowired
     private DataUdioRespIdentyService dataUdioRespIdentyService;
 
+    @Autowired
+    private DNGetService dnGetService;
+
     public List<People> getAll(){
         return peopleRepo.findAll();
     }
 
-
-    public List<People> searchFromUdio(List<DataFilePatient> dataFilePatientsFromSrz){
+    public List<People> searchFromUdio(DataFile dataFile){
         List<People> peoples = new ArrayList<>();
-        for (DataFilePatient dataFilePatient : dataFilePatientsFromSrz) {
+        for (DataFilePatient dataFilePatient : dataFile.getDataFilePatient()) {
             if (dataFilePatient.getIdsrz() != null) {
-                People people = peopleRepo.findPeopleByFamAndImAndOtAndDr(dataFilePatient.getFam().toUpperCase(),
-                        dataFilePatient.getIm().toUpperCase(), dataFilePatient.getOt().toUpperCase(),
+                People people = peopleRepo.findPeopleByFamAndImAndOtAndDr(dataFilePatient.getFam(),
+                        dataFilePatient.getIm(), dataFilePatient.getOt(),
                         dataFilePatient.getDr(), dataFilePatient.getEnp());
                 if (people != null) {
                     peoples.add(people);
+                    dnGetService.save(new DNGet(dataFile, dataFilePatient, people));
                 } else {
                     people = peopleRepo.findPeopleByEnp(dataFilePatient.getEnp());
-                    if (people != null)
+                    if (people != null) {
                         peoples.add(update(dataFilePatient));
-                    else
-                        peoples.add(save(new People(dataFilePatient)));
+                        dnGetService.save(new DNGet(dataFile, dataFilePatient, people));
+                    }
+                    else {
+                        People newPeople = new People(dataFilePatient);
+                        peoples.add(save(newPeople));
+                        dnGetService.save(new DNGet(dataFile, dataFilePatient, newPeople));
+                    }
                 }
             } else peoples.add(new People(dataFilePatient));
         }
         return peoples;
     }
 
-    private List<DataFilePatient> searchFromSRZ(List<DataFilePatient> dataFilePatient) throws IOException, InterruptedException {
-        return dbfSearchService.getDataFromDBF(dataFilePatient);
+    private DataFile searchFromSRZ(DataFile DataFile) throws IOException, InterruptedException {
+        return dbfSearchService.getDataFromDBF(DataFile);
     }
 
     public People save(People people){
         return peopleRepo.save(people);
     }
 
+    @Transactional
     public People update(DataFilePatient dataFilePatient){
-        People peopleUdio = peopleRepo.findPeopleByFamAndImAndOtAndDr(dataFilePatient.getFam().toUpperCase(), dataFilePatient.getIm().toUpperCase(),
-                dataFilePatient.getOt().toUpperCase(), dataFilePatient.getDr(), dataFilePatient.getEnp());
+        People peopleUdio = peopleRepo.findPeopleByFamAndImAndOtAndDr(dataFilePatient.getFam(), dataFilePatient.getIm(),
+                dataFilePatient.getOt(), dataFilePatient.getDr(), dataFilePatient.getEnp());
         peopleUdio.setEnp(dataFilePatient.getEnp());
         peopleUdio.setSex(dataFilePatient.getSex());
-        peopleUdio.getNhistory().clear();
-        peopleUdio.getNhistory().addAll(dataFilePatient.getNhistory());
         peopleUdio.setDr(dataFilePatient.getDr());
         peopleUdio.setOt(dataFilePatient.getOt());
         peopleUdio.setFam(dataFilePatient.getFam());
         peopleUdio.setIm(dataFilePatient.getIm());
         peopleUdio.setIdsrz(dataFilePatient.getIdsrz());
+        peopleUdio.setDate_edit(Date.from(Instant.now()));
         return peopleRepo.save(peopleUdio);
     }
 
     public void treatment(DataFile dataFile, Long id) throws IOException, InterruptedException {
         dataFileService.save(dataFile);
-        dataUdioRespIdentyService.updateProcessEnd(
-        dataUdioRespService.getListDataUdioFromPeoples(
-                searchFromUdio(
-                searchFromSRZ(
-                dataFile.getDataFilePatient()))), id);
+            dataUdioRespIdentyService.updateProcessEnd(
+                dataUdioRespService.getListDataUdioFromPeoples(
+                    searchFromUdio(
+                        searchFromSRZ(dataFile))), id);
     }
 }

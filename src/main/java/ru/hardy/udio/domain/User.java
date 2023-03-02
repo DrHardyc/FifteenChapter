@@ -15,7 +15,7 @@ import java.util.Set;
 @Table(name = "usr", schema = "udio_sec")
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "udio_sec.usr_seq")
     private Long id;
     private String username;
     private String password;

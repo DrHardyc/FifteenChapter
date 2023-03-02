@@ -18,4 +18,8 @@ public class DNCase {
     @JoinColumn(name = "people_id", nullable = false)
     private People pid;
     private Integer idsl;
+
+    private Date date_beg;
+    private Date date_edit;
+
 }

@@ -6,7 +6,10 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import ru.hardy.udio.domain.ResponseAnswerUdio;
+import ru.hardy.udio.domain.struct.DataFile;
 import ru.hardy.udio.domain.struct.DataFilePatient;
+import ru.hardy.udio.repo.DataFileRepo;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -20,6 +23,10 @@ import java.util.Objects;
 
 @Service
 public class DBFSearchService {
+
+    @Autowired
+    private DataFileRepo dataFileRepo;
+
 
     @Autowired
     private Environment environment;
@@ -55,6 +62,7 @@ public class DBFSearchService {
 
         DBFWriter writer;
         try {
+            System.out.println("Создан файл :" + dirFileIn);
             writer = new DBFWriter(new FileOutputStream(dirFileIn), Charset.forName("cp866"));
         } catch (FileNotFoundException ex) {
             throw new RuntimeException(ex);
@@ -74,20 +82,23 @@ public class DBFSearchService {
         writer.close();
     }
 
-    public List<DataFilePatient> getDataFromDBF(List<DataFilePatient> dataFilePatientList) throws IOException, InterruptedException {
+    public DataFile getDataFromDBF(DataFile dataFile) throws IOException, InterruptedException {
         String genStrDirFile = RandomStringUtils.random(10, true, true);
         String dirFileIn = environment.getProperty("dbffile.pathin") + "TESTDBF" + genStrDirFile.toUpperCase() + ".dbf";
         String dirFileOut = environment.getProperty("dbffile.pathout") + "out_TESTDBF" + genStrDirFile.toUpperCase() + ".dbf";
-        setDataDBF(dataFilePatientList, dirFileIn);
+        setDataDBF(dataFile.getDataFilePatient(), dirFileIn);
         int sec = 0;
         while (!checkDBFFile(dirFileOut)){
-            if (sec > 9000000) {
-                Thread.sleep(1000);
-                System.out.println("Oshibka ojidaniy ot SRZ");
+            Thread.sleep(1000);
+            if (sec > 86400) {
+                dataFile.setResultCode(ResponseAnswerUdio.PROCESSING_ERR);
+                dataFile.setResultDesc("Ошибка ожидания от СРЗ");
+                dataFileRepo.save(dataFile);
                 break;
             }
             sec++;
         }
+        System.out.println("Получен файл :" + dirFileOut);
         DBFReader reader = null;
         FileInputStream fileInputStream = new FileInputStream(dirFileOut);
         try {
@@ -95,7 +106,7 @@ public class DBFSearchService {
 
             DBFRow row;
             while ((row = reader.nextRow()) != null) {
-                for (DataFilePatient dataFilePatient : dataFilePatientList){
+                for (DataFilePatient dataFilePatient : dataFile.getDataFilePatient()){
                     if (Objects.equals(dataFilePatient.getEnp(), row.getString("enp"))){
                         dataFilePatient.setIdsrz(row.getLong("pid"));
                         break;
@@ -115,7 +126,7 @@ public class DBFSearchService {
                 }
             }).start();
         }
-        return dataFilePatientList;
+        return dataFile;
     }
 
     private boolean checkDBFFile(String dirFileOut){

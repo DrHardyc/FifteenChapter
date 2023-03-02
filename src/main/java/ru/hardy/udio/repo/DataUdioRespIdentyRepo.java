@@ -9,4 +9,7 @@ import ru.hardy.udio.domain.struct.DataUdioRespIdenty;
 public interface DataUdioRespIdentyRepo extends JpaRepository<DataUdioRespIdenty, Long> {
     @Query("SELECT d FROM DataUdioRespIdenty d WHERE d.id = :id")
     DataUdioRespIdenty getOneById(Long id);
+
+    @Query("SELECT d FROM DataUdioRespIdenty d WHERE d.identy = :identy")
+    DataUdioRespIdenty findByIdenty(Long identy);
 }

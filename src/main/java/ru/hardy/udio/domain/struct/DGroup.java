@@ -15,6 +15,13 @@ public class DGroup {
 
     private String ds;
     private String period;
+
+    @ManyToOne
+    @JoinColumn(name = "people_id", nullable = false)
+    private People people;
+
+    private Integer code_spec;
+
     private Date date_beg;
-    private Date date_end;
+    private Date date_edit;
 }

@@ -4,9 +4,6 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -26,9 +23,11 @@ public class People {
     private Date dr;
     private String enp;
 
-    @ElementCollection
-    @CollectionTable(name = "nhistory_people", schema = "udio_tfoms")
-    private List<String> nhistory;
+    @OneToMany(mappedBy="people")
+    private List<DNGet> dngets;
+
+    @OneToMany(mappedBy="people")
+    private List<DGroup> dGroups;
 
     @OneToOne
     @JoinColumn(name = "sex_id", nullable = false)
@@ -38,7 +37,8 @@ public class People {
     @JoinColumn(name = "dfp_id", nullable = false)
     private DataFilePatient dataFilePatient;
 
-    private Date dedit;
+    private Date date_beg;
+    private Date date_edit;
 
     public People(DataFilePatient dataFilePatient){
         this.idsrz = dataFilePatient.getIdsrz();
@@ -47,12 +47,12 @@ public class People {
         this.im = dataFilePatient.getIm();
         this.dr = dataFilePatient.getDr();
         this.enp = dataFilePatient.getEnp();
-        this.nhistory = dataFilePatient.getNhistory();
         this.sex = dataFilePatient.getSex();
-        this.dedit = Date.from(Instant.now());
+        this.date_beg = Date.from(Instant.now());
+        this.date_edit = Date.from(Instant.now());
         this.dataFilePatient = dataFilePatient;
-    }
 
+    }
 
     public People() {
 
