@@ -39,14 +39,7 @@ public class AdminView extends VerticalLayout {
     private PeopleService peopleService;
 
     @Autowired
-    private DNGetService dnGetService;
-
-    @Autowired
-    private DataFileService dataFileService;
-
-    @Autowired
-    private SexService sexService;
-
+    private PR168Service pr168Service;
 
     public AdminView()  {
 
@@ -120,81 +113,8 @@ public class AdminView extends VerticalLayout {
 
 
         btnTest.addClickListener(event -> {
-            List<DataFilePatient> dataFilePatientList = new ArrayList<>();
-            DataFilePatient dataFilePatient = new DataFilePatient();
-            dataFilePatient.setIdsrz(152233L);
-            dataFilePatient.setEnp("23412342341234");
-            dataFilePatient.setFam("Чречесов");
-            dataFilePatient.setIm("Михаил");
-            dataFilePatient.setOt("Владимирович");
-            dataFilePatient.setSex(sexService.getById(1L));
-            dataFilePatient.setDate_1(Date.from(Instant.now()));
-            List<String> nhistory = new ArrayList<>();
-            nhistory.add("34234234");
-            nhistory.add("23456456");
-            dataFilePatient.setNhistory(nhistory);
-            DataFile dataFile = new DataFile();
-            dataFile.setDate_beg(Date.from(Instant.now()));
-            dataFile.setDate_edit(Date.from(Instant.now()));
-            dataFile.setLpu("150002");
-            dataFile.setName("testname");
-            dataFilePatientList.add(dataFilePatient);
-            dataFile.setDataFilePatient(dataFilePatientList);
-
-            People people = new People(dataFilePatient);
-            DNGet dnGet = new DNGet(dataFile, dataFilePatient, people);
-            dataFileService.save(dataFile);
-            peopleService.save(people);
-            dnGetService.save(dnGet);
-
-            System.out.println(dnGet);
-
-//            Token token = tokenService.genToken("150002");
-//            Notification.show(token.getKey());
-//            ExecutorService executor = Executors.newFixedThreadPool(10);
-//            executor.execute(new Thread(() -> {
-//                try {
-//                    testAsync(this.getUI().get());
-//                } catch (InterruptedException e) {
-//                    throw new RuntimeException(e);
-//                }
-//            }));
-
-
-//
-//            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-//
-//            List<DataFilePatient> dataFilePatientList = new ArrayList<>();
-//            try {
-//                dataFilePatientList.add(new DataFilePatient("ПЛИЕВА", "МАРИНА", "АЛАНОВНА",
-//                        simpleDateFormat.parse("2008-09-21"), "1590199778000327"));
-//                dataFilePatientList.add(new DataFilePatient("АЙЛАРОВ", "ТАМЕРЛАН", "ИРБЕКОВИЧ",
-//                        simpleDateFormat.parse("1987-08-08"), "1551210841000249"));
-//                dataFilePatientList.add(new DataFilePatient("АЙЛasdfАРОВ", "ТАМЕРЛadsfАН", "ИРБЕКОasdfВИЧ",
-//                        simpleDateFormat.parse("1987-08-08"), "1551212841000249"));
-//            } catch (ParseException ex) {
-//                throw new RuntimeException(ex);
-//            }
-//            dbfSearchService.setDataDBF(dataFilePatientList, generatedString);
-//
-//            long delay = 1L;
-//            while (!dbfSearchService.checkDBFFile(generatedString)){
-//                try {
-//                    Thread.sleep(delay);
-//                } catch (InterruptedException ex) {
-//                    throw new RuntimeException(ex);
-//                }
-//            }
-//
-//            try {
-//                Thread.sleep(2000);
-//                Future<List<DataFilePatient>> dataFilePatients = dbfSearchService.getDateDBF(generatedString, dataFilePatientList);
-//                System.out.println(dataFilePatients.toString());
-//            } catch (IOException | InterruptedException ex) {
-//                throw new RuntimeException(ex);
-//            }
-
-            //while ()
+           // pr168Service.getWithDiagAndKod("I13", 25);
+            System.out.println(pr168Service.getWithDiagAndKod("I13", 25));
 
         });
 
