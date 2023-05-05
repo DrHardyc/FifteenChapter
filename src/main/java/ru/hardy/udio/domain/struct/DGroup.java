@@ -1,27 +1,31 @@
 package ru.hardy.udio.domain.struct;
 
+import jakarta.persistence.*;
 import lombok.Data;
 
-import javax.persistence.*;
-import java.sql.Date;
+import java.time.Instant;
+import java.util.Date;
 
 @Entity
 @Data
 @Table(schema = "udio_tfoms")
 public class DGroup {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "dgroup_seq")
+    @SequenceGenerator(name = "dgroup_seq", allocationSize = 1)
     private Long id;
 
     private String ds;
     private String period;
 
-    @ManyToOne
-    @JoinColumn(name = "people_id", nullable = false)
-    private People people;
-
     private Integer code_spec;
 
     private Date date_beg;
     private Date date_edit;
+
+    public DGroup(){
+        this.date_beg = java.util.Date.from(Instant.now());
+        this.date_edit = java.util.Date.from(Instant.now());
+    }
+
 }

@@ -1,10 +1,10 @@
 package ru.hardy.udio.domain.struct;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.Data;
 import ru.hardy.udio.domain.ResponseAnswerUdio;
 
-import javax.persistence.*;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
@@ -16,7 +16,8 @@ import java.util.List;
 public class DataUdioRespIdenty {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "data_udio_resp_identy_seq")
+    @SequenceGenerator(name = "data_udio_resp_identy_seq", allocationSize = 1)
     @JsonIgnore
     private Long id;
 

@@ -1,9 +1,8 @@
 package ru.hardy.udio.domain;
 
 
+import jakarta.persistence.*;
 import lombok.Data;
-
-import javax.persistence.*;
 
 @Entity
 @Data
@@ -11,7 +10,8 @@ import javax.persistence.*;
 public class Token{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "token_seq")
+    @SequenceGenerator(name = "token_seq", allocationSize = 1)
     private Long id;
 
     private String key;

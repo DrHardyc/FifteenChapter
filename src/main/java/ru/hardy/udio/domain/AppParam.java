@@ -1,8 +1,7 @@
 package ru.hardy.udio.domain;
 
+import jakarta.persistence.*;
 import lombok.Data;
-
-import javax.persistence.*;
 
 
 @Data
@@ -10,7 +9,8 @@ import javax.persistence.*;
 @Table(schema = "udio_util")
 public class AppParam {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "app_param_seq")
+    @SequenceGenerator(name = "app_param_seq", allocationSize = 1)
     private Long id;
     private String name;
     private String value;

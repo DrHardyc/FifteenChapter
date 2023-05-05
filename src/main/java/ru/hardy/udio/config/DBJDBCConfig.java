@@ -16,4 +16,17 @@ public class DBJDBCConfig{
         Connection connection = dataSource.getConnection();
         return connection.createStatement();
     }
+
+    public Statement getBars() throws SQLException {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("org.postgresql.Driver");
+        dataSource.setUrl("jdbc:postgresql://192.168.2.210/d3_tfoms");
+        dataSource.setUsername("rsotfoms_user");
+        dataSource.setPassword("JgE2D43ddHUZSwcQ");
+        Connection connection = dataSource.getConnection();
+        Statement statement = connection.createStatement();
+        statement.execute("select core.f_sys_set_config('sysuser',core.f_users8get_id_by_name('CherchesovMV')::text)");
+        return statement;
+    }
+
 }

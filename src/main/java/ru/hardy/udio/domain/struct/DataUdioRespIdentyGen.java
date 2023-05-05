@@ -1,8 +1,8 @@
 package ru.hardy.udio.domain.struct;
 
+import jakarta.persistence.*;
 import lombok.Data;
 
-import javax.persistence.*;
 import java.time.Instant;
 import java.util.Date;
 
@@ -11,7 +11,8 @@ import java.util.Date;
 @Table(schema = "udio_datacontrol")
 public class DataUdioRespIdentyGen {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "data_udio_resp_identy_gen_seq")
+    @SequenceGenerator(name = "data_udio_resp_identy_gen_seq", allocationSize = 1)
     private Long genId;
 
     private Date date_beg;

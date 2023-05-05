@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.7-SNAPSHOT</version>
+        <version>3.0.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>ru.hardy</groupId>
@@ -15,7 +15,7 @@
     <description>udio</description>
     <properties>
         <java.version>19</java.version>
-        <vaadin.version>23.3.5</vaadin.version>
+        <vaadin.version>24.0.4</vaadin.version>
     </properties>
     <dependencies>
         <dependency>
@@ -79,13 +79,26 @@
             <artifactId>poi-ooxml</artifactId>
             <version>5.2.0</version>
         </dependency>
-<!--Chart  пока не работает с версией 23,3 ваадина     -->
+<!--Apex Chart -->
         <dependency>
             <groupId>com.github.appreciated</groupId>
             <artifactId>apexcharts</artifactId>
             <version>23.0.1</version>
         </dependency>
-<!--    -->
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
+        <!--    -->
+<!--        Download file-->
+        <dependency>
+            <groupId>org.vaadin.olli</groupId>
+            <artifactId>file-download-wrapper</artifactId>
+            <version>7.0.0</version>
+        </dependency>
+<!--        -->
     </dependencies>
     <dependencyManagement>
         <dependencies>
@@ -117,8 +130,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>18</source>
-                    <target>18</target>
+                    <source>19</source>
+                    <target>19</target>
                 </configuration>
             </plugin>
         </plugins>

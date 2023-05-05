@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.ResponseAnswerUdio;
 import ru.hardy.udio.domain.struct.DataFile;
 import ru.hardy.udio.domain.struct.DataFilePatient;
+import ru.hardy.udio.repo.DataFilePatientRepo;
 import ru.hardy.udio.repo.DataFileRepo;
 
 import java.io.FileInputStream;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,13 +29,15 @@ public class DBFSearchService {
     @Autowired
     private DataFileRepo dataFileRepo;
 
+    @Autowired
+    private DataFilePatientRepo dataFilePatientRepo;
 
     @Autowired
     private Environment environment;
 
     private void setDataDBF(List<DataFilePatient> dataDBF, String dirFileIn){
 
-        DBFField[] fields = new DBFField[5];
+        DBFField[] fields = new DBFField[6];
 
         fields[0] = new DBFField();
         fields[0].setName("fam");
@@ -60,6 +64,11 @@ public class DBFSearchService {
         fields[4].setType(DBFDataType.CHARACTER);
         fields[4].setLength(16);
 
+        fields[5] = new DBFField();
+        fields[5].setName("dout");
+        fields[5].setType(DBFDataType.DATE);
+        fields[5].setLength(8);
+
         DBFWriter writer;
         try {
             System.out.println("Создан файл :" + dirFileIn);
@@ -69,16 +78,17 @@ public class DBFSearchService {
         }
         writer.setFields(fields);
 
-        for (DataFilePatient dataFilePatient : dataDBF){
-            Object[] rowData = new Object[5];
+        List<DataFilePatient> newDataFilePatientList = createDataFileWithDBFFile(dataDBF);
+        for (DataFilePatient dataFilePatient : newDataFilePatientList){
+            Object[] rowData = new Object[6];
             rowData[0] = dataFilePatient.getFam();
             rowData[1] = dataFilePatient.getIm();
             rowData[2] = dataFilePatient.getOt();
             rowData[3] = dataFilePatient.getDr();
             rowData[4] = dataFilePatient.getEnp();
+            rowData[5] = dataFilePatient.getDate_2();
             writer.addRecord(rowData);
         }
-
         writer.close();
     }
 
@@ -109,7 +119,10 @@ public class DBFSearchService {
                 for (DataFilePatient dataFilePatient : dataFile.getDataFilePatient()){
                     if (Objects.equals(dataFilePatient.getEnp(), row.getString("enp"))){
                         dataFilePatient.setIdsrz(row.getLong("pid"));
-                        break;
+                        if (row.getString("lpu") == null || row.getString("lpu").isEmpty()){
+                            dataFilePatient.setMo_attach(0);
+                        } else dataFilePatient.setMo_attach(Integer.valueOf(row.getString("lpu")));
+                        dataFilePatientRepo.save(dataFilePatient);
                     }
                 }
             }
@@ -135,5 +148,27 @@ public class DBFSearchService {
         } catch (Exception e){
             return false;
         }
+    }
+
+    private List<DataFilePatient> createDataFileWithDBFFile(List<DataFilePatient> dataFilePatientList){
+        List<DataFilePatient> newDataFilePatientList = new ArrayList<>();
+        newDataFilePatientList.add(dataFilePatientList.get(0));
+        boolean flagAdd;
+        for (DataFilePatient dataFilePatient : dataFilePatientList){
+            flagAdd = true;
+            for (DataFilePatient newFilePatient : newDataFilePatientList){
+                if (newFilePatient.getFIO().equals(dataFilePatient.getFIO()) &&
+                        newFilePatient.getEnp().equals(dataFilePatient.getEnp())){
+                    flagAdd = false;
+                    break;
+                }
+            }
+            if (flagAdd){
+                newDataFilePatientList.add(dataFilePatient);
+            }
+        }
+
+        return newDataFilePatientList;
+
     }
 }

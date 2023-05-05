@@ -7,7 +7,6 @@ import ru.hardy.udio.domain.struct.DataUdioResp;
 import ru.hardy.udio.domain.struct.DataUdioRespIdenty;
 import ru.hardy.udio.repo.DataUdioRespIdentyRepo;
 
-import javax.transaction.Transactional;
 import java.sql.Date;
 import java.time.Instant;
 import java.util.List;
@@ -22,7 +21,6 @@ public class DataUdioRespIdentyService {
         return dataUdioRespIdentyRepo.save(dataUdioRespIdenty);
     }
 
-    @Transactional
     public void updateProcessEnd(List<DataUdioResp> dataUdioResps, Long id) {
         DataUdioRespIdenty dataUdioRespIdenty = dataUdioRespIdentyRepo.getOneById(id);
         dataUdioRespIdenty.getDataUdioResps().clear();

@@ -16,6 +16,8 @@ create table udio_sec.usr (
     email varchar(255),
     password varchar(255),
     username varchar(255),
+    fio varchar(255),
+    position varchar(255),
     primary key (id)
 );
 

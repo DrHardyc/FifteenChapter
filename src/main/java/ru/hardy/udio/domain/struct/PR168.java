@@ -1,9 +1,8 @@
 package ru.hardy.udio.domain.struct;
 
 
+import jakarta.persistence.*;
 import lombok.Data;
-
-import javax.persistence.*;
 
 @Entity
 @Data

@@ -1,9 +1,9 @@
 package ru.hardy.udio.domain.struct;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.Data;
 
-import javax.persistence.*;
 import java.time.Instant;
 import java.util.Date;
 
@@ -12,7 +12,8 @@ import java.util.Date;
 @Table(schema = "udio_datacontrol")
 public class DataUdioResp {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "data_udio_resp_seq")
+    @SequenceGenerator(name = "data_udio_resp_seq", allocationSize = 1)
     @JsonIgnore
     private Long id;
 
@@ -31,7 +32,7 @@ public class DataUdioResp {
         this.fam = people.getFam();
         this.im = people.getIm();
         this.ot = people.getOt();
-        this.enp = people.getEnp();
+       // this.enp = people.getEnp();
         this.codeResp = codeResp;
         this.date_beg = Date.from(Instant.now());
         this.date_edit = Date.from(Instant.now());

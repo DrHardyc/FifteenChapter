@@ -1,12 +1,11 @@
 package ru.hardy.udio.domain;
 
 
-import com.vaadin.open.App;
+import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
 import java.util.Collection;
 import java.util.Set;
 
@@ -15,11 +14,15 @@ import java.util.Set;
 @Table(name = "usr", schema = "udio_sec")
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "udio_sec.usr_seq")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "usr_seq")
+    @SequenceGenerator(name = "usr_seq", initialValue = 2, allocationSize = 1)
     private Long id;
     private String username;
     private String password;
     private String email;
+    private String fio;
+    private String position; //должность
+
     private boolean active;
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", schema = "udio_sec", joinColumns = @JoinColumn(name = "user_id"))

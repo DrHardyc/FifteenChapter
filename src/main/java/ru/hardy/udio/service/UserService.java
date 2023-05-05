@@ -37,9 +37,7 @@ public class UserService implements UserDetailsService {
             GrantedAuthority authority = new SimpleGrantedAuthority(role.toString());
             grantList.add(authority);
         }
-        UserDetails userDetails =
-                new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), grantList);
-        return userDetails;
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), grantList);
     }
     public boolean addUser(String username, String password, Set<Role> roles){
         User user = new User();
@@ -57,5 +55,10 @@ public class UserService implements UserDetailsService {
 
     public List<User> getAll(){
         return userRepo.findAll();
+    }
+
+
+    public User getWithName(String username){
+        return userRepo.findByUsername(username);
     }
 }
