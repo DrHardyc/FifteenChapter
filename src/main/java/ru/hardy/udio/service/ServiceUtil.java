@@ -7,10 +7,10 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.RouterLink;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import ru.hardy.udio.domain.report.DNTherapistReport.DateInterval;
 import ru.hardy.udio.view.AdminView;
 import ru.hardy.udio.view.LogoutView;
 import ru.hardy.udio.view.ReportView;
@@ -21,7 +21,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.sql.ClientInfoStatus;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Service
 public class ServiceUtil{
@@ -61,5 +63,35 @@ public class ServiceUtil{
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
         return new BufferedReader(new InputStreamReader(con.getInputStream()));
+    }
+
+    public Date transformDate(String month, String year, DateInterval dateinterval){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+
+        switch (dateinterval){
+            case minDate -> {
+                try {
+                    if (month.equals("1")){
+                        return dateFormat.parse("26.12." + (Integer.parseInt(year) - 1));
+                    } else {
+                        return dateFormat.parse("26." + (Integer.parseInt(month) - 1) + "." + year);
+                    }
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            case maxDate -> {
+                try {
+                    if (month.equals("12")){
+                        return dateFormat.parse("25.01." + (Integer.parseInt(year) + 1));
+                    } else {
+                        return dateFormat.parse("25." + (Integer.parseInt(month) + 1) + "." + year);
+                    }
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        return null;
     }
 }

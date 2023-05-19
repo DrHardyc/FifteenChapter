@@ -2,6 +2,7 @@ package ru.hardy.udio.view;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.applayout.AppLayout;
+import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.notification.Notification;
@@ -31,6 +32,8 @@ public class MainView extends AppLayout {
 
     public MainView(){
 
+        DrawerToggle toggle = new DrawerToggle();
+
         H3 title = new H3("Диспансерное наблюдение v1.1_betta");
         title.getStyle().set("margin", "0");
         ServiceUtil su = new ServiceUtil();
@@ -44,7 +47,7 @@ public class MainView extends AppLayout {
         verticalLayout.add(avatar);
         verticalLayout.setSizeFull();
         horizontalLayout.add(title, verticalLayout);
-        addToNavbar(horizontalLayout);
+        addToNavbar(toggle, horizontalLayout);
         String authenticationName = SecurityContextHolder.getContext().getAuthentication().getName();
         avatar.setName(authenticationName);
     }

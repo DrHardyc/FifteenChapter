@@ -5,7 +5,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridMultiSelectionModel;
 import com.vaadin.flow.component.grid.dataview.GridListDataView;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
@@ -21,14 +20,13 @@ import ru.hardy.udio.domain.struct.DNGet;
 import ru.hardy.udio.service.DNGetService;
 import ru.hardy.udio.service.ExcelService;
 import ru.hardy.udio.service.TokenService;
-import ru.hardy.udio.view.grid.GridView;
+import ru.hardy.udio.view.grid.DNGetGrid;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.List;
 
 @Service
-public class DialogView extends Dialog {
+public class DialogView {
 
     private final Dialog dialog = new Dialog();
     private final HorizontalLayout horizontalLayout = new HorizontalLayout();//Костыль Excel
@@ -78,7 +76,7 @@ public class DialogView extends Dialog {
     public Dialog getDNGetDialog(DNGetService dnGetService, Long peopleId){
         Grid<DNGet> grid = new Grid<>(DNGet.class, false);
         grid.addColumn(DNGet::getNhistory);
-        grid.addColumn(DNGet::getProfil);
+        grid.addColumn(DNGet::getSpecialization);
         grid.setItems(dnGetService.getByPeopleId(peopleId));
         grid.setSizeFull();
         dialog.add(grid);
@@ -91,7 +89,7 @@ public class DialogView extends Dialog {
         Button btnExcel = new Button("Выгрузить в Excel");
         btnExcel.setEnabled(false);
         btnExcel.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        GridView gridView = new GridView();
+        DNGetGrid DNgetGrid = new DNGetGrid();
 
         grid.addItemDoubleClickListener(e -> {
             Notification.show("Double Click!");
@@ -112,7 +110,7 @@ public class DialogView extends Dialog {
             Button downloadButton = new Button();
             downloadButton.setHeight("0px"); // что бы не было видно кнопки
             downloadButton.setWidth("0px");
-            FileDownloadWrapper downloadButtonWrapper = new FileDownloadWrapper("fff.xlsx", file);
+            FileDownloadWrapper downloadButtonWrapper = new FileDownloadWrapper(file.getName(), file);
             downloadButtonWrapper.wrapComponent(downloadButton);
             horizontalLayout.add(downloadButtonWrapper);
             downloadButton.clickInClient();
@@ -126,7 +124,7 @@ public class DialogView extends Dialog {
 
         grid.setSizeFull();
         GridListDataView<DNGet> dnGetGridListDataView = grid.setItems(dnGets);
-        gridView.getDnGetGrid(grid, dnGetGridListDataView);
+        DNgetGrid.getGrid(grid, dnGetGridListDataView);
         dnGetGridListDataView.addItemCountChangeListener(ev -> {
             label.setText(String.valueOf(dnGetGridListDataView.getItemCount()));
         });

@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
-public class DateIntervalView {
+public class DateInterval {
 
     public ComboBox<Month> getMonthInterval(String name){
         ComboBox<Month> monthPicker = new ComboBox<>(name, Month.values());

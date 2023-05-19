@@ -19,6 +19,13 @@ public interface DNGetRepo extends JpaRepository<DNGet, Long> {
 
 
     @Query("select t from DNGet t " +
-            "where t.date_2 between :dateBeg and :dateEnd")
+            "where t.date_1 between :dateBeg and :dateEnd")
     List<DNGet> findAllWithInterval(@Param("dateBeg") Date dateBeg, @Param("dateEnd") Date dateEnd);
+
+    @Query("select count(t) from DNGet t " +
+            "where t.date_2 between :dateBeg and :dateEnd")
+    int findCount_m_16_60();
+
+    @Query("select t from DNGet t where t.specialization = 76")
+    List<DNGet> findAllByTherapist();
 }

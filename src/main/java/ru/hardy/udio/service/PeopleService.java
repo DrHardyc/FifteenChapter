@@ -8,11 +8,15 @@ import org.springframework.data.jpa.provider.HibernateUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.hardy.udio.config.DBJDBCConfig;
 import ru.hardy.udio.domain.struct.*;
 import ru.hardy.udio.repo.PeopleRepo;
 import ru.hardy.udio.service.SRZ.DBFSearchService;
 
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,6 +44,9 @@ public class PeopleService {
 
     @Autowired
     private DNGetService dnGetService;
+
+    @Autowired
+    private DataFilePatientService dataFilePatientService;
 
     public List<People> getAll(){
         return peopleRepo.findAll();
@@ -74,8 +81,30 @@ public class PeopleService {
 
     }
 
-    private DataFile searchFromSRZ(DataFile DataFile) throws IOException, InterruptedException {
-        return dbfSearchService.getDataFromDBF(DataFile);
+    private DataFile searchFromSRZ(DataFile dataFile) {
+        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
+        Statement statement = dbjdbcConfig.getSRZ();
+        for (DataFilePatient dataFilePatient : dataFile.getDataFilePatient()){
+            if (dataFilePatientService.searchFromPeople(dataFilePatient)) {
+                try {
+                    ResultSet resultSet = statement.executeQuery("" +
+                            "select p.id, p.LPU from people p where p.fam = '" + dataFilePatient.getFam() +
+                            "' and p.im = '" + dataFilePatient.getIm() + "' and p.ot = '" +  dataFilePatient.getOt() +
+                            "' and p.dr = PARSE('" + dataFilePatient.getDr() + "' as date) and p.enp = '" + dataFilePatient.getEnp() + "'");
+                    while (resultSet.next()){
+                        dataFilePatient.setIdsrz(resultSet.getLong(1));
+                        if (resultSet.getString(2) != null && !resultSet.getString(2).isEmpty()){
+                            dataFilePatient.setMo_attach(resultSet.getInt(2));
+                        }
+                    }
+                } catch(SQLException e){
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        return dataFile;
+       // return dbfSearchService.getDataFromDBF(dataFile);
     }
 
     @Transactional
@@ -89,7 +118,7 @@ public class PeopleService {
         return save(people);
     }
 
-    public void processing(DataFile dataFile, Long id) throws IOException, InterruptedException {
+    public void processingFromAPI(DataFile dataFile, Long id) {
         dataFileService.save(dataFile);
             dataUdioRespIdentyService.updateProcessEnd(
                 dataUdioRespService.getListDataUdioFromPeoples(
@@ -98,7 +127,7 @@ public class PeopleService {
     }
 
     public void processingFromBars(List<DataFile> dataFileList){
-        ExecutorService executor = Executors.newFixedThreadPool(5);
+        ExecutorService executor = Executors.newFixedThreadPool(3);
         for (DataFile dataFile : dataFileList) {
             Runnable worker = new Thread(() -> {
                 try {

@@ -11,6 +11,7 @@ import ru.hardy.udio.domain.struct.DataFile;
 import ru.hardy.udio.domain.struct.DataFilePatient;
 import ru.hardy.udio.repo.DataFilePatientRepo;
 import ru.hardy.udio.repo.DataFileRepo;
+import ru.hardy.udio.repo.PeopleRepo;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -34,6 +35,9 @@ public class DBFSearchService {
 
     @Autowired
     private Environment environment;
+
+    @Autowired
+    private PeopleRepo peopleRepo;
 
     private void setDataDBF(List<DataFilePatient> dataDBF, String dirFileIn){
 
@@ -80,26 +84,32 @@ public class DBFSearchService {
 
         List<DataFilePatient> newDataFilePatientList = createDataFileWithDBFFile(dataDBF);
         for (DataFilePatient dataFilePatient : newDataFilePatientList){
-            Object[] rowData = new Object[6];
-            rowData[0] = dataFilePatient.getFam();
-            rowData[1] = dataFilePatient.getIm();
-            rowData[2] = dataFilePatient.getOt();
-            rowData[3] = dataFilePatient.getDr();
-            rowData[4] = dataFilePatient.getEnp();
-            rowData[5] = dataFilePatient.getDate_2();
-            writer.addRecord(rowData);
+            if (searchFromUdioWithSrzId(dataFilePatient.getEnp())) {
+                Object[] rowData = new Object[6];
+                rowData[0] = dataFilePatient.getFam();
+                rowData[1] = dataFilePatient.getIm();
+                rowData[2] = dataFilePatient.getOt();
+                rowData[3] = dataFilePatient.getDr();
+                rowData[4] = dataFilePatient.getEnp();
+                rowData[5] = dataFilePatient.getDate_2();
+                writer.addRecord(rowData);
+            }
         }
         writer.close();
     }
 
-    public DataFile getDataFromDBF(DataFile dataFile) throws IOException, InterruptedException {
+    public DataFile getDataFromDBF(DataFile dataFile)  {
         String genStrDirFile = RandomStringUtils.random(10, true, true);
         String dirFileIn = environment.getProperty("dbffile.pathin") + "TESTDBF" + genStrDirFile.toUpperCase() + ".dbf";
         String dirFileOut = environment.getProperty("dbffile.pathout") + "out_TESTDBF" + genStrDirFile.toUpperCase() + ".dbf";
         setDataDBF(dataFile.getDataFilePatient(), dirFileIn);
         int sec = 0;
         while (!checkDBFFile(dirFileOut)){
-            Thread.sleep(1000);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             if (sec > 86400) {
                 dataFile.setResultCode(ResponseAnswerUdio.PROCESSING_ERR);
                 dataFile.setResultDesc("Ошибка ожидания от СРЗ");
@@ -110,7 +120,12 @@ public class DBFSearchService {
         }
         System.out.println("Получен файл :" + dirFileOut);
         DBFReader reader = null;
-        FileInputStream fileInputStream = new FileInputStream(dirFileOut);
+        FileInputStream fileInputStream;
+        try {
+            fileInputStream = new FileInputStream(dirFileOut);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         try {
             reader = new DBFReader(fileInputStream, Charset.forName("cp866"));
 
@@ -170,5 +185,9 @@ public class DBFSearchService {
 
         return newDataFilePatientList;
 
+    }
+
+    private boolean searchFromUdioWithSrzId(String enp){
+        return peopleRepo.findPeopleByEnp(enp) != null;
     }
 }

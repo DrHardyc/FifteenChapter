@@ -13,21 +13,19 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.struct.DNGet;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.function.Consumer;
 
 
 
 @Service
-public class GridView {
-    public void getDnGetGrid(Grid<DNGet> grid, GridListDataView<DNGet> dnGetGridListDataView) {
+public class DNGetGrid {
+    public void getGrid(Grid<DNGet> grid, GridListDataView<DNGet> dnGetGridListDataView) {
         Grid.Column<DNGet> fioCol = grid.addColumn(DNGet::getFIO).setResizable(true).setSortable(true).setWidth("300px");
         Grid.Column<DNGet> moAttachCol = grid.addColumn(DNGet::getMOAttach).setResizable(true).setSortable(true);
         Grid.Column<DNGet> moCol = grid.addColumn(DNGet::getMo).setResizable(true).setSortable(true);
         Grid.Column<DNGet> sexCol = grid.addColumn(DNGet::getPeopleSex).setResizable(true).setSortable(true);
         Grid.Column<DNGet> diagCol = grid.addColumn(DNGet::getDiag).setResizable(true).setSortable(true);
-        Grid.Column<DNGet> profileCol = grid.addColumn(DNGet::getProfil).setResizable(true).setSortable(true);
+        Grid.Column<DNGet> profileCol = grid.addColumn(DNGet::getSpecialization).setResizable(true).setSortable(true);
         Grid.Column<DNGet> ageCol = grid.addColumn(DNGet::getAge).setResizable(true).setSortable(true);
         Grid.Column<DNGet> invCol = grid.addColumn(DNGet::getPeopleInv).setResizable(true).setSortable(true);
         Grid.Column<DNGet> date1Col = grid.addColumn(new LocalDateTimeRenderer<>(
@@ -139,7 +137,7 @@ public class GridView {
             boolean matchesMo = matches(String.valueOf(dnGet.getMo()), mo);
             boolean matchesSex = matches(dnGet.getPeopleSex(), sex);
             boolean matchesDiag = matches(dnGet.getDiag(), diag);
-            boolean matchesProfile = matches(String.valueOf(dnGet.getProfil()), profile);
+            boolean matchesProfile = matches(String.valueOf(dnGet.getSpecialization()), profile);
             boolean matchesAge = matches(String.valueOf(dnGet.getAge()), age);
             boolean matchesInv = matches(dnGet.getPeopleInv(), inv);
             boolean matchesDate1 = matches(dnGet.getDate1String(), date_1);

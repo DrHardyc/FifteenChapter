@@ -22,6 +22,7 @@ import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.service.*;
 import ru.hardy.udio.view.dialog.DialogView;
 
+import java.sql.SQLException;
 import java.util.Collections;
 
 @Route(layout = MainView.class)
@@ -34,12 +35,14 @@ public class AdminView extends VerticalLayout{
     @Autowired
     private UserService userService;
 
-
     @Autowired
     private PeopleService peopleService;
 
     @Autowired
     private DataFilePatientService dataFilePatientService;
+
+    @Autowired
+    private DataFileService dataFileService;
 
 
     public AdminView(){
@@ -123,17 +126,26 @@ public class AdminView extends VerticalLayout{
 
         tabSheet.add("Графики", vlTestChart);
 
+        Button btnLoadFromBars = new Button("Загрузить из барса");
+        btnLoadFromBars.addClickListener(e -> {
+           //dataFilePatientService.getFromBars();
+           peopleService.processingFromBars(dataFileService.getAll());
+        });
+        VerticalLayout vlLoads = new VerticalLayout();
+        vlLoads.add(btnLoadFromBars);
+        tabSheet.add("Загрузки", vlLoads);
+
         add(tabSheet);
     }
 
     @Override
     public void onAttach(AttachEvent attachEvent) {
-        this.add(createApexChart());
+        //this.add(createApexChart());
     }
 
-    private ApexCharts createApexChart(){
-        AChartService aChartService = new AChartService();
-        return aChartService.getAC(aChartService.getFromFilePatient(dataFilePatientService.getAll(), "age"));
-
-    }
+//    private ApexCharts createApexChart(){
+//        AChartService aChartService = new AChartService();
+//        return aChartService.getAC(aChartService.getFromFilePatient(dataFilePatientService.getAll(), "age"));
+//
+//    }
 }

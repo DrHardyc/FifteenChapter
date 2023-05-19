@@ -7,6 +7,7 @@ import lombok.Data;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Data
@@ -29,9 +30,10 @@ public class DNGet {
     private Date date_2; // Дата окончания лечения???
     private Date date_call; //Дата вызова
     private String diag; //диагноз
-    private Integer profil; //профиль по V021
+
+    private Integer specialization; //профиль по V021
     private Long import_id; // id в БД мо
-    private int mo; //мо прохождения д-наблюдения
+    private Integer mo; //мо прохождения д-наблюдения
     private Date date_beg;
     private Date date_edit;
 
@@ -42,7 +44,7 @@ public class DNGet {
         this.date_2 = dataFilePatient.getDate_2();
         this.diag = dataFilePatient.getDiag();
         this.date_call = dataFilePatient.getDate_call();
-        this.profil = dataFilePatient.getProfil();
+        this.specialization = dataFilePatient.getSpecialization();
         this.import_id = dataFilePatient.getDatafile().getImport_id();
         this.date_beg = Date.from(Instant.now());
         this.date_edit = Date.from(Instant.now());
@@ -104,4 +106,19 @@ public class DNGet {
     public int getMOAttach(){
         return this.people.getMo_attach();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        DNGet dnGet = (DNGet) o;
+        return this.getPeople().equals(dnGet.getPeople());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getPeople());
+    }
+
 }

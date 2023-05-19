@@ -31,6 +31,11 @@ public class DNGetService {
         return dnGetRepo.findAll();
     }
 
+    @Transactional
+    public List<DNGet> getAllTherapist(){
+        return dnGetRepo.findAllByTherapist();
+    }
+
     public List<DNGet> getByPeopleId(Long id) {
         return dnGetRepo.findByPeopleId(id);
     }
@@ -49,7 +54,7 @@ public class DNGetService {
     }
 
     private void update(DNGet dnGet, DataFilePatient dataFilePatient){
-        dnGet.setProfil(dataFilePatient.getProfil());
+        dnGet.setSpecialization(dataFilePatient.getSpecialization());
         dnGet.setDate_1(dataFilePatient.getDate_1());
         dnGet.setDate_2(dataFilePatient.getDate_2());
         dnGet.setDate_call(dataFilePatient.getDate_call());
