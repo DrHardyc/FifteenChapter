@@ -28,4 +28,10 @@ public interface DNGetRepo extends JpaRepository<DNGet, Long> {
 
     @Query("select t from DNGet t where t.specialization = 76")
     List<DNGet> findAllByTherapist();
+
+    @Query("select t from DNGet t where substring(t.diag, 1, 1) = 'C' or substring(t.diag, 1, 2) = 'D0'")
+    List<DNGet> findAllByONKO();
+
+    @Query("select t from DNGet t where substring(t.diag, 1, 1) = 'I'")
+    List<DNGet> findAllByKARDIO();
 }

@@ -2,9 +2,9 @@ package ru.hardy.udio.service.report;
 
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.config.DBJDBCConfig;
-import ru.hardy.udio.domain.report.DNTherapistReport.DateInterval;
-import ru.hardy.udio.domain.report.DNTherapistReport.VisitType;
-import ru.hardy.udio.domain.report.DNTherapistReport.WorkingAgeSex;
+import ru.hardy.udio.domain.report.DateInterval;
+import ru.hardy.udio.domain.report.VisitType;
+import ru.hardy.udio.domain.report.WorkingAgeSex;
 import ru.hardy.udio.domain.struct.DNGet;
 import ru.hardy.udio.service.ServiceUtil;
 
@@ -33,7 +33,7 @@ public class DNTherapistReportService {
                     .filter(c -> c.getPeople().getAge() >= 16
                             && c.getPeople().getAge() <= 60
                             && c.getPeopleSex().equals("1")
-                            && diags.contains(transformDiag(c.getDiag())))
+                            && diags.contains(serviceUtil.transformDiag(c.getDiag())))
                     .toList()
                     .stream()
                     .distinct()
@@ -45,7 +45,7 @@ public class DNTherapistReportService {
                     .stream()
                     .filter(c -> c.getPeople().getAge() > 60
                             && c.getPeopleSex().equals("1")
-                            && diags.contains(transformDiag(c.getDiag())))
+                            && diags.contains(serviceUtil.transformDiag(c.getDiag())))
                     .toList().stream().distinct().toList().size();
 
             case W_16_55 ->
@@ -54,7 +54,7 @@ public class DNTherapistReportService {
                     .filter(c -> c.getPeople().getAge() >= 16
                             && c.getPeople().getAge() <= 55
                             && c.getPeopleSex().equals("2")
-                            && diags.contains(transformDiag(c.getDiag())))
+                            && diags.contains(serviceUtil.transformDiag(c.getDiag())))
                     .toList()
                     .stream()
                     .distinct()
@@ -66,7 +66,7 @@ public class DNTherapistReportService {
                     .stream()
                     .filter(c -> c.getPeople().getAge() > 55
                             && c.getPeopleSex().equals("2")
-                            && diags.contains(transformDiag(c.getDiag())))
+                            && diags.contains(serviceUtil.transformDiag(c.getDiag())))
                     .toList()
                     .stream()
                     .distinct()
@@ -75,7 +75,7 @@ public class DNTherapistReportService {
             case all ->
                 dnGets
                     .stream()
-                    .filter(c -> diags.contains(transformDiag(c.getDiag())))
+                    .filter(c -> diags.contains(serviceUtil.transformDiag(c.getDiag())))
                     .toList()
                     .stream()
                     .distinct()
@@ -99,7 +99,7 @@ public class DNTherapistReportService {
                             .filter(c -> c.getPeople().getAge() >= 16
                                     && c.getPeople().getAge() <= 60
                                     && c.getPeopleSex().equals("1")
-                                    && diags.contains(transformDiag(c.getDiag()))
+                                    && diags.contains(serviceUtil.transformDiag(c.getDiag()))
                                     && c.getDate_1().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
                                     && c.getDate_1().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
                             .toList()
@@ -112,7 +112,7 @@ public class DNTherapistReportService {
                             .stream()
                             .filter(c -> c.getPeople().getAge() > 60
                                     && c.getPeopleSex().equals("1")
-                                    && diags.contains(transformDiag(c.getDiag()))
+                                    && diags.contains(serviceUtil.transformDiag(c.getDiag()))
                                     && c.getDate_1().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
                                     && c.getDate_1().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
                             .toList()
@@ -126,7 +126,7 @@ public class DNTherapistReportService {
                             .filter(c -> c.getPeople().getAge() >= 16
                                     && c.getPeople().getAge() <= 55
                                     && c.getPeopleSex().equals("2")
-                                    && diags.contains(transformDiag(c.getDiag()))
+                                    && diags.contains(serviceUtil.transformDiag(c.getDiag()))
                                     && c.getDate_1().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
                                     && c.getDate_1().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
                             .toList()
@@ -139,7 +139,7 @@ public class DNTherapistReportService {
                             .stream()
                             .filter(c -> c.getPeople().getAge() > 55
                                     && c.getPeopleSex().equals("2")
-                                    && diags.contains(transformDiag(c.getDiag()))
+                                    && diags.contains(serviceUtil.transformDiag(c.getDiag()))
                                     && c.getDate_1().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
                                     && c.getDate_1().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
                             .toList()
@@ -149,7 +149,7 @@ public class DNTherapistReportService {
             case all ->
                     dnGetsPeople = dnGets
                             .stream()
-                            .filter(c -> diags.contains(transformDiag(c.getDiag()))
+                            .filter(c -> diags.contains(serviceUtil.transformDiag(c.getDiag()))
                                     && c.getDate_1().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
                                     && c.getDate_1().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
                             .toList()
@@ -195,7 +195,7 @@ public class DNTherapistReportService {
                          c.getPeople().getAge() >= 16
                                  && c.getPeople().getAge() <= 60
                                  && c.getPeopleSex().equals("1")
-                                 && diags.contains(transformDiag(c.getDiag()))
+                                 && diags.contains(serviceUtil.transformDiag(c.getDiag()))
                                  && c.getDate_call() != null
                                  && c.getDate_call().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
                                  && c.getDate_call().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
@@ -211,7 +211,7 @@ public class DNTherapistReportService {
                     .filter(c ->
                         c.getPeople().getAge() > 60
                                 && c.getPeopleSex().equals("1")
-                                && diags.contains(transformDiag(c.getDiag()))
+                                && diags.contains(serviceUtil.transformDiag(c.getDiag()))
                                 && c.getDate_call() != null
                                 && c.getDate_call().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
                                 && c.getDate_call().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
@@ -227,7 +227,7 @@ public class DNTherapistReportService {
                     .filter(c -> c.getPeople().getAge() >= 16
                             && c.getPeople().getAge() <= 55
                             && c.getPeopleSex().equals("2")
-                            && diags.contains(transformDiag(c.getDiag()))
+                            && diags.contains(serviceUtil.transformDiag(c.getDiag()))
                             && c.getDate_call() != null
                             && c.getDate_call().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
                             && c.getDate_call().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
@@ -242,7 +242,7 @@ public class DNTherapistReportService {
                     .stream()
                     .filter(c -> c.getPeople().getAge() > 55
                             && c.getPeopleSex().equals("2")
-                            && diags.contains(transformDiag(c.getDiag()))
+                            && diags.contains(serviceUtil.transformDiag(c.getDiag()))
                             && c.getDate_call() != null
                             && c.getDate_call().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
                             && c.getDate_call().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
@@ -254,7 +254,7 @@ public class DNTherapistReportService {
             case all ->
                 dnGets
                     .stream()
-                    .filter(c -> diags.contains(transformDiag(c.getDiag()))
+                    .filter(c -> diags.contains(serviceUtil.transformDiag(c.getDiag()))
                             && c.getDate_call() != null
                             && c.getDate_call().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
                             && c.getDate_call().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
@@ -309,7 +309,7 @@ public class DNTherapistReportService {
                             " and coalesce(" + strVisitTypeSearchValue + ", '0') <> '0' " +
                             "and date_part('year', age(cb.date_2, cbp.pac_dr)) between 16 and 60 " +
                             "and cbp.pac_w = 1712801 " +
-                            "and mkb.mkb_code in (" + transformDiagForBars(diags) +
+                            "and mkb.mkb_code in (" + serviceUtil.transformStringArrayForBars(diags) +
                             ") and sl.dn in (1, 2, 6)");
                     if (resultSet.next())
                         return resultSet.getInt(1);
@@ -333,7 +333,7 @@ public class DNTherapistReportService {
                             " and coalesce(" + strVisitTypeSearchValue + ", '0') <> '0' " +
                             "and date_part('year', age(cb.date_2, cbp.pac_dr)) > 60 " +
                             "and cbp.pac_w = 1712801 " +
-                            "and mkb.mkb_code in (" + transformDiagForBars(diags) +
+                            "and mkb.mkb_code in (" + serviceUtil.transformStringArrayForBars(diags) +
                             ") and sl.dn in (1, 2, 6)");
                     if (resultSet.next())
                         return resultSet.getInt(1);
@@ -356,7 +356,7 @@ public class DNTherapistReportService {
                             " and coalesce(" + strVisitTypeSearchValue + ", '0') <> '0' " +
                             "and date_part('year', age(cb.date_2, cbp.pac_dr)) between 16 and 55 " +
                             "and cbp.pac_w = 1712821 " +
-                            "and mkb.mkb_code in (" + transformDiagForBars(diags) +
+                            "and mkb.mkb_code in (" + serviceUtil.transformStringArrayForBars(diags) +
                             ") and sl.dn in (1, 2, 6)");
                     if (resultSet.next())
                         return resultSet.getInt(1);
@@ -379,7 +379,7 @@ public class DNTherapistReportService {
                             " and coalesce(" + strVisitTypeSearchValue + ", '0') <> '0' " +
                             "and date_part('year', age(cb.date_2, cbp.pac_dr)) > 55 " +
                             "and cbp.pac_w = 1712821 " +
-                            "and mkb.mkb_code in (" + transformDiagForBars(diags) +
+                            "and mkb.mkb_code in (" + serviceUtil.transformStringArrayForBars(diags) +
                             ") and sl.dn in (1, 2, 6)");
                     if (resultSet.next())
                         return resultSet.getInt(1);
@@ -400,7 +400,7 @@ public class DNTherapistReportService {
                             "where cbb.month = " + month +
                             " and cbb.year = " + year +
                             " and coalesce(" + strVisitTypeSearchValue + ", '0') <> '0' " +
-                            "and mkb.mkb_code in (" + transformDiagForBars(diags) +
+                            "and mkb.mkb_code in (" + serviceUtil.transformStringArrayForBars(diags) +
                             ") and sl.dn in (1, 2, 6)");
                     if (resultSet.next())
                         return resultSet.getInt(1);
@@ -427,7 +427,7 @@ public class DNTherapistReportService {
                             .filter(c -> c.getPeople().getAge() >= 16
                                     && c.getPeople().getAge() <= 60
                                     && c.getPeopleSex().equals("1")
-                                    && diags.contains(transformDiag(c.getDiag())))
+                                    && diags.contains(serviceUtil.transformDiag(c.getDiag())))
                             .toList()
                             .stream()
                             .distinct()
@@ -438,7 +438,7 @@ public class DNTherapistReportService {
                             .stream()
                             .filter(c -> c.getPeople().getAge() > 60
                                     && c.getPeopleSex().equals("1")
-                                    && diags.contains(transformDiag(c.getDiag())))
+                                    && diags.contains(serviceUtil.transformDiag(c.getDiag())))
                             .toList()
                             .stream()
                             .distinct()
@@ -450,7 +450,7 @@ public class DNTherapistReportService {
                             .filter(c -> c.getPeople().getAge() >= 16
                                     && c.getPeople().getAge() <= 55
                                     && c.getPeopleSex().equals("2")
-                                    && diags.contains(transformDiag(c.getDiag())))
+                                    && diags.contains(serviceUtil.transformDiag(c.getDiag())))
                             .toList()
                             .stream()
                             .distinct()
@@ -461,7 +461,7 @@ public class DNTherapistReportService {
                             .stream()
                             .filter(c -> c.getPeople().getAge() > 55
                                     && c.getPeopleSex().equals("2")
-                                    && diags.contains(transformDiag(c.getDiag())))
+                                    && diags.contains(serviceUtil.transformDiag(c.getDiag())))
                             .toList()
                             .stream()
                             .distinct()
@@ -469,7 +469,7 @@ public class DNTherapistReportService {
             case all ->
                     dnGetsPeople = dnGets
                             .stream()
-                            .filter(c -> diags.contains(transformDiag(c.getDiag())))
+                            .filter(c -> diags.contains(serviceUtil.transformDiag(c.getDiag())))
                             .toList()
                             .stream()
                             .distinct()
@@ -522,7 +522,7 @@ public class DNTherapistReportService {
                             .filter(c -> c.getPeople().getAge() >= 16
                                     && c.getPeople().getAge() <= 60
                                     && c.getPeopleSex().equals("1")
-                                    && diags.contains(transformDiag(c.getDiag())))
+                                    && diags.contains(serviceUtil.transformDiag(c.getDiag())))
                             .toList()
                             .stream()
                             .distinct()
@@ -533,7 +533,7 @@ public class DNTherapistReportService {
                             .stream()
                             .filter(c -> c.getPeople().getAge() > 60
                                     && c.getPeopleSex().equals("1")
-                                    && diags.contains(transformDiag(c.getDiag())))
+                                    && diags.contains(serviceUtil.transformDiag(c.getDiag())))
                             .toList()
                             .stream()
                             .distinct()
@@ -545,7 +545,7 @@ public class DNTherapistReportService {
                             .filter(c -> c.getPeople().getAge() >= 16
                                     && c.getPeople().getAge() <= 55
                                     && c.getPeopleSex().equals("2")
-                                    && diags.contains(transformDiag(c.getDiag())))
+                                    && diags.contains(serviceUtil.transformDiag(c.getDiag())))
                             .toList()
                             .stream()
                             .distinct()
@@ -556,7 +556,7 @@ public class DNTherapistReportService {
                             .stream()
                             .filter(c -> c.getPeople().getAge() > 55
                                     && c.getPeopleSex().equals("2")
-                                    && diags.contains(transformDiag(c.getDiag())))
+                                    && diags.contains(serviceUtil.transformDiag(c.getDiag())))
                             .toList()
                             .stream()
                             .distinct()
@@ -564,7 +564,7 @@ public class DNTherapistReportService {
             case all ->
                     dnGetsPeople = dnGets
                             .stream()
-                            .filter(c -> diags.contains(transformDiag(c.getDiag())))
+                            .filter(c -> diags.contains(serviceUtil.transformDiag(c.getDiag())))
                             .toList()
                             .stream()
                             .distinct()
@@ -606,7 +606,7 @@ public class DNTherapistReportService {
                             .filter(c -> c.getPeople().getAge() >= 16
                                     && c.getPeople().getAge() <= 60
                                     && c.getPeopleSex().equals("1")
-                                    && diags.contains(transformDiag(c.getDiag()))
+                                    && diags.contains(serviceUtil.transformDiag(c.getDiag()))
                                     && c.getDate_1().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
                                     && c.getDate_1().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
                             .toList()
@@ -619,7 +619,7 @@ public class DNTherapistReportService {
                             .stream()
                             .filter(c -> c.getPeople().getAge() > 60
                                     && c.getPeopleSex().equals("1")
-                                    && diags.contains(transformDiag(c.getDiag()))
+                                    && diags.contains(serviceUtil.transformDiag(c.getDiag()))
                                     && c.getDate_1().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
                                     && c.getDate_1().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
                             .toList()
@@ -633,7 +633,7 @@ public class DNTherapistReportService {
                             .filter(c -> c.getPeople().getAge() >= 16
                                     && c.getPeople().getAge() <= 55
                                     && c.getPeopleSex().equals("2")
-                                    && diags.contains(transformDiag(c.getDiag()))
+                                    && diags.contains(serviceUtil.transformDiag(c.getDiag()))
                                     && c.getDate_1().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
                                     && c.getDate_1().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
                             .toList()
@@ -646,7 +646,7 @@ public class DNTherapistReportService {
                             .stream()
                             .filter(c -> c.getPeople().getAge() > 55
                                     && c.getPeopleSex().equals("2")
-                                    && diags.contains(transformDiag(c.getDiag()))
+                                    && diags.contains(serviceUtil.transformDiag(c.getDiag()))
                                     && c.getDate_1().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
                                     && c.getDate_1().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
                             .toList()
@@ -656,7 +656,7 @@ public class DNTherapistReportService {
             case all ->
                     dnGetsPeople = dnGets
                             .stream()
-                            .filter(c -> diags.contains(transformDiag(c.getDiag()))
+                            .filter(c -> diags.contains(serviceUtil.transformDiag(c.getDiag()))
                                     && c.getDate_1().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
                                     && c.getDate_1().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
                             .toList()
@@ -700,7 +700,7 @@ public class DNTherapistReportService {
                     .filter(c -> c.getPeople().getAge() >= 16
                             && c.getPeople().getAge() <= 60
                             && c.getPeopleSex().equals("1")
-                            && diags.contains(transformDiag(c.getDiag()))
+                            && diags.contains(serviceUtil.transformDiag(c.getDiag()))
                             && c.getPeople().getInv() != 0
                             && c.getPeople().getInv() != null)
                     .toList()
@@ -714,7 +714,7 @@ public class DNTherapistReportService {
                     .stream()
                     .filter(c -> c.getPeople().getAge() > 60
                             && c.getPeopleSex().equals("1")
-                            && diags.contains(transformDiag(c.getDiag()))
+                            && diags.contains(serviceUtil.transformDiag(c.getDiag()))
                             && c.getPeople().getInv() != 0)
                     .toList()
                     .stream()
@@ -728,7 +728,7 @@ public class DNTherapistReportService {
                     .filter(c -> c.getPeople().getAge() >= 16
                             && c.getPeople().getAge() <= 55
                             && c.getPeopleSex().equals("2")
-                            && diags.contains(transformDiag(c.getDiag()))
+                            && diags.contains(serviceUtil.transformDiag(c.getDiag()))
                             && c.getPeople().getInv() != 0
                             && c.getPeople().getInv() != null)
                     .toList()
@@ -742,7 +742,7 @@ public class DNTherapistReportService {
                     .stream()
                     .filter(c -> c.getPeople().getAge() > 55
                             && c.getPeopleSex().equals("2")
-                            && diags.contains(transformDiag(c.getDiag()))
+                            && diags.contains(serviceUtil.transformDiag(c.getDiag()))
                             && c.getPeople().getInv() != 0
                             && c.getPeople().getInv() != null)
                     .toList()
@@ -754,7 +754,7 @@ public class DNTherapistReportService {
             case all ->
                     dnGets
                             .stream()
-                            .filter(c -> diags.contains(transformDiag(c.getDiag()))
+                            .filter(c -> diags.contains(serviceUtil.transformDiag(c.getDiag()))
                                     && c.getPeople().getInv() != 0
                                     && c.getPeople().getInv() != null)
                             .toList()
@@ -763,24 +763,5 @@ public class DNTherapistReportService {
                             .toList()
                             .size();
         };
-    }
-
-    private String transformDiag(String diag){
-        if(diag!= null && diag.substring(diag.indexOf(".") + 1).equals("0") && diag.length() == 5){
-            return diag.substring(0, 3);
-        } else return diag;
-    }
-
-    private String transformDiagForBars(String diags){
-        int count = 0;
-        StringBuilder resultStr = new StringBuilder();
-        String[] str = diags.replaceAll("\\s", "").trim().split(",");
-        while (count < str.length){
-            if (count == 0){
-                resultStr.append("'").append(str[count]).append("'");
-            } else  resultStr.append(",'").append(str[count]).append("'");
-            count++;
-        }
-        return resultStr.toString();
     }
 }

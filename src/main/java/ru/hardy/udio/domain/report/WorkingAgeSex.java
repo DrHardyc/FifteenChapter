@@ -1,4 +1,4 @@
-package ru.hardy.udio.domain.report.DNTherapistReport;
+package ru.hardy.udio.domain.report;
 
 public enum WorkingAgeSex {
     all,

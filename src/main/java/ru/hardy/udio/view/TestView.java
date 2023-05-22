@@ -2,71 +2,30 @@ package ru.hardy.udio.view;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.avatar.Avatar;
-import com.vaadin.flow.component.avatar.AvatarVariant;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.dataview.GridListDataView;
 import com.vaadin.flow.component.html.Anchor;
-import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.TabSheet;
-import com.vaadin.flow.component.tabs.TabVariant;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.StreamResource;
-import com.vaadin.flow.server.VaadinServlet;
-import com.vaadin.flow.theme.lumo.LumoUtility;
 import jakarta.annotation.security.RolesAllowed;
-import org.apache.catalina.webresources.FileResource;
-import org.hibernate.dialect.SpannerDialect;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.LinkedMultiValueMap;
-import ru.hardy.udio.domain.report.DNTherapistReport.WorkingAgeSex;
-import ru.hardy.udio.domain.struct.DNGet;
-import ru.hardy.udio.domain.task.ReportTask;
-import ru.hardy.udio.domain.task.StatusTask;
-import ru.hardy.udio.service.DNGetService;
-import ru.hardy.udio.service.report.DNTherapistReportService;
-import ru.hardy.udio.service.task.ReportTaskService;
-import ru.hardy.udio.view.grid.ReportTaskGrid;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.net.MalformedURLException;
-import java.time.Month;
-import java.util.List;
 
 @Route(layout = MainView.class)
 @RolesAllowed({"ROLE_ADMIN"})
 public class TestView extends VerticalLayout {
 
-    @Autowired
-    private DNGetService dnGetService;
-
-    @Autowired
-    private ReportTaskService reportTaskService;
-
-    private List<ReportTask> reportTaskList = null;
-    private final Grid<ReportTask> grid = new Grid<>();
 
 
     public TestView() {
 
         Avatar avatar = new Avatar();
-
-        add(grid);
-
 
         Anchor anchor = new Anchor(new StreamResource("DNTh.xlsx",
                 () -> {
@@ -77,7 +36,6 @@ public class TestView extends VerticalLayout {
                     }
                 }),
                 "A document");
-
 
         anchor.getElement().setAttribute("router-ignore", true);
 
@@ -118,7 +76,6 @@ public class TestView extends VerticalLayout {
         add(horizontalLayout);
         button.addClickListener(ev -> {
 
-
 //            DNTherapistReportService dnTherapistReportService = new DNTherapistReportService();
 //
 //            System.out.println(dnTherapistReportService.getCountCalling(dnGetService.getAllTherapist(), WorkingAgeSex.W_older_55,
@@ -136,8 +93,6 @@ public class TestView extends VerticalLayout {
 
     @Override
     public void onAttach(AttachEvent attachEvent){
-        GridListDataView<ReportTask> dnGetGridListDataView = grid.setItems(reportTaskService.getAll());
-        ReportTaskGrid.getGrid(grid, dnGetGridListDataView);
     }
 
 }

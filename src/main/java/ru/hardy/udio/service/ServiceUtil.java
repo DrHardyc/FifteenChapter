@@ -10,11 +10,8 @@ import com.vaadin.flow.router.RouterLink;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import ru.hardy.udio.domain.report.DNTherapistReport.DateInterval;
-import ru.hardy.udio.view.AdminView;
-import ru.hardy.udio.view.LogoutView;
-import ru.hardy.udio.view.ReportView;
-import ru.hardy.udio.view.TestView;
+import ru.hardy.udio.domain.report.DateInterval;
+import ru.hardy.udio.view.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,6 +36,7 @@ public class ServiceUtil{
         if (authentication.getAuthorities().stream()
                 .anyMatch(r -> r.getAuthority().equals("ROLE_TFOMS"))) {
             tabs.add(createTab(VaadinIcon.FILE_TABLE, "Отчеты", "Отчеты", ReportView.class));
+            tabs.add(createTab(VaadinIcon.TASKS, "Задачи", "Задачи", TaskView.class));
         }
         tabs.add(createTab(VaadinIcon.EXIT_O, "Выход", "Выйти из программы", LogoutView.class));
         tabs.setOrientation(Tabs.Orientation.VERTICAL);
@@ -93,5 +91,25 @@ public class ServiceUtil{
             }
         }
         return null;
+    }
+
+
+    public String transformDiag(String diag){
+        if(diag!= null && diag.substring(diag.indexOf(".") + 1).equals("0") && diag.length() == 5){
+            return diag.substring(0, 3);
+        } else return diag;
+    }
+
+    public String transformStringArrayForBars(String diags){
+        int count = 0;
+        StringBuilder resultStr = new StringBuilder();
+        String[] str = diags.replaceAll("\\s", "").trim().split(",");
+        while (count < str.length){
+            if (count == 0){
+                resultStr.append("'").append(str[count]).append("'");
+            } else  resultStr.append(",'").append(str[count]).append("'");
+            count++;
+        }
+        return resultStr.toString();
     }
 }

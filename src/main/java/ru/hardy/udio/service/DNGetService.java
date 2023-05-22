@@ -36,6 +36,11 @@ public class DNGetService {
         return dnGetRepo.findAllByTherapist();
     }
 
+    @Transactional
+    public List<DNGet> getAllONKO(){
+        return dnGetRepo.findAllByONKO();
+    }
+
     public List<DNGet> getByPeopleId(Long id) {
         return dnGetRepo.findByPeopleId(id);
     }
@@ -66,5 +71,9 @@ public class DNGetService {
 
     public List<DNGet> getAllWithDateInterval(Date dateBeg, Date dateEnd) {
         return dnGetRepo.findAllWithInterval(dateBeg, dateEnd);
+    }
+
+    public List<DNGet> getAllKARDIO() {
+        return dnGetRepo.findAllByKARDIO();
     }
 }
