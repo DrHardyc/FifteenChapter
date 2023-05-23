@@ -5,8 +5,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
-
-import javax.annotation.security.PermitAll;
+import jakarta.annotation.security.PermitAll;
 
 @Route("logout")
 @PermitAll
