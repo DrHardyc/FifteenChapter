@@ -14,4 +14,9 @@ public class SexService {
     public Sex getById(Long id){
         return sexRepo.searchById(id);
     }
+
+    public Sex getByName(String name){
+        if (name.equals("Ж")) return sexRepo.searchById(2L);
+        else return sexRepo.searchById(1L);
+    }
 }

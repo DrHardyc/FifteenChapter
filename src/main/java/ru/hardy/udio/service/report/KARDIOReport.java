@@ -2,6 +2,7 @@ package ru.hardy.udio.service.report;
 
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.config.DBJDBCConfig;
+import ru.hardy.udio.domain.report.DateInterval;
 import ru.hardy.udio.domain.struct.DNGet;
 import ru.hardy.udio.service.ServiceUtil;
 
@@ -21,11 +22,9 @@ public class KARDIOReport {
         this.dnGets = dnGets;
     }
 
-    public int getCountKARDIOBars(String month, String year){
+    public int getCountKARDIOBars(String monthBeg, String monthEnd, String yearBeg, String yearEnd, Statement statement){
         int count = 0;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
-        Statement statement = dbjdbcConfig.getBars();
 
         List<DNGet> dnGetsPeople = dnGets.stream()
             .filter(c -> c.getPeople().getAge() >= 18 && c.getDiag().charAt(0) == 'I')
@@ -42,11 +41,14 @@ public class KARDIOReport {
                         "inner join tf_proc.tp_casebill_bill cbb on cbb.id = cb.tp_casebill_bill " +
                         "left join nsi_med.med_mkb10 mkb on mkb.id = cb.ds1 " +
                         "left join nsi_med.med_purp_visit mpv on mpv.id = sl.p_cel " +
-                        "where cbb.month = " + month +
-                        " and cbb.year = " + year +
-                        " and cbp.pac_fam = '" + dnGet.getPeople().getFam() +
-                        "' and cbp.pac_im  = '" + dnGet.getPeople().getIm() +
-                        "' and cbp.pac_ot = '" + dnGet.getPeople().getOt() +
+                        "where cb.date_1 between " +
+                        "to_date('" + dateFormat.format(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                            + "', 'dd.mm.yyyy') and " +
+                        "to_date('" + dateFormat.format(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate))
+                            + "', 'dd.mm.yyyy')" +
+                        " and upper(cbp.pac_fam) = '" + dnGet.getPeople().getFam().toUpperCase() +
+                        "' and upper(cbp.pac_im)  = '" + dnGet.getPeople().getIm().toUpperCase() +
+                        "' and upper(cbp.pac_ot) = '" + dnGet.getPeople().getOt().toUpperCase() +
                         "' and cbp.pac_dr  = to_date('" + dateFormat.format(dnGet.getPeople().getDr()) + "', 'DD.MM.YYYY') " +
                         "and cb.enp  = '" + dnGet.getPeople().getEnp() + "'" +
                         "and substring(mkb.mkb_code, 1, 1) = 'I' " +

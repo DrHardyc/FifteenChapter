@@ -93,7 +93,6 @@ public class ServiceUtil{
         return null;
     }
 
-
     public String transformDiag(String diag){
         if(diag!= null && diag.substring(diag.indexOf(".") + 1).equals("0") && diag.length() == 5){
             return diag.substring(0, 3);

@@ -41,10 +41,11 @@ public class ReportTaskGrid {
         Grid.Column<ReportTask> errCol = grid.addColumn(ReportTask::getResult).setResizable(true).setSortable(true);
         Grid.Column<ReportTask> usernameCol = grid.addColumn(ReportTask::getUsername).setResizable(true).setSortable(true);
         Grid.Column<ReportTask> dateBegCol = grid.addColumn(new LocalDateTimeRenderer<>(
-                ReportTask::getLocalDateTimeDateBeg, "dd.MM.yyyy HH:mm:ss")).setResizable(true).setComparator(ReportTask::getLocalDateTimeDateBeg);
+                ReportTask::getLocalDateTimeDateBeg, "dd.MM.yyyy HH:mm:ss")).setResizable(true)
+                .setComparator(ReportTask::getLocalDateTimeDateBeg);
         Grid.Column<ReportTask> dateEditCol = grid.addColumn(new LocalDateTimeRenderer<>(
                 ReportTask::getLocalDateTimeDateEdit, "dd.MM.yyyy HH:mm:ss")).setResizable(true).setComparator(ReportTask::getLocalDateTimeDateEdit);
-
+        grid.setMultiSort(true, Grid.MultiSortPriority.APPEND);
         ReportTaskGridFilter taskReportGrid = new ReportTaskGridFilter(reportTaskGridListDataView);
         grid.getHeaderRows().clear();
         HeaderRow headerRow = grid.appendHeaderRow();

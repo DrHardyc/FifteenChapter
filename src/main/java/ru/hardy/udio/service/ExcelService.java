@@ -2,28 +2,48 @@ package ru.hardy.udio.service;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import ru.hardy.udio.config.DBJDBCConfig;
 import ru.hardy.udio.domain.report.AgeLimit;
 import ru.hardy.udio.domain.report.VisitType;
 import ru.hardy.udio.domain.report.WorkingAgeSex;
 import ru.hardy.udio.domain.struct.DNGet;
+import ru.hardy.udio.domain.struct.DataFile;
+import ru.hardy.udio.domain.struct.DataFilePatient;
+import ru.hardy.udio.domain.struct.Sex;
 import ru.hardy.udio.service.report.DNTherapistReportService;
 import ru.hardy.udio.service.report.KARDIOReport;
 import ru.hardy.udio.service.report.ONKOReport;
 
+import javax.print.DocFlavor;
 import java.io.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.*;
 
 @Service
 public class ExcelService {
 
+
+    private SexService sexService;
+
+
+    private DataFilePatientService dataFilePatientService;
+
+
     private XSSFWorkbook workbook = new XSSFWorkbook();
-    private CellStyle style;
+    private final CellStyle style;
 
     private final CellStyle headerStyle = workbook.createCellStyle();
 
-    private FileInputStream excelFile;
+    private InputStream excelFile;
     private FileOutputStream outputStream;
     public ExcelService(){
         this.style = workbook.createCellStyle();
@@ -42,7 +62,31 @@ public class ExcelService {
         font.setFontName("Arial");
         font.setBold(true);
         headerStyle.setFont(font);
+
     }
+
+    public ExcelService(SexService sexService, DataFilePatientService dataFilePatientService){
+        this.style = workbook.createCellStyle();
+        this.style.setWrapText(true);
+        this.style.setAlignment(HorizontalAlignment.CENTER);
+        this.style.setVerticalAlignment(VerticalAlignment.CENTER);
+        this.style.setBorderTop(BorderStyle.THIN);
+        this.style.setBorderBottom(BorderStyle.THIN);
+        this.style.setBorderLeft(BorderStyle.THIN);
+        this.style.setBorderRight(BorderStyle.THIN);
+
+        //headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        headerStyle.setAlignment(HorizontalAlignment.CENTER);
+
+        XSSFFont font = workbook.createFont();
+        font.setFontName("Arial");
+        font.setBold(true);
+        headerStyle.setFont(font);
+        this.sexService = sexService;
+        this.dataFilePatientService = dataFilePatientService;
+
+    }
+
 
     public File getOtherDNGets(Collection<DNGet> dnGetList){
 
@@ -90,7 +134,7 @@ public class ExcelService {
         return currDir;
     }
 
-    public void getDNTherapistReportSample(List<DNGet> dnGets, String month, String year, String filename){
+    public void getDNTherapistReportSample(List<DNGet> dnGets, String monthBeg, String monthEnd, String yearBeg, String yearEnd, String filename){
         try {
             excelFile = new FileInputStream("samples\\DNTh.xlsx");
             workbook = new XSSFWorkbook(excelFile);
@@ -145,6 +189,10 @@ public class ExcelService {
         diags.add("M81.5");
         DNTherapistReportService dnTherapistReportService = new DNTherapistReportService(dnGets);
 
+        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
+        Statement statementBars = dbjdbcConfig.getBars();
+        Statement statementSrz = dbjdbcConfig.getSRZ();
+
         int diagCount = 0;
         int wasCount;
         for (String diag : diags) {
@@ -157,13 +205,13 @@ public class ExcelService {
 
             for (WorkingAgeSex workingAgeSex : WorkingAgeSex.values()) {
                 sheet.getRow(rowIndex + diagCount).getCell(colIndex + wasCount)
-                        .setCellValue(dnTherapistReportService.getCountDNPr(workingAgeSex, diag, month, year));
+                        .setCellValue(dnTherapistReportService.getCountDNPr(workingAgeSex, diag, monthBeg, monthEnd, yearBeg, yearEnd, statementBars));
                 wasCount++;
             }
 
             for (WorkingAgeSex workingAgeSex : WorkingAgeSex.values()) {
                 sheet.getRow(rowIndex + diagCount).getCell(colIndex + wasCount)
-                        .setCellValue(dnTherapistReportService.getCountCalling(workingAgeSex, diag, month, year));
+                        .setCellValue(dnTherapistReportService.getCountCalling(workingAgeSex, diag, monthBeg, monthEnd, yearBeg, yearEnd));
                 wasCount++;
             }
 
@@ -175,33 +223,33 @@ public class ExcelService {
 
             for (WorkingAgeSex workingAgeSex : WorkingAgeSex.values()) {
                 sheet.getRow(rowIndex + diagCount).getCell(colIndex + wasCount)
-                        .setCellValue(dnTherapistReportService.getCountDNPr(workingAgeSex, diag, month, year));
+                        .setCellValue(dnTherapistReportService.getCountDNPr(workingAgeSex, diag, monthBeg, monthEnd, yearBeg, yearEnd, statementBars));
                 wasCount++;
             }
 
             for (VisitType visitType : VisitType.values()) {
                 for (WorkingAgeSex workingAgeSex : WorkingAgeSex.values()) {
                     sheet.getRow(rowIndex + diagCount).getCell(colIndex + wasCount)
-                            .setCellValue(dnTherapistReportService.getCountVisit(visitType, workingAgeSex, diag, month, year));
+                            .setCellValue(dnTherapistReportService.getCountVisit(visitType, workingAgeSex, diag, monthBeg, monthEnd, yearBeg, yearEnd, statementBars));
                     wasCount++;
                 }
             }
 
             for (WorkingAgeSex workingAgeSex : WorkingAgeSex.values()) {
                 sheet.getRow(rowIndex + diagCount).getCell(colIndex + wasCount)
-                        .setCellValue(dnTherapistReportService.getCountHospitalize(workingAgeSex, diag, month, year));
+                        .setCellValue(dnTherapistReportService.getCountHospitalize(workingAgeSex, diag, monthBeg, monthEnd, yearBeg, yearEnd, statementBars));
                 wasCount++;
             }
 
             for (WorkingAgeSex workingAgeSex : WorkingAgeSex.values()) {
                 sheet.getRow(rowIndex + diagCount).getCell(colIndex + wasCount)
-                        .setCellValue(dnTherapistReportService.getCountDeath(workingAgeSex, diag, month, year));
+                        .setCellValue(dnTherapistReportService.getCountDeath(workingAgeSex, diag, monthBeg, monthEnd, yearBeg, yearEnd, statementSrz));
                 wasCount++;
             }
 
             for (WorkingAgeSex workingAgeSex : WorkingAgeSex.values()) {
                 sheet.getRow(rowIndex + diagCount).getCell(colIndex + wasCount)
-                        .setCellValue(dnTherapistReportService.getCountAmbulance(workingAgeSex, diag, month, year));
+                        .setCellValue(dnTherapistReportService.getCountAmbulance(workingAgeSex, diag, monthBeg, monthEnd, yearBeg, yearEnd, statementBars));
                 wasCount++;
             }
 
@@ -233,7 +281,7 @@ public class ExcelService {
         cell.setCellValue(value);
     }
 
-    public void getONKOReport(List<DNGet> dnGets, String month, String year, String filename){
+    public void getONKOReport(List<DNGet> dnGets, String monthBeg, String monthEnd, String yearBeg, String yearEnd, String filename){
         try {
             excelFile = new FileInputStream("samples\\ONKO.xlsx");
             workbook = new XSSFWorkbook(excelFile);
@@ -259,10 +307,16 @@ public class ExcelService {
             if(colIndex > -1) break;
         }
 
+        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
+        Statement statement = dbjdbcConfig.getBars();
         ONKOReport onkoReport = new ONKOReport(dnGets);
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
         double all1 = onkoReport.getCountOnko(AgeLimit.all);
-        double all4 = onkoReport.getCountOnkoSpec(AgeLimit.all, month, year, "9,41,49,39,102,19", "1,2,3");
+        int older_18_1 = onkoReport.getCountOnkoSpec(AgeLimit.older_18, monthBeg, monthEnd, yearBeg, yearEnd, "9,41,39", "1,2", statement);
+        int older_18_2 = onkoReport.getCountOnkoSpec(AgeLimit.older_18, monthBeg, monthEnd, yearBeg, yearEnd, "9,41,39", "3", statement);
+        int younger_18_1 = onkoReport.getCountOnkoSpec(AgeLimit.younger_18, monthBeg, monthEnd, yearBeg, yearEnd, "49,39,102,19", "1,2", statement);
+        int younger_18_2 = onkoReport.getCountOnkoSpec(AgeLimit.younger_18, monthBeg, monthEnd, yearBeg, yearEnd, "49,39,102,19", "3", statement);
+        double all4 = older_18_1 + older_18_2 + younger_18_1 + younger_18_2;
 
         sheet.getRow(rowIndex).getCell(colIndex)
                 .setCellValue(all1);
@@ -270,16 +324,16 @@ public class ExcelService {
                 .setCellValue(onkoReport.getCountOnko(AgeLimit.older_18));
         sheet.getRow(rowIndex).getCell(colIndex + 2)
                 .setCellValue(onkoReport.getCountOnko(AgeLimit.younger_18));
-        sheet.getRow(rowIndex).getCell(colIndex + 3).setCellValue(all4);
 
+        sheet.getRow(rowIndex).getCell(colIndex + 3).setCellValue(all4);
         sheet.getRow(rowIndex).getCell(colIndex + 4)
-                .setCellValue(onkoReport.getCountOnkoSpec(AgeLimit.older_18, month, year, "9,41,39", "1,2"));
+                .setCellValue(older_18_1);
         sheet.getRow(rowIndex).getCell(colIndex + 5)
-                .setCellValue(onkoReport.getCountOnkoSpec(AgeLimit.older_18, month, year, "9,41,39", "3"));
+                .setCellValue(older_18_2);
         sheet.getRow(rowIndex).getCell(colIndex + 6)
-                .setCellValue(onkoReport.getCountOnkoSpec(AgeLimit.younger_18, month, year, "49,39,102,19", "1,2"));
+                .setCellValue(younger_18_1);
         sheet.getRow(rowIndex).getCell(colIndex + 7)
-                .setCellValue(onkoReport.getCountOnkoSpec(AgeLimit.younger_18, month, year, "49,39,102,19", "3"));
+                .setCellValue(younger_18_2);
         sheet.getRow(rowIndex).getCell(colIndex + 8).setCellValue(decimalFormat.format(all4 / all1  * 100));
 
         try {
@@ -290,7 +344,7 @@ public class ExcelService {
         }
     }
 
-    public void getKARDIOReport(List<DNGet> dnGets, String month, String year, String filename){
+    public void getKARDIOReport(List<DNGet> dnGets, String monthBeg, String monthEnd, String yearBeg, String yearEnd, String filename){
         try {
             excelFile = new FileInputStream("samples\\KARDIO.xlsx");
             workbook = new XSSFWorkbook(excelFile);
@@ -316,10 +370,12 @@ public class ExcelService {
             if(colIndex > -1) break;
         }
 
+        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
+        Statement statement = dbjdbcConfig.getBars();
         KARDIOReport kardioReport = new KARDIOReport(dnGets);
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
         double all1 = kardioReport.getCountKARDIO();
-        double all2 = kardioReport.getCountKARDIOBars(month, year);
+        double all2 = kardioReport.getCountKARDIOBars(monthBeg, monthEnd, yearBeg, yearEnd, statement);
 
         sheet.getRow(rowIndex).getCell(colIndex).setCellValue(all1);
         sheet.getRow(rowIndex).getCell(colIndex + 1).setCellValue(all2);
@@ -333,4 +389,172 @@ public class ExcelService {
         }
     }
 
+    public DataFile loadFromExcel(DataFile dataFile, InputStream inputStream ) throws ParseException {
+
+        List<DataFilePatient> dataFilePatientList = new ArrayList<>();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy");
+        SimpleDateFormat dateFormatDr = new SimpleDateFormat("dd.MM.yyyy");
+        try {
+            workbook = new XSSFWorkbook(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Sheet sheet = workbook.getSheetAt(0);
+        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
+        Statement statement = dbjdbcConfig.getSRZ();
+
+        String fio = "";
+        String dr = "";
+        Sex w = null;
+        Date date_1 = null;
+        String diag = "";
+
+        for (int count = 5; count < sheet.getLastRowNum() + 1; count++) {
+            for (int levelCount = 0; levelCount < 4; levelCount++) {
+                if (sheet.getRow(count - levelCount).getCell(1).getStringCellValue() != null
+                        && !sheet.getRow(count - levelCount).getCell(1).getStringCellValue().isEmpty()) {
+                    if (levelCount == 0){
+                        fio = sheet.getRow(count).getCell(1).getStringCellValue();
+                        dr = sheet.getRow(count).getCell(2).getStringCellValue();
+                        w = sexService.getByName(sheet.getRow(count).getCell(3).getStringCellValue());
+                        date_1 = dateFormat.parse(sheet.getRow(count).getCell(4).getStringCellValue());
+                        diag = sheet.getRow(count).getCell(6).getStringCellValue();
+                    } else {
+                        fio = sheet.getRow(count - levelCount).getCell(1).getStringCellValue();
+                        dr = sheet.getRow(count - levelCount).getCell(2).getStringCellValue();
+                        w = sexService.getByName(sheet.getRow(count - levelCount).getCell(3).getStringCellValue());
+                        date_1 = dateFormat.parse(sheet.getRow(count - levelCount).getCell(4).getStringCellValue());
+                        diag = sheet.getRow(count - levelCount).getCell(6).getStringCellValue();
+                    }
+                    System.out.println(fio + " " + dr + " " + w.getName() + " " + diag);
+                    break;
+                }
+            }
+
+            try {
+                ResultSet resultSet = statement.executeQuery("select p.enp, p.lpu, p.id from PEOPLE p join HISTFDR h on h.pid = p.id " +
+                        "where (concat(p.FAM, ' ', p.IM, ' ', p.OT) = '" + fio + "' " +
+                        " or concat(h.FAM, ' ', h.IM, ' ', h.OT) = '" + fio + "') " +
+                        "and p.DR  = PARSE('" + dr + "' as date)");
+                if(resultSet.next()){
+                    int mo_attach = 0;
+                    if (resultSet.getString(2) != null && !resultSet.getString(2).isEmpty()){
+                        mo_attach = resultSet.getInt(2);
+                    }
+                    dataFilePatientList.add(new DataFilePatient(
+                            parseFIO(fio)[0], parseFIO(fio)[1], parseFIO(fio)[2], dateFormatDr.parse(dr), resultSet.getString(1),
+                            mo_attach, w, 0, "", diag, null, 41, date_1, null,
+                            "", resultSet.getLong(3), dataFile));
+                } else {
+                    dataFilePatientList.add(new DataFilePatient(
+                            parseFIO(fio)[0], parseFIO(fio)[1], parseFIO(fio)[2], dateFormatDr.parse(dr), "", 0,
+                            w, 0, "", diag, null, 41, date_1, null,
+                            "не найден в srz", 0L,  dataFile));
+
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        dataFile.setDataFilePatient(dataFilePatientList);
+        return dataFile;
+    }
+
+    public DataFile loadFromExcel1(){
+
+        DataFile dataFile = new DataFile("onkosvod", Date.from(Instant.now()), 150031, 123123L);
+
+        List<DataFilePatient> dataFilePatientList = new ArrayList<>();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        try {
+            excelFile = new FileInputStream("onko\\old\\onkosvod.xlsx");
+            workbook = new XSSFWorkbook(excelFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Sheet sheet = workbook.getSheetAt(0);
+        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
+        Statement statement = dbjdbcConfig.getSRZ();
+
+        for (int count = 3; count < sheet.getLastRowNum() + 1; count++) {
+            System.out.println(sheet.getRow(count).getCell(3).getStringCellValue() + " "
+                    + sheet.getRow(count).getCell(4).getDateCellValue() + " "
+                    + sheet.getRow(count).getCell(5).getStringCellValue() + " "
+                    + sheet.getRow(count).getCell(6).getDateCellValue() + " "
+                    + sheet.getRow(count).getCell(8).getStringCellValue());
+
+            try {
+                ResultSet resultSet = statement.executeQuery("select p.enp, p.lpu, p.id from PEOPLE p join HISTFDR h on h.pid = p.id " +
+                        "where (concat(p.FAM, ' ', p.IM, ' ', p.OT) = '" + sheet.getRow(count).getCell(3).getStringCellValue() + "' " +
+                        " or concat(h.FAM, ' ', h.IM, ' ', h.OT) = '" + sheet.getRow(count).getCell(3).getStringCellValue() + "') " +
+                        "and p.DR  = PARSE('" + dateFormat.format(sheet.getRow(count).getCell(4).getDateCellValue()) + "' as date)");
+                if(resultSet.next()){
+                    int mo_attach = 0;
+                    if (resultSet.getString(2) != null && !resultSet.getString(2).isEmpty()){
+                        mo_attach = resultSet.getInt(2);
+                    }
+                    dataFilePatientList.add(new DataFilePatient(
+                            parseFIO(sheet.getRow(count).getCell(3).getStringCellValue())[0],
+                            parseFIO(sheet.getRow(count).getCell(3).getStringCellValue())[1],
+                            parseFIO(sheet.getRow(count).getCell(3).getStringCellValue())[2],
+                            sheet.getRow(count).getCell(4).getDateCellValue(),
+                            resultSet.getString(1),
+                            mo_attach,
+                            sexService.getByName(sheet.getRow(count).getCell(5).getStringCellValue()), 0, "",
+                            sheet.getRow(count).getCell(8).getStringCellValue(), null, 41,
+                            sheet.getRow(count).getCell(6).getDateCellValue(), null, "",
+                            resultSet.getLong(3), dataFile));
+                } else {
+                    dataFilePatientList.add(new DataFilePatient(
+                            parseFIO(sheet.getRow(count).getCell(3).getStringCellValue())[0],
+                            parseFIO(sheet.getRow(count).getCell(3).getStringCellValue())[1],
+                            parseFIO(sheet.getRow(count).getCell(3).getStringCellValue())[2],
+                            sheet.getRow(count).getCell(4).getDateCellValue(),
+                            "", 0,
+                            sexService.getByName(sheet.getRow(count).getCell(5).getStringCellValue()), 0, "",
+                            sheet.getRow(count).getCell(8).getStringCellValue(), null, 41,
+                            sheet.getRow(count).getCell(6).getDateCellValue(), null, "не найден в srz",
+                            0L,  dataFile));
+
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        dataFile.setDataFilePatient(dataFilePatientList);
+        return dataFile;
+    }
+
+
+    private String[] parseFIO(String fio){
+        String[] str = new String[3];
+        str[0] = fio.substring(0, fio.indexOf(" ")).trim();
+        try {
+            str[1] = fio.substring(fio.indexOf(" "), fio.indexOf(" ", fio.indexOf(" ") + 1)).trim();
+        } catch (Exception e){
+            str[1] = fio.substring(fio.indexOf(" ", fio.indexOf(" "))).trim();
+        }
+        try {
+            str[2] = fio.substring(fio.indexOf(" ", fio.indexOf(" ") + 1)).trim();
+        } catch (Exception e){
+            str[2] = "";
+        }
+        return str;
+    }
+
+    private String[] parseAddress(String address){
+        String[] str = new String[2];
+        try {
+            str[0] = address.substring(address.indexOf(".") + 1, address.indexOf(",")).trim();
+        } catch (Exception e){
+            str[0] = address;
+        }
+        try {
+            str[1] = address.substring(address.indexOf(".", 5) + 1,
+                    address.indexOf(",", address.indexOf(".", 5) + 1)).trim();
+        } catch (Exception e){
+            str[1] = "";
+        }
+        return str;
+    }
 }

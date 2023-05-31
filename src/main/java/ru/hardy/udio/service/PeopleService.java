@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
@@ -71,17 +72,19 @@ public class PeopleService {
                     if (dataFilePatient.getIdsrz() != null && dataFilePatient.getIdsrz() != 0L) {
                         People newPeople = new People(dataFilePatient);
                         peoples.add(newPeople);
+                        peopleRepo.save(newPeople);
                         dnGetService.saveOrUpdate(dataFilePatient, newPeople);
                     }
                 }
             }
         }
-        peopleRepo.saveAll(peoples);
+//        peopleRepo.saveAll(peoples);
         return peoples;
 
     }
 
     private DataFile searchFromSRZ(DataFile dataFile) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
         Statement statement = dbjdbcConfig.getSRZ();
         for (DataFilePatient dataFilePatient : dataFile.getDataFilePatient()){
@@ -90,7 +93,8 @@ public class PeopleService {
                     ResultSet resultSet = statement.executeQuery("" +
                             "select p.id, p.LPU from people p where p.fam = '" + dataFilePatient.getFam() +
                             "' and p.im = '" + dataFilePatient.getIm() + "' and p.ot = '" +  dataFilePatient.getOt() +
-                            "' and p.dr = PARSE('" + dataFilePatient.getDr() + "' as date) and p.enp = '" + dataFilePatient.getEnp() + "'");
+                            "' and p.dr = PARSE('" + dateFormat.format(dataFilePatient.getDr()) + "' as date) and p.enp = '"
+                            + dataFilePatient.getEnp() + "'");
                     while (resultSet.next()){
                         dataFilePatient.setIdsrz(resultSet.getLong(1));
                         if (resultSet.getString(2) != null && !resultSet.getString(2).isEmpty()){
@@ -102,9 +106,7 @@ public class PeopleService {
                 }
             }
         }
-
         return dataFile;
-       // return dbfSearchService.getDataFromDBF(dataFile);
     }
 
     @Transactional
@@ -118,12 +120,17 @@ public class PeopleService {
         return save(people);
     }
 
-    public void processingFromAPI(DataFile dataFile, Long id) {
+    public void processingFromAPI(DataFile dataFile) {
         dataFileService.save(dataFile);
             dataUdioRespIdentyService.updateProcessEnd(
                 dataUdioRespService.getListDataUdioFromPeoples(
                     searchFromUdio(
-                        searchFromSRZ(dataFile))), id);
+                        searchFromSRZ(dataFile))));
+    }
+
+    public void processingFromExcel(DataFile dataFile) {
+        dataFileService.save(dataFile);
+        searchFromUdio(searchFromSRZ(dataFile));
     }
 
     public void processingFromBars(List<DataFile> dataFileList){

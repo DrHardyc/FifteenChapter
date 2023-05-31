@@ -4,10 +4,8 @@ import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +66,7 @@ public class ReportView extends VerticalLayout {
 
         btnSearch.addClickListener(e -> {
 
-            if (checkNullDateInterval()) {
+            if (checkNullDateInterval(comboBox.getValue())) {
                 if (comboBox.getValue().equals("Все")) {
                     List<DNGet> dnGets = changeDataFromDateInterval();
                     Dialog dialog = new DialogView().getMainReportDialog(dnGets);
@@ -85,7 +83,10 @@ public class ReportView extends VerticalLayout {
                                     new ReportTask("ДН-Терапефт", "", StatusTask.progress, "", username));
                             ExcelService excelService = new ExcelService();
                             excelService.getDNTherapistReportSample(dnGetService.getAllTherapist(),
-                                    String.valueOf(monthPickerBeg.getValue().getValue()), yearPickerBeg.getValue().toString(), filename);
+                                    String.valueOf(monthPickerBeg.getValue().getValue()),
+                                    String.valueOf(monthPickerEnd.getValue().getValue()),
+                                    yearPickerBeg.getValue().toString(),
+                                    yearPickerEnd.getValue().toString(), filename);
                             reportTaskService.updateStatus(StatusTask.success,"Успешно", filename, id);
                         } catch (Exception err){
                             if (id != 0L){
@@ -104,7 +105,10 @@ public class ReportView extends VerticalLayout {
                                     new ReportTask("ОНКО", "", StatusTask.progress, "", username));
                             ExcelService excelService = new ExcelService();
                             excelService.getONKOReport(dnGetService.getAllONKO(),
-                                    String.valueOf(monthPickerBeg.getValue().getValue()), yearPickerBeg.getValue().toString(), filename);
+                                    String.valueOf(monthPickerBeg.getValue().getValue()),
+                                    String.valueOf(monthPickerEnd.getValue().getValue()),
+                                    yearPickerBeg.getValue().toString(),
+                                    yearPickerEnd.getValue().toString(), filename);
                             reportTaskService.updateStatus(StatusTask.success,"Успешно", filename, id);
                         } catch (Exception err){
                             if (id != 0L){
@@ -123,7 +127,10 @@ public class ReportView extends VerticalLayout {
                                     new ReportTask("КАРДИО", "", StatusTask.progress, "", username));
                             ExcelService excelService = new ExcelService();
                             excelService.getKARDIOReport(dnGetService.getAllKARDIO(),
-                                    String.valueOf(monthPickerBeg.getValue().getValue()), yearPickerBeg.getValue().toString(), filename);
+                                    String.valueOf(monthPickerBeg.getValue().getValue()),
+                                    String.valueOf(monthPickerEnd.getValue().getValue()),
+                                    yearPickerBeg.getValue().toString(),
+                                    yearPickerEnd.getValue().toString(), filename);
                             reportTaskService.updateStatus(StatusTask.success,"Успешно", filename, id);
                         } catch (Exception err){
                             if (id != 0L){
@@ -149,8 +156,10 @@ public class ReportView extends VerticalLayout {
         }
         return null;
     }
-    private boolean checkNullDateInterval(){
-        return monthPickerBeg.getValue() != null && monthPickerEnd.getValue() != null && yearPickerBeg.getValue() != null
-                && yearPickerEnd.getValue() != null;
+    private boolean checkNullDateInterval(String cbValue) {
+        if (cbValue.equals("Все")) {
+            return monthPickerBeg.getValue() != null && monthPickerEnd.getValue() != null && yearPickerBeg.getValue() != null
+                    && yearPickerEnd.getValue() != null;
+        } else return monthPickerBeg.getValue() != null && yearPickerBeg.getValue() != null;
     }
 }

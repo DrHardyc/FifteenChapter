@@ -47,11 +47,13 @@ public class DNGetService {
 
     @Transactional
     public void saveOrUpdate(DataFilePatient dataFilePatient, People people) {
-        DNGet dnGet = dnGetRepo.findByNhistory(dataFilePatient.getNhistory());
-        if (dnGet != null &&
-                dnGet.getPeople().getFIO().equals(dataFilePatient.getFIO())){
-            update(dnGet, dataFilePatient);
-        } else if (people.getId() == null || people.getId() == 0){
+        DNGet dnGet = null;
+        if (dataFilePatient.getDiag() != null && !dataFilePatient.getDiag().isEmpty()){
+            dnGet = dnGetRepo.findByDiagAndPeople(dataFilePatient.getDiag(), people);
+        }
+        if (dnGet != null) return;
+
+        if (people.getId() == null || people.getId() == 0) {
             save(new DNGet(dataFilePatient, null, people));
         } else {
             save(new DNGet(dataFilePatient, null, peopleRepo.getReferenceById(people.getId())));
@@ -67,7 +69,6 @@ public class DNGetService {
         dnGet.setDate_edit(Date.from(Instant.now()));
         dnGetRepo.save(dnGet);
     }
-
 
     public List<DNGet> getAllWithDateInterval(Date dateBeg, Date dateEnd) {
         return dnGetRepo.findAllWithInterval(dateBeg, dateEnd);

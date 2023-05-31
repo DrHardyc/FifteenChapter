@@ -21,8 +21,8 @@ public class DataUdioRespIdentyService {
         return dataUdioRespIdentyRepo.save(dataUdioRespIdenty);
     }
 
-    public void updateProcessEnd(List<DataUdioResp> dataUdioResps, Long id) {
-        DataUdioRespIdenty dataUdioRespIdenty = dataUdioRespIdentyRepo.getOneById(id);
+    public void updateProcessEnd(List<DataUdioResp> dataUdioResps) {
+        DataUdioRespIdenty dataUdioRespIdenty = dataUdioRespIdentyRepo.getOneById(1L);
         dataUdioRespIdenty.getDataUdioResps().clear();
         dataUdioRespIdenty.getDataUdioResps().addAll(dataUdioResps);
         dataUdioRespIdenty.setStatus(ResponseAnswerUdio.PROCESSING_END);

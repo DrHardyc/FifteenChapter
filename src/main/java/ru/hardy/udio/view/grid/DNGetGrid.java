@@ -35,6 +35,7 @@ public class DNGetGrid {
 
         DNGetFilter dnGetFilter = new DNGetFilter(dnGetGridListDataView);
         grid.getHeaderRows().clear();
+        grid.setMultiSort(true, Grid.MultiSortPriority.APPEND);
         HeaderRow headerRow = grid.appendHeaderRow();
 
         headerRow.getCell(fioCol).setComponent(

@@ -34,9 +34,6 @@ public class DBFSearchService {
     private DataFilePatientRepo dataFilePatientRepo;
 
     @Autowired
-    private Environment environment;
-
-    @Autowired
     private PeopleRepo peopleRepo;
 
     private void setDataDBF(List<DataFilePatient> dataDBF, String dirFileIn){
@@ -82,9 +79,10 @@ public class DBFSearchService {
         }
         writer.setFields(fields);
 
+
         List<DataFilePatient> newDataFilePatientList = createDataFileWithDBFFile(dataDBF);
         for (DataFilePatient dataFilePatient : newDataFilePatientList){
-            if (searchFromUdioWithSrzId(dataFilePatient.getEnp())) {
+            if (dataFilePatient.getEnp() != null && !dataFilePatient.getEnp().isEmpty() && searchFromUdioWithSrzId(dataFilePatient.getEnp())) {
                 Object[] rowData = new Object[6];
                 rowData[0] = dataFilePatient.getFam();
                 rowData[1] = dataFilePatient.getIm();
@@ -93,6 +91,15 @@ public class DBFSearchService {
                 rowData[4] = dataFilePatient.getEnp();
                 rowData[5] = dataFilePatient.getDate_2();
                 writer.addRecord(rowData);
+            } else {
+                Object[] rowData = new Object[6];
+                rowData[0] = dataFilePatient.getFam();
+                rowData[1] = dataFilePatient.getIm();
+                rowData[2] = dataFilePatient.getOt();
+                rowData[3] = dataFilePatient.getDr();
+                rowData[4] = "";
+                rowData[5] = null;
+                writer.addRecord(rowData);
             }
         }
         writer.close();
@@ -100,8 +107,8 @@ public class DBFSearchService {
 
     public DataFile getDataFromDBF(DataFile dataFile)  {
         String genStrDirFile = RandomStringUtils.random(10, true, true);
-        String dirFileIn = environment.getProperty("dbffile.pathin") + "TESTDBF" + genStrDirFile.toUpperCase() + ".dbf";
-        String dirFileOut = environment.getProperty("dbffile.pathout") + "out_TESTDBF" + genStrDirFile.toUpperCase() + ".dbf";
+        String dirFileIn = "dbf\\TESTDBF" + genStrDirFile.toUpperCase() + ".dbf";
+        String dirFileOut = "dbf\\out_TESTDBF" + genStrDirFile.toUpperCase() + ".dbf";
         setDataDBF(dataFile.getDataFilePatient(), dirFileIn);
         int sec = 0;
         while (!checkDBFFile(dirFileOut)){

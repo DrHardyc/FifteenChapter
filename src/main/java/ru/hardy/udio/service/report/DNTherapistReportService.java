@@ -1,7 +1,6 @@
 package ru.hardy.udio.service.report;
 
 import org.springframework.stereotype.Service;
-import ru.hardy.udio.config.DBJDBCConfig;
 import ru.hardy.udio.domain.report.DateInterval;
 import ru.hardy.udio.domain.report.VisitType;
 import ru.hardy.udio.domain.report.WorkingAgeSex;
@@ -85,12 +84,11 @@ public class DNTherapistReportService {
     }
 
     //Впервые выявленные
-    public int getCountDNPr(WorkingAgeSex workingAgeSex, String diags, String month, String year){
+    public int getCountDNPr(WorkingAgeSex workingAgeSex, String diags, String monthBeg, String monthEnd,
+                            String yearBeg, String yearEnd, Statement statement){
         int count = 0;
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
-        Statement statement = dbjdbcConfig.getBars();
         List<DNGet> dnGetsPeople = null;
         switch (workingAgeSex){
             case M_16_60 ->
@@ -100,8 +98,8 @@ public class DNTherapistReportService {
                                     && c.getPeople().getAge() <= 60
                                     && c.getPeopleSex().equals("1")
                                     && diags.contains(serviceUtil.transformDiag(c.getDiag()))
-                                    && c.getDate_1().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
-                                    && c.getDate_1().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
+                                    && c.getDate_1().after(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                                    && c.getDate_1().before(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
                             .toList()
                             .stream()
                             .distinct()
@@ -113,8 +111,8 @@ public class DNTherapistReportService {
                             .filter(c -> c.getPeople().getAge() > 60
                                     && c.getPeopleSex().equals("1")
                                     && diags.contains(serviceUtil.transformDiag(c.getDiag()))
-                                    && c.getDate_1().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
-                                    && c.getDate_1().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
+                                    && c.getDate_1().after(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                                    && c.getDate_1().before(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
                             .toList()
                             .stream()
                             .distinct()
@@ -127,8 +125,8 @@ public class DNTherapistReportService {
                                     && c.getPeople().getAge() <= 55
                                     && c.getPeopleSex().equals("2")
                                     && diags.contains(serviceUtil.transformDiag(c.getDiag()))
-                                    && c.getDate_1().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
-                                    && c.getDate_1().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
+                                    && c.getDate_1().after(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                                    && c.getDate_1().before(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
                             .toList()
                             .stream()
                             .distinct()
@@ -140,8 +138,8 @@ public class DNTherapistReportService {
                             .filter(c -> c.getPeople().getAge() > 55
                                     && c.getPeopleSex().equals("2")
                                     && diags.contains(serviceUtil.transformDiag(c.getDiag()))
-                                    && c.getDate_1().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
-                                    && c.getDate_1().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
+                                    && c.getDate_1().after(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                                    && c.getDate_1().before(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
                             .toList()
                             .stream()
                             .distinct()
@@ -150,8 +148,8 @@ public class DNTherapistReportService {
                     dnGetsPeople = dnGets
                             .stream()
                             .filter(c -> diags.contains(serviceUtil.transformDiag(c.getDiag()))
-                                    && c.getDate_1().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
-                                    && c.getDate_1().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
+                                    && c.getDate_1().after(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                                    && c.getDate_1().before(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
                             .toList()
                             .stream()
                             .distinct()
@@ -166,11 +164,13 @@ public class DNTherapistReportService {
                         "inner join tf_proc.tp_casebill_patient cbp on cbp.id = cb.pid " +
                         "inner join tf_proc.tp_casebill_bill cbb on cbb.id = cb.tp_casebill_bill " +
                         "where sl.ds1_pr = 1 " +
-                        "and cbb.month = " + month +
-                        "and cbb.year = " + year +
-                        " and cbp.pac_fam = '" + dnGet.getPeople().getFam() +
-                        "' and cbp.pac_im  = '" + dnGet.getPeople().getIm() +
-                        "' and cbp.pac_ot = '" + dnGet.getPeople().getOt() +
+                        " and cb.date_1 between to_date('" + dateFormat.format(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                        + "', 'dd.mm.yyyy') and " +
+                        " to_date('" + dateFormat.format(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate))
+                        + "', 'dd.mm.yyyy') " +
+                        " and upper(cbp.pac_fam) = '" + dnGet.getPeople().getFam().toUpperCase() +
+                        "' and upper(cbp.pac_im)  = '" + dnGet.getPeople().getIm().toUpperCase() +
+                        "' and upper(cbp.pac_ot) = '" + dnGet.getPeople().getOt().toUpperCase() +
                         "' and cbp.pac_dr  = to_date('" + dateFormat.format(dnGet.getPeople().getDr()) + "', 'DD.MM.YYYY') " +
                         "and cb.enp  = '" + dnGet.getPeople().getEnp() + "'");
                 while (resultSet.next()) {
@@ -185,7 +185,7 @@ public class DNTherapistReportService {
     }
 
     //Проинформированные
-    public int getCountCalling(WorkingAgeSex workingAgeSex, String diags, String month, String year){
+    public int getCountCalling(WorkingAgeSex workingAgeSex, String diags, String monthBeg, String monthEnd, String yearBeg, String yearEnd){
 
         return switch (workingAgeSex){
             case M_16_60 ->
@@ -197,8 +197,8 @@ public class DNTherapistReportService {
                                  && c.getPeopleSex().equals("1")
                                  && diags.contains(serviceUtil.transformDiag(c.getDiag()))
                                  && c.getDate_call() != null
-                                 && c.getDate_call().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
-                                 && c.getDate_call().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
+                                 && c.getDate_call().after(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                                 && c.getDate_call().before(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
                     .toList()
                     .stream()
                     .distinct()
@@ -213,8 +213,8 @@ public class DNTherapistReportService {
                                 && c.getPeopleSex().equals("1")
                                 && diags.contains(serviceUtil.transformDiag(c.getDiag()))
                                 && c.getDate_call() != null
-                                && c.getDate_call().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
-                                && c.getDate_call().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
+                                && c.getDate_call().after(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                                && c.getDate_call().before(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
                     .toList()
                     .stream()
                     .distinct()
@@ -229,8 +229,8 @@ public class DNTherapistReportService {
                             && c.getPeopleSex().equals("2")
                             && diags.contains(serviceUtil.transformDiag(c.getDiag()))
                             && c.getDate_call() != null
-                            && c.getDate_call().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
-                            && c.getDate_call().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
+                            && c.getDate_call().after(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                            && c.getDate_call().before(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
                     .toList()
                     .stream()
                     .distinct()
@@ -244,8 +244,8 @@ public class DNTherapistReportService {
                             && c.getPeopleSex().equals("2")
                             && diags.contains(serviceUtil.transformDiag(c.getDiag()))
                             && c.getDate_call() != null
-                            && c.getDate_call().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
-                            && c.getDate_call().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
+                            && c.getDate_call().after(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                            && c.getDate_call().before(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
                     .toList()
                     .stream()
                     .distinct()
@@ -256,8 +256,8 @@ public class DNTherapistReportService {
                     .stream()
                     .filter(c -> diags.contains(serviceUtil.transformDiag(c.getDiag()))
                             && c.getDate_call() != null
-                            && c.getDate_call().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
-                            && c.getDate_call().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
+                            && c.getDate_call().after(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                            && c.getDate_call().before(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
                     .toList()
                     .stream()
                     .distinct()
@@ -268,10 +268,10 @@ public class DNTherapistReportService {
 
     //Визиты поликлиника/дом
     public int getCountVisit(VisitType visitType,
-                             WorkingAgeSex workingAgeSex, String diags, String month, String year){
+                             WorkingAgeSex workingAgeSex, String diags, String monthBeg, String monthEnd,
+                             String yearBeg, String yearEnd, Statement statement){
 
-        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
-        Statement statement = dbjdbcConfig.getBars();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         String strVisitType = "";
         String strVisitTypeSearchValue = "";
         switch (visitType){
@@ -304,8 +304,10 @@ public class DNTherapistReportService {
                             "inner join tf_proc.tp_caseraw_sl crsl on c.caseraw = crsl.pid " +
                             "inner join tf_proc.tp_caseraw_sl_ext crsle on crsle.xid = crsl.id " +
                             "left join nsi_med.med_mkb10 mkb on mkb.id = sl.ds1 " +
-                            "where cbb.month = " + month +
-                            " and cbb.year = " + year +
+                            "where cb.date_1 between to_date('" + dateFormat.format(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                            + "', 'dd.mm.yyyy') and " +
+                            "to_date('" + dateFormat.format(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate))
+                            + "', 'dd.mm.yyyy')" +
                             " and coalesce(" + strVisitTypeSearchValue + ", '0') <> '0' " +
                             "and date_part('year', age(cb.date_2, cbp.pac_dr)) between 16 and 60 " +
                             "and cbp.pac_w = 1712801 " +
@@ -328,8 +330,10 @@ public class DNTherapistReportService {
                             "inner join tf_proc.tp_caseraw_sl crsl on c.caseraw = crsl.pid " +
                             "inner join tf_proc.tp_caseraw_sl_ext crsle on crsle.xid = crsl.id " +
                             "left join nsi_med.med_mkb10 mkb on mkb.id = sl.ds1 " +
-                            "where cbb.month = " + month +
-                            " and cbb.year = " + year +
+                            "where cb.date_1 between to_date('" + dateFormat.format(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                            + "', 'dd.mm.yyyy') and " +
+                            "to_date('" + dateFormat.format(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate))
+                            + "', 'dd.mm.yyyy')" +
                             " and coalesce(" + strVisitTypeSearchValue + ", '0') <> '0' " +
                             "and date_part('year', age(cb.date_2, cbp.pac_dr)) > 60 " +
                             "and cbp.pac_w = 1712801 " +
@@ -351,8 +355,10 @@ public class DNTherapistReportService {
                             "inner join tf_proc.tp_caseraw_sl crsl on c.caseraw = crsl.pid " +
                             "inner join tf_proc.tp_caseraw_sl_ext crsle on crsle.xid = crsl.id " +
                             "left join nsi_med.med_mkb10 mkb on mkb.id = sl.ds1 " +
-                            "where cbb.month = " + month +
-                            " and cbb.year = " + year +
+                            "where cb.date_1 between to_date('" + dateFormat.format(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                            + "', 'dd.mm.yyyy') and " +
+                            "to_date('" + dateFormat.format(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate))
+                            + "', 'dd.mm.yyyy')" +
                             " and coalesce(" + strVisitTypeSearchValue + ", '0') <> '0' " +
                             "and date_part('year', age(cb.date_2, cbp.pac_dr)) between 16 and 55 " +
                             "and cbp.pac_w = 1712821 " +
@@ -374,8 +380,10 @@ public class DNTherapistReportService {
                             "inner join tf_proc.tp_caseraw_sl crsl on c.caseraw = crsl.pid " +
                             "inner join tf_proc.tp_caseraw_sl_ext crsle on crsle.xid = crsl.id " +
                             "left join nsi_med.med_mkb10 mkb on mkb.id = sl.ds1 " +
-                            "where cbb.month = " + month +
-                            " and cbb.year = " + year +
+                            "where cb.date_1 between to_date('" + dateFormat.format(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                            + "', 'dd.mm.yyyy') and " +
+                            "to_date('" + dateFormat.format(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate))
+                            + "', 'dd.mm.yyyy')" +
                             " and coalesce(" + strVisitTypeSearchValue + ", '0') <> '0' " +
                             "and date_part('year', age(cb.date_2, cbp.pac_dr)) > 55 " +
                             "and cbp.pac_w = 1712821 " +
@@ -397,8 +405,10 @@ public class DNTherapistReportService {
                             "inner join tf_proc.tp_caseraw_sl crsl on c.caseraw = crsl.pid " +
                             "inner join tf_proc.tp_caseraw_sl_ext crsle on crsle.xid = crsl.id " +
                             "left join nsi_med.med_mkb10 mkb on mkb.id = sl.ds1 " +
-                            "where cbb.month = " + month +
-                            " and cbb.year = " + year +
+                            "where cb.date_1 between to_date('" + dateFormat.format(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                            + "', 'dd.mm.yyyy') and " +
+                            "to_date('" + dateFormat.format(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate))
+                            + "', 'dd.mm.yyyy')" +
                             " and coalesce(" + strVisitTypeSearchValue + ", '0') <> '0' " +
                             "and mkb.mkb_code in (" + serviceUtil.transformStringArrayForBars(diags) +
                             ") and sl.dn in (1, 2, 6)");
@@ -413,11 +423,10 @@ public class DNTherapistReportService {
     }
 
     //Госпитализация
-    public int getCountHospitalize(WorkingAgeSex workingAgeSex, String diags, String month, String year){
+    public int getCountHospitalize(WorkingAgeSex workingAgeSex, String diags, String monthBeg, String monthEnd,
+                                   String yearBeg, String yearEnd, Statement statement){
         int count = 0;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
-        Statement statement = dbjdbcConfig.getBars();
 
         List<DNGet> dnGetsPeople = null;
         switch (workingAgeSex){
@@ -487,12 +496,14 @@ public class DNTherapistReportService {
                         "    inner join tf_proc.tp_caseraw_sl_ext crsle on crsle.xid = crsl.id " +
                         "    left join nsi_med.med_mkb10 mkb on mkb.id = sl.ds1 " +
                         "    left join nsi_med.med_help_conditions mhc on mhc.id = cb.usl_ok " +
-                        "    where cbb.month = " + month +
-                        "    and cbb.year = " + year +
+                        "where cb.date_1 between to_date('" + dateFormat.format(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                        + "', 'dd.mm.yyyy') and " +
+                        "to_date('" + dateFormat.format(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate))
+                        + "', 'dd.mm.yyyy')" +
                         "    and cb.sump > 0" +
-                        " and cbp.pac_fam = '" + dnGet.getPeople().getFam() +
-                        "' and cbp.pac_im = '" + dnGet.getPeople().getIm() +
-                        "' and cbp.pac_ot = '" + dnGet.getPeople().getOt() +
+                        " and upper(cbp.pac_fam) = '" + dnGet.getPeople().getFam().toUpperCase() +
+                        "' and upper(cbp.pac_im) = '" + dnGet.getPeople().getIm().toUpperCase() +
+                        "' and upper(cbp.pac_ot) = '" + dnGet.getPeople().getOt().toUpperCase() +
                         "' and cbp.pac_dr = to_date('" + dateFormat.format(dnGet.getPeople().getDr()) + "', 'dd.mm.yyyy')" +
                         " and cb.enp = '" + dnGet.getPeople().getEnp() +
                         "' and mhc.code = '1'");
@@ -508,11 +519,10 @@ public class DNTherapistReportService {
 
 
     //Смертность
-    public int getCountDeath(WorkingAgeSex workingAgeSex, String diags, String month, String year){
+    public int getCountDeath(WorkingAgeSex workingAgeSex, String diags, String monthBeg, String monthEnd,
+                             String yearBeg, String yearEnd, Statement statement){
         int count = 0;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
-        Statement statement = dbjdbcConfig.getSRZ();
 
         List<DNGet> dnGetsPeople = null;
         switch (workingAgeSex){
@@ -579,8 +589,8 @@ public class DNTherapistReportService {
                         "and p.OT = '" + dnGet.getPeople().getOt() + "' " +
                         "and p.dr = PARSE('" + dnGet.getPeople().getDr() + "' as date) " +
                         "and p.enp = '" + dnGet.getPeople().getEnp() + "' " +
-                        "and p.ds between PARSE('" + dateFormat.format(serviceUtil.transformDate(month, year, DateInterval.minDate)) + "' as date) " +
-                        "and PARSE('" + dateFormat.format(serviceUtil.transformDate(month, year, DateInterval.maxDate)) + "' as date)");
+                        "and p.ds between PARSE('" + dateFormat.format(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate)) + "' as date) " +
+                        "and PARSE('" + dateFormat.format(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate)) + "' as date)");
                 while (resultSet.next()) {
                     count = count + resultSet.getInt(1);
                 }
@@ -592,12 +602,11 @@ public class DNTherapistReportService {
     }
 
     //Скорая помощь
-    public int getCountAmbulance(WorkingAgeSex workingAgeSex, String diags, String month, String year){
+    public int getCountAmbulance(WorkingAgeSex workingAgeSex, String diags, String monthBeg, String monthEnd,
+                                 String yearBeg, String yearEnd, Statement statement){
         int count = 0;
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
-        Statement statement = dbjdbcConfig.getBars();
         List<DNGet> dnGetsPeople = null;
         switch (workingAgeSex){
             case M_16_60 ->
@@ -607,8 +616,8 @@ public class DNTherapistReportService {
                                     && c.getPeople().getAge() <= 60
                                     && c.getPeopleSex().equals("1")
                                     && diags.contains(serviceUtil.transformDiag(c.getDiag()))
-                                    && c.getDate_1().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
-                                    && c.getDate_1().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
+                                    && c.getDate_1().after(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                                    && c.getDate_1().before(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
                             .toList()
                             .stream()
                             .distinct()
@@ -620,8 +629,8 @@ public class DNTherapistReportService {
                             .filter(c -> c.getPeople().getAge() > 60
                                     && c.getPeopleSex().equals("1")
                                     && diags.contains(serviceUtil.transformDiag(c.getDiag()))
-                                    && c.getDate_1().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
-                                    && c.getDate_1().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
+                                    && c.getDate_1().after(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                                    && c.getDate_1().before(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
                             .toList()
                             .stream()
                             .distinct()
@@ -634,8 +643,8 @@ public class DNTherapistReportService {
                                     && c.getPeople().getAge() <= 55
                                     && c.getPeopleSex().equals("2")
                                     && diags.contains(serviceUtil.transformDiag(c.getDiag()))
-                                    && c.getDate_1().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
-                                    && c.getDate_1().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
+                                    && c.getDate_1().after(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                                    && c.getDate_1().before(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
                             .toList()
                             .stream()
                             .distinct()
@@ -647,8 +656,8 @@ public class DNTherapistReportService {
                             .filter(c -> c.getPeople().getAge() > 55
                                     && c.getPeopleSex().equals("2")
                                     && diags.contains(serviceUtil.transformDiag(c.getDiag()))
-                                    && c.getDate_1().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
-                                    && c.getDate_1().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
+                                    && c.getDate_1().after(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                                    && c.getDate_1().before(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
                             .toList()
                             .stream()
                             .distinct()
@@ -657,8 +666,8 @@ public class DNTherapistReportService {
                     dnGetsPeople = dnGets
                             .stream()
                             .filter(c -> diags.contains(serviceUtil.transformDiag(c.getDiag()))
-                                    && c.getDate_1().after(serviceUtil.transformDate(month, year, DateInterval.minDate))
-                                    && c.getDate_1().before(serviceUtil.transformDate(month, year, DateInterval.maxDate)))
+                                    && c.getDate_1().after(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                                    && c.getDate_1().before(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
                             .toList()
                             .stream()
                             .distinct()
@@ -674,8 +683,10 @@ public class DNTherapistReportService {
                         "inner join tf_proc.tp_casebill_bill cbb on cbb.id = cb.tp_casebill_bill " +
                         "left join nsi_med.med_purp_visit mpv on mpv.id = sl.p_cel " +
                         "where mpv.code = '1.1' " +
-                        "and cbb.month = " + month +
-                        " and cbb.year = " + year +
+                        " and cb.date_1 between to_date('" + dateFormat.format(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                        + "', 'dd.mm.yyyy') and " +
+                        "to_date('" + dateFormat.format(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate))
+                        + "', 'dd.mm.yyyy')" +
                         " and cbp.pac_fam = '" + dnGet.getPeople().getFam() +
                         "' and cbp.pac_im  = '" + dnGet.getPeople().getIm() +
                         "' and cbp.pac_ot = '" + dnGet.getPeople().getOt() +

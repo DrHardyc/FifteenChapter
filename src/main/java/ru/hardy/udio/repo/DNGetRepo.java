@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.hardy.udio.domain.struct.DNGet;
+import ru.hardy.udio.domain.struct.People;
 
 import java.time.Month;
 import java.util.Date;
@@ -15,7 +16,7 @@ public interface DNGetRepo extends JpaRepository<DNGet, Long> {
 
     //@Query("select t from DNGet t where t.people = :id")
     List<DNGet> findByPeopleId(Long id);
-    DNGet findByNhistory(String nhistory);
+    DNGet findByDiagAndPeople(String diag, People people);
 
 
     @Query("select t from DNGet t " +

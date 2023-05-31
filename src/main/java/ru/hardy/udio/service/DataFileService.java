@@ -18,7 +18,7 @@ public class DataFileService {
     private DataFileRepo dataFileRepo;
 
     public void save(DataFile dataFile){
-        for (DataFilePatient dataFilePatient : dataFile.getDataFilePatient()){
+        for (DataFilePatient dataFilePatient : dataFile.getDataFilePatient()) {
             dataFilePatient.setDate_edit(Date.from(Instant.now()));
         }
         dataFileRepo.save(dataFile);
@@ -27,5 +27,6 @@ public class DataFileService {
     public List<DataFile> getAll(){
         return dataFileRepo.findAll();
     }
+
 
 }

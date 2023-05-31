@@ -18,7 +18,7 @@ public class ReportTaskService {
     private ReportTaskRepo reportTaskRepo;
 
     public List<ReportTask> getAll(){
-        return reportTaskRepo.findAll();
+        return reportTaskRepo.findAllOrderByDateBeg();
     }
 
     @Transactional

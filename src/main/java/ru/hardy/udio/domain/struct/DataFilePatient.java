@@ -43,13 +43,15 @@ public class DataFilePatient {
     private Integer specialization; //специальность врача
     private Date date_1;
     private Date date_2;
+
+    private String srz_status; // найден/ не найден
     @JsonIgnore
     private Date date_beg;
     @JsonIgnore
     private Date date_edit;
 
     public DataFilePatient(String fam, String im, String ot, Date dr, String enp, Integer mo_attach, Sex sex, Integer inv, String nhistory,
-                           String diag, Date date_call, Integer specialization, Date date_1, Date date_2, DataFile dataFile) {
+                           String diag, Date date_call, Integer specialization, Date date_1, Date date_2, String srz_status, Long idsrz, DataFile dataFile) {
         this.fam = fam;
         this.im = im;
         this.ot = ot;
@@ -64,10 +66,13 @@ public class DataFilePatient {
         this.specialization = specialization;
         this.date_1 = date_1;
         this.date_2 = date_2;
+        this.idsrz = idsrz;
+        this.srz_status = srz_status;
         this.date_beg = Date.from(Instant.now());
         this.date_edit = Date.from(Instant.now());
         this.datafile = dataFile;
     }
+
 
     public DataFilePatient(){
         this.date_beg = Date.from(Instant.now());

@@ -22,6 +22,7 @@ public class TaskView extends VerticalLayout {
     private final Grid<ReportTask> grid = new Grid<>();
 
     public TaskView() {
+        grid.setHeight("60em");
         add(grid);
     }
 

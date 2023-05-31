@@ -80,7 +80,7 @@ public class DataFilePatientService {
                     null, sexService.getById(resultSet.getLong(6)),
                     resultSet.getInt(7), resultSet.getString(8),
                     resultSet.getString(9), null, resultSet.getInt(10),
-                    resultSet.getDate(12), resultSet.getDate(13), dataFile));
+                    resultSet.getDate(12), resultSet.getDate(13), "", 0L, dataFile));
             }
             assert dataFile != null;
             dataFile.setDataFilePatient(dataFilePatientList);
@@ -94,5 +94,9 @@ public class DataFilePatientService {
     public boolean searchFromPeople(DataFilePatient dataFilePatient) {
         return peopleRepo.findPeopleByFamAndImAndOtAndDrAndEnp(dataFilePatient.getFam(), dataFilePatient.getIm(),
                 dataFilePatient.getOt(), dataFilePatient.getDr(), dataFilePatient.getEnp()) == null;
+    }
+
+    public List<DataFilePatient> getNoSearchFromSRZ(){
+        return dataFilePatientRepo.getNoSearchFromSRZ();
     }
 }

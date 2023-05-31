@@ -10,20 +10,50 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.TabSheet;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import jakarta.annotation.security.RolesAllowed;
+import org.springframework.beans.factory.annotation.Autowired;
+import ru.hardy.udio.config.DBJDBCConfig;
+import ru.hardy.udio.domain.struct.DNGet;
+import ru.hardy.udio.domain.struct.DataFile;
+import ru.hardy.udio.service.*;
+import ru.hardy.udio.service.SRZ.DBFSearchService;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
+import java.util.List;
 
 @Route(layout = MainView.class)
 @RolesAllowed({"ROLE_ADMIN"})
 public class TestView extends VerticalLayout {
 
+    @Autowired
+    private PeopleService peopleService;
 
+    @Autowired
+    private SexService sexService;
 
-    public TestView() {
+    @Autowired
+    private DataFilePatientService dataFilePatientService;
+
+    @Autowired
+    private DNGetService dnGetService;
+
+    @Autowired
+    private DataFileService dataFileService;
+
+    public TestView() throws SQLException {
 
         Avatar avatar = new Avatar();
 
@@ -64,24 +94,50 @@ public class TestView extends VerticalLayout {
         span.getStyle().set("font-size", "x-small");
         span.getStyle().set("margin-left", "-15px");
         span.getStyle().set("margin-bottom", "20px");
-//        span.getStyle().set("border", "1px solid");
-        //span.getStyle().set("border-width", "1px");
 
+        MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
+        Upload upload = new Upload(buffer);
 
-//        span2.getStyle().set("height", "150px");
-//        span2.getStyle().set("background-color", "#008000");
-//        span2.getStyle().set("margin-inline-start", "var(--lumo-space-xs)");
-
+        TextField textField = new TextField("Код МО");
+        upload.addSucceededListener(event -> {
+            ExcelService excelService = new ExcelService(sexService, dataFilePatientService);
+            System.out.println(event.getFileName().substring(0, 6));
+            try {
+                peopleService.processingFromExcel(excelService.loadFromExcel(
+                        new DataFile(event.getFileName(), Date.from(Instant.now()), Integer.parseInt(event.getFileName().substring(0, 6)), 123123L),
+                        buffer.getInputStream(event.getFileName())));
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+        });
         //add(avatar);
         add(horizontalLayout);
         button.addClickListener(ev -> {
 
-//            DNTherapistReportService dnTherapistReportService = new DNTherapistReportService();
-//
-//            System.out.println(dnTherapistReportService.getCountCalling(dnGetService.getAllTherapist(), WorkingAgeSex.W_older_55,
-//                    "I11, I20.1, I20.8, I20.9, I25.0, I25.1, I25.2, I25.5, I25.6, I25.8, I25.9", "5", "2023"));
         });
-        add(button, anchor);
+
+        add(button, anchor, textField, upload);
+    }
+
+    private void updateMODNGet(List<DNGet> allDnGets) throws SQLException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
+        Statement statement = dbjdbcConfig.getSRZ();
+
+        for (DNGet dnGet : allDnGets){
+            ResultSet resultSet = statement.executeQuery("select p.lpu from PEOPLE p join HISTFDR h on h.pid = p.id " +
+                    "where (concat(p.FAM, ' ', p.IM, ' ', p.OT) = '" + dnGet.getPeople().getFam() + " " +
+                    dnGet.getPeople().getIm() + " " + dnGet.getPeople().getOt() + "' " +
+                    " or concat(h.FAM, ' ', h.IM, ' ', h.OT) = '" + dnGet.getPeople().getFam() + " " +
+                    dnGet.getPeople().getIm() + " " + dnGet.getPeople().getOt() + "') " +
+                    "and p.DR  = PARSE('" + dateFormat.format(dnGet.getPeople().getDr()) + "' as date)");
+            if(resultSet.next()) {
+                if (resultSet.getString(1) != null && !resultSet.getString(1).isEmpty()) {
+                    dnGet.setMo(resultSet.getInt(1));
+                    dnGetService.save(dnGet);
+                }
+            }
+        }
     }
 
     private Span createBadge(int value) {
@@ -93,8 +149,30 @@ public class TestView extends VerticalLayout {
 
     @Override
     public void onAttach(AttachEvent attachEvent){
-    }
+        Button btnEditMO = new Button("Обновить МО");
+        btnEditMO.addClickListener(e -> {
+            try {
+                ExcelService excelService = new ExcelService(sexService, dataFilePatientService);
+                peopleService.processingFromExcel(excelService.loadFromExcel1());
+                updateMODNGet(dnGetService.getAll());
+            } catch (SQLException err) {
+                throw new RuntimeException(err);
+            }
+        });
+        add(btnEditMO);
 
+        Button btnSearchInSRZ = new Button("Поиск через дбф");
+        btnSearchInSRZ.addClickListener(e -> {
+            DBFSearchService dbfSearchService = new DBFSearchService();
+            DataFile dataFile = new DataFile();
+            dataFile.setDataFilePatient(dataFilePatientService.getNoSearchFromSRZ());
+            DataFile dataFile1 = dbfSearchService.getDataFromDBF(dataFile);
+            System.out.println(dataFile1.getDataFilePatient());
+        });
+
+        add(btnSearchInSRZ);
+
+    }
 }
 
 
