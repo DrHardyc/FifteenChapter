@@ -1,7 +1,8 @@
 package ru.hardy.udio.domain.struct;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -10,8 +11,10 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
-@Data
+
 @Entity
+@Getter
+@Setter
 @Table(schema = "udio_tfoms")
 public class People {
 

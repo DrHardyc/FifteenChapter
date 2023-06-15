@@ -11,13 +11,14 @@ import java.util.Date;
 @Repository
 public interface PeopleRepo extends JpaRepository<People, Long> {
 
-    @Query("SELECT p FROM People p WHERE p.fam = :fam and p.im = :im and p.ot = :ot and p.dr = :dr and p.enp = :enp")
-    People findPeopleByFamAndImAndOtAndDrAndEnp(@Param("fam") String fam, @Param("im") String im,
-                                                @Param("ot") String ot, @Param("dr") Date dr,
-                                                @Param("enp") String enp);
+    //@Query("SELECT p FROM People p WHERE p.fam = :fam and p.im = :im and p.ot = :ot and p.dr = :dr and p.enp = :enp")
+    People findPeopleByFamIgnoreCaseAndImIgnoreCaseAndOtIgnoreCaseAndDrAndEnp(String fam, String im, String ot, Date dr, String enp);
 
     @Query("SELECT p FROM People p WHERE p.enp = :enp")
     People findPeopleByEnp(@Param("enp") String enp);
+
+    @Query ("SELECT p FROM People p WHERE p.id = :id")
+    People findById1(Long id);
 
 //    @Modifying
 //    @Query("update EARAttachment ear set ear.status = ?1 where ear.id = ?2")

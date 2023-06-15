@@ -7,9 +7,12 @@ import ru.hardy.udio.domain.struct.DNGet;
 import ru.hardy.udio.domain.struct.DataFilePatient;
 import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.repo.DNGetRepo;
+import ru.hardy.udio.repo.DataFilePatientRepo;
 import ru.hardy.udio.repo.PeopleRepo;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +21,9 @@ public class DNGetService {
 
     @Autowired
     private DNGetRepo dnGetRepo;
+
+    @Autowired
+    private DataFilePatientRepo dataFilePatientRepo;
 
     @Autowired
     private PeopleRepo peopleRepo;
@@ -46,20 +52,19 @@ public class DNGetService {
     }
 
     @Transactional
-    public void saveOrUpdate(DataFilePatient dataFilePatient, People people) {
+    public void saveOrUpdate(DataFilePatient dataFilePatient, People people, DataFilePatientService dataFilePatientService) {
         DNGet dnGet = null;
         if (dataFilePatient.getDiag() != null && !dataFilePatient.getDiag().isEmpty()){
             dnGet = dnGetRepo.findByDiagAndPeople(dataFilePatient.getDiag(), people);
         }
-        if (dnGet != null) return;
 
-        if (people.getId() == null || people.getId() == 0) {
-            save(new DNGet(dataFilePatient, null, people));
-        } else {
-            save(new DNGet(dataFilePatient, null, peopleRepo.getReferenceById(people.getId())));
+        if (dnGet != null) {
+            dataFilePatientService.updateStatus(dataFilePatient, 5);
+            return;
         }
-    }
 
+        dnGetRepo.save(new DNGet(dataFilePatient, null, peopleRepo.findById1(people.getId())));
+    }
     private void update(DNGet dnGet, DataFilePatient dataFilePatient){
         dnGet.setSpecialization(dataFilePatient.getSpecialization());
         dnGet.setDate_1(dataFilePatient.getDate_1());
@@ -71,10 +76,15 @@ public class DNGetService {
     }
 
     public List<DNGet> getAllWithDateInterval(Date dateBeg, Date dateEnd) {
-        return dnGetRepo.findAllWithInterval(dateBeg, dateEnd);
+        return dnGetRepo.findAllByDate_1Between(dateBeg, dateEnd);
     }
 
     public List<DNGet> getAllKARDIO() {
         return dnGetRepo.findAllByKARDIO();
     }
+
+    public void deleteAllByPeople(List<DNGet> dnGets) {
+        dnGetRepo.deleteAll(dnGets);
+    }
+
 }

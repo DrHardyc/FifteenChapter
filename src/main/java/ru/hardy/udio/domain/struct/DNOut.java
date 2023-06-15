@@ -1,19 +1,33 @@
 package ru.hardy.udio.domain.struct;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import ru.hardy.udio.domain.struct.DNGet;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-@EqualsAndHashCode(callSuper = false)
 @Entity
+@Getter
+@Setter
 @Table(schema = "udio_tfoms")
-public class DNOut extends DNGet {
+public class DNOut{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @OneToOne
+    private People people;
+
     private String reason_dereg; //причина снятия с учета
+
+
+
+    public DNOut(People people, String reason_dereg) {
+        this.people = people;
+        this.reason_dereg = reason_dereg;
+
+    }
+
+    public DNOut() {
+
+    }
 }

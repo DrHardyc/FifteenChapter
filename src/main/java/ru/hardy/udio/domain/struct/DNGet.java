@@ -2,7 +2,8 @@ package ru.hardy.udio.domain.struct;
 
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.text.SimpleDateFormat;
 import java.time.*;
@@ -10,7 +11,8 @@ import java.util.Date;
 import java.util.Objects;
 
 @Entity
-@Data
+@Setter
+@Getter
 @Table(schema = "udio_tfoms")
 public class DNGet {
     @Id
@@ -18,19 +20,23 @@ public class DNGet {
     @SequenceGenerator(name = "dnget_seq", allocationSize = 1)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "people_id", nullable = false)
     private People people;
 
     @OneToOne
     @JoinColumn(name = "dgroup_id")
     private DGroup dGroup;
+
+    @OneToOne
+    @JoinColumn(name = "dfp_id")
+    private DataFilePatient dataFilePatient;
+
     private String nhistory; // номер истории
     private Date date_1; // Дата начала лечения
     private Date date_2; // Дата окончания лечения???
     private Date date_call; //Дата вызова
     private String diag; //диагноз
-
     private Integer specialization; //профиль по V021
     private Long import_id; // id в БД мо
     private Integer mo; //мо прохождения д-наблюдения
@@ -50,6 +56,7 @@ public class DNGet {
         this.date_edit = Date.from(Instant.now());
         this.dGroup = dGroup;
         this.people = people;
+        this.dataFilePatient = dataFilePatient;
     }
 
     public DNGet() {

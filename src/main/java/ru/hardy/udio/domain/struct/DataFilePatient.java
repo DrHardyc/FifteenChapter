@@ -3,6 +3,8 @@ package ru.hardy.udio.domain.struct;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -11,7 +13,8 @@ import java.time.ZoneId;
 import java.util.Date;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(schema = "udio_tfoms")
 public class DataFilePatient {
     @Id
@@ -45,13 +48,14 @@ public class DataFilePatient {
     private Date date_2;
 
     private String srz_status; // найден/ не найден
+    private int srz_status_code; //1 - успешно добавлен; 2 - не найден в срз; 3 - не добавлен; 4 - найден по енп; 5- дубль; 6 - ошибка поиска срз
     @JsonIgnore
     private Date date_beg;
     @JsonIgnore
     private Date date_edit;
 
     public DataFilePatient(String fam, String im, String ot, Date dr, String enp, Integer mo_attach, Sex sex, Integer inv, String nhistory,
-                           String diag, Date date_call, Integer specialization, Date date_1, Date date_2, String srz_status, Long idsrz, DataFile dataFile) {
+                           String diag, Date date_call, Integer specialization, Date date_1, Date date_2, int srz_status_code, Long idsrz, DataFile dataFile) {
         this.fam = fam;
         this.im = im;
         this.ot = ot;
@@ -67,10 +71,19 @@ public class DataFilePatient {
         this.date_1 = date_1;
         this.date_2 = date_2;
         this.idsrz = idsrz;
-        this.srz_status = srz_status;
+        this.srz_status_code = srz_status_code;
         this.date_beg = Date.from(Instant.now());
         this.date_edit = Date.from(Instant.now());
         this.datafile = dataFile;
+
+        switch (srz_status_code){
+            case 1 -> srz_status = "успешно добавлен";
+            case 2 -> srz_status = "не найден в срз";
+            case 3 -> srz_status = "не добавлен";
+            case 4 -> srz_status = "найден по енп";
+            case 5 -> srz_status = "дубль";
+            case 6 -> srz_status = "ошибка поиска срз";
+        }
     }
 
 

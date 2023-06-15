@@ -1,10 +1,6 @@
 package ru.hardy.udio.service;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.engine.spi.SessionLazyDelegator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.provider.HibernateUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,8 +8,8 @@ import ru.hardy.udio.config.DBJDBCConfig;
 import ru.hardy.udio.domain.struct.*;
 import ru.hardy.udio.repo.PeopleRepo;
 import ru.hardy.udio.service.SRZ.DBFSearchService;
+import ru.hardy.udio.service.deamon.SearchDead;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -47,6 +43,9 @@ public class PeopleService {
     private DNGetService dnGetService;
 
     @Autowired
+    private DNOutService dnOutService;
+
+    @Autowired
     private DataFilePatientService dataFilePatientService;
 
     public List<People> getAll(){
@@ -54,40 +53,50 @@ public class PeopleService {
     }
 
     public List<People> searchFromUdio(DataFile dataFile){
+        System.out.println("Сохранение результатов");
         List<People> peoples = new ArrayList<>();
-        People people;
+        People people = null;
         for (DataFilePatient dataFilePatient : dataFile.getDataFilePatient()) {
-            people = peopleRepo.findPeopleByFamAndImAndOtAndDrAndEnp(dataFilePatient.getFam(),
-                    dataFilePatient.getIm(), dataFilePatient.getOt(),
-                    dataFilePatient.getDr(), dataFilePatient.getEnp());
-            if (people != null){
-                dnGetService.saveOrUpdate(dataFilePatient, people);
-            } else {
-                people = peopleRepo.findPeopleByEnp(dataFilePatient.getEnp());
-                if (people != null) {
-                    peoples.add(update(people));
-                    dnGetService.saveOrUpdate(dataFilePatient, people);
+            System.out.println(dataFilePatient.getFIO() + " " + dataFilePatient.getEnp());
+            if (dataFilePatient.getSrz_status_code() == 1){
+                if (dataFilePatient.getEnp() != null && !dataFilePatient.getEnp().isEmpty()){
+                    people = peopleRepo.findPeopleByFamIgnoreCaseAndImIgnoreCaseAndOtIgnoreCaseAndDrAndEnp(dataFilePatient.getFam().toUpperCase(),
+                            dataFilePatient.getIm().toUpperCase(), dataFilePatient.getOt().toUpperCase(),
+                            dataFilePatient.getDr(), dataFilePatient.getEnp());
                 }
-                else {
-                    if (dataFilePatient.getIdsrz() != null && dataFilePatient.getIdsrz() != 0L) {
-                        People newPeople = new People(dataFilePatient);
-                        peoples.add(newPeople);
-                        peopleRepo.save(newPeople);
-                        dnGetService.saveOrUpdate(dataFilePatient, newPeople);
+                if (people != null){
+                    dnGetService.saveOrUpdate(dataFilePatient, people, dataFilePatientService);
+                } else {
+                    if (dataFilePatient.getEnp() != null && !dataFilePatient.getEnp().isEmpty()) {
+                        people = peopleRepo.findPeopleByEnp(dataFilePatient.getEnp());
+                    }
+                    if (people != null) {
+                        peoples.add(updateWithDFP(people, dataFilePatient));
+                        dnGetService.saveOrUpdate(dataFilePatient, people, dataFilePatientService);
+                    } else {
+                        if (dataFilePatient.getIdsrz() != null && dataFilePatient.getIdsrz() != 0L) {
+                            People newPeople = new People(dataFilePatient);
+                            peoples.add(newPeople);
+                            peopleRepo.save(newPeople);
+                            dnGetService.saveOrUpdate(dataFilePatient, newPeople, dataFilePatientService);
+                        }
                     }
                 }
             }
         }
+        System.out.println("Обработка завершена");
 //        peopleRepo.saveAll(peoples);
         return peoples;
 
     }
 
-    private DataFile searchFromSRZ(DataFile dataFile) {
+    public DataFile searchFromSRZ(DataFile dataFile) {
+        System.out.println("Поиск в срз");
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
         Statement statement = dbjdbcConfig.getSRZ();
         for (DataFilePatient dataFilePatient : dataFile.getDataFilePatient()){
+            System.out.println(dataFilePatient.getFIO() + " " + dataFilePatient.getEnp());
             if (dataFilePatientService.searchFromPeople(dataFilePatient)) {
                 try {
                     ResultSet resultSet = statement.executeQuery("" +
@@ -115,7 +124,11 @@ public class PeopleService {
     }
 
     @Transactional
-    public People update(People people){
+    public People updateWithDFP(People people, DataFilePatient dataFilePatient){
+        people.setFam(dataFilePatient.getFam());
+        people.setIm(dataFilePatient.getIm());
+        people.setOt(dataFilePatient.getOt());
+        people.setDr(dataFilePatient.getDr());
         people.setDate_edit(Date.from(Instant.now()));
         return save(people);
     }
@@ -130,7 +143,7 @@ public class PeopleService {
 
     public void processingFromExcel(DataFile dataFile) {
         dataFileService.save(dataFile);
-        searchFromUdio(searchFromSRZ(dataFile));
+        searchFromUdio(dataFile);
     }
 
     public void processingFromBars(List<DataFile> dataFileList){
@@ -149,5 +162,15 @@ public class PeopleService {
         while (!executor.isTerminated()) {
         }
         System.out.println("Processing complete!");
+    }
+
+    @Transactional
+    public void searchDead(){
+        SearchDead searchDead = new SearchDead();
+        for (People people : searchDead.search(peopleRepo.findAll())) {
+            dnGetService.deleteAllByPeople(dnGetService.getByPeopleId(people.getId()));
+            dnOutService.add(new DNOut(people, "дата смерти"));
+            System.out.println(people.getFIO() + " " + people.getDr());
+        }
     }
 }

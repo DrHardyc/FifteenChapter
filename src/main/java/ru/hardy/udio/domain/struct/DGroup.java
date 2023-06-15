@@ -1,13 +1,15 @@
 package ru.hardy.udio.domain.struct;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
 import java.util.Date;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(schema = "udio_tfoms")
 public class DGroup {
     @Id

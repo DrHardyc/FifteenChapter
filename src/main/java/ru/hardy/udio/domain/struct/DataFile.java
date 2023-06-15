@@ -1,14 +1,16 @@
 package ru.hardy.udio.domain.struct;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "data_file", schema = "udio_tfoms")
 public class DataFile {
 
@@ -43,5 +45,7 @@ public class DataFile {
         this.date_beg = Date.from(Instant.now());
         this.date_edit = Date.from(Instant.now());
     }
+
+
 
 }

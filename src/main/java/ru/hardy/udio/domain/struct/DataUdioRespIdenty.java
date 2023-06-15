@@ -2,7 +2,8 @@ package ru.hardy.udio.domain.struct;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import ru.hardy.udio.domain.ResponseAnswerUdio;
 
 import java.time.Instant;
@@ -11,7 +12,8 @@ import java.util.List;
 
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(schema = "udio_datacontrol")
 public class DataUdioRespIdenty {
 

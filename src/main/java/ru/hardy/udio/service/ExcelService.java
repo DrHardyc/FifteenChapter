@@ -2,8 +2,6 @@ package ru.hardy.udio.service;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.config.DBJDBCConfig;
 import ru.hardy.udio.domain.report.AgeLimit;
@@ -17,7 +15,6 @@ import ru.hardy.udio.service.report.DNTherapistReportService;
 import ru.hardy.udio.service.report.KARDIOReport;
 import ru.hardy.udio.service.report.ONKOReport;
 
-import javax.print.DocFlavor;
 import java.io.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -389,7 +386,7 @@ public class ExcelService {
         }
     }
 
-    public DataFile loadFromExcel(DataFile dataFile, InputStream inputStream ) throws ParseException {
+    public DataFile loadFromExcelOnkoOther(DataFile dataFile, InputStream inputStream ) throws ParseException {
 
         List<DataFilePatient> dataFilePatientList = new ArrayList<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy");
@@ -444,12 +441,12 @@ public class ExcelService {
                     dataFilePatientList.add(new DataFilePatient(
                             parseFIO(fio)[0], parseFIO(fio)[1], parseFIO(fio)[2], dateFormatDr.parse(dr), resultSet.getString(1),
                             mo_attach, w, 0, "", diag, null, 41, date_1, null,
-                            "", resultSet.getLong(3), dataFile));
+                            1, resultSet.getLong(3), dataFile));
                 } else {
                     dataFilePatientList.add(new DataFilePatient(
                             parseFIO(fio)[0], parseFIO(fio)[1], parseFIO(fio)[2], dateFormatDr.parse(dr), "", 0,
                             w, 0, "", diag, null, 41, date_1, null,
-                            "не найден в srz", 0L,  dataFile));
+                            2, 0L,  dataFile));
 
                 }
             } catch (SQLException e) {
@@ -460,15 +457,12 @@ public class ExcelService {
         return dataFile;
     }
 
-    public DataFile loadFromExcel1(){
-
-        DataFile dataFile = new DataFile("onkosvod", Date.from(Instant.now()), 150031, 123123L);
+    public DataFile loadFromExcelOnkoChild(DataFile dataFile, InputStream inputStream){
 
         List<DataFilePatient> dataFilePatientList = new ArrayList<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         try {
-            excelFile = new FileInputStream("onko\\old\\onkosvod.xlsx");
-            workbook = new XSSFWorkbook(excelFile);
+            workbook = new XSSFWorkbook(inputStream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -476,13 +470,19 @@ public class ExcelService {
         DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
         Statement statement = dbjdbcConfig.getSRZ();
 
-        for (int count = 3; count < sheet.getLastRowNum() + 1; count++) {
-            System.out.println(sheet.getRow(count).getCell(3).getStringCellValue() + " "
-                    + sheet.getRow(count).getCell(4).getDateCellValue() + " "
-                    + sheet.getRow(count).getCell(5).getStringCellValue() + " "
-                    + sheet.getRow(count).getCell(6).getDateCellValue() + " "
-                    + sheet.getRow(count).getCell(8).getStringCellValue());
+        String fio;
+        Date dr;
+        Sex w;
+        Date date_1;
+        String diag;
 
+        for (int count = 3; count < sheet.getLastRowNum() + 1; count++) {
+            fio = sheet.getRow(count).getCell(3).getStringCellValue();
+            dr = sheet.getRow(count).getCell(4).getDateCellValue();
+            w = sexService.getByName(sheet.getRow(count).getCell(5).getStringCellValue());
+            date_1 = sheet.getRow(count).getCell(6).getDateCellValue();
+            diag = sheet.getRow(count).getCell(8).getStringCellValue();
+            System.out.println(fio);
             try {
                 ResultSet resultSet = statement.executeQuery("select p.enp, p.lpu, p.id from PEOPLE p join HISTFDR h on h.pid = p.id " +
                         "where (concat(p.FAM, ' ', p.IM, ' ', p.OT) = '" + sheet.getRow(count).getCell(3).getStringCellValue() + "' " +
@@ -494,28 +494,14 @@ public class ExcelService {
                         mo_attach = resultSet.getInt(2);
                     }
                     dataFilePatientList.add(new DataFilePatient(
-                            parseFIO(sheet.getRow(count).getCell(3).getStringCellValue())[0],
-                            parseFIO(sheet.getRow(count).getCell(3).getStringCellValue())[1],
-                            parseFIO(sheet.getRow(count).getCell(3).getStringCellValue())[2],
-                            sheet.getRow(count).getCell(4).getDateCellValue(),
-                            resultSet.getString(1),
-                            mo_attach,
-                            sexService.getByName(sheet.getRow(count).getCell(5).getStringCellValue()), 0, "",
-                            sheet.getRow(count).getCell(8).getStringCellValue(), null, 41,
-                            sheet.getRow(count).getCell(6).getDateCellValue(), null, "",
-                            resultSet.getLong(3), dataFile));
+                            parseFIO(fio)[0], parseFIO(fio)[1], parseFIO(fio)[2], dr, resultSet.getString(1),
+                            mo_attach, w, 0, "", diag, null, 41, date_1,
+                            null, 1, resultSet.getLong(3), dataFile));
                 } else {
                     dataFilePatientList.add(new DataFilePatient(
-                            parseFIO(sheet.getRow(count).getCell(3).getStringCellValue())[0],
-                            parseFIO(sheet.getRow(count).getCell(3).getStringCellValue())[1],
-                            parseFIO(sheet.getRow(count).getCell(3).getStringCellValue())[2],
-                            sheet.getRow(count).getCell(4).getDateCellValue(),
-                            "", 0,
-                            sexService.getByName(sheet.getRow(count).getCell(5).getStringCellValue()), 0, "",
-                            sheet.getRow(count).getCell(8).getStringCellValue(), null, 41,
-                            sheet.getRow(count).getCell(6).getDateCellValue(), null, "не найден в srz",
+                            parseFIO(fio)[0], parseFIO(fio)[1], parseFIO(fio)[2], dr, "", 0,
+                            w, 0, "", diag, null, 41, date_1, null, 2,
                             0L,  dataFile));
-
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -525,6 +511,70 @@ public class ExcelService {
         return dataFile;
     }
 
+    public DataFile loadFromExcelFromBarsMO(DataFile dataFile, InputStream inputStream ) throws ParseException {
+
+        List<DataFilePatient> dataFilePatientList = new ArrayList<>();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        try {
+            workbook = new XSSFWorkbook(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Sheet sheet = workbook.getSheetAt(0);
+        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
+        Statement statement = dbjdbcConfig.getSRZ();
+
+        String fio;
+        Date dr;
+        Sex w;
+        Date date_1;
+        String diag;
+
+        for (int count = 2; count < sheet.getLastRowNum(); count++) {
+            if (sheet.getRow(count).getCell(6).getDateCellValue() != null
+                    && sheet.getRow(count).getCell(3).getDateCellValue() != null) {
+                fio = sheet.getRow(count).getCell(1).getStringCellValue();
+                dr = sheet.getRow(count).getCell(3).getDateCellValue();
+                w = sexService.getByName(sheet.getRow(count).getCell(2).getStringCellValue());
+                date_1 = sheet.getRow(count).getCell(6).getDateCellValue();
+                diag = sheet.getRow(count).getCell(0).getStringCellValue();
+                System.out.println(fio);
+                try {
+                    ResultSet resultSet = statement.executeQuery("select p.enp, p.lpu, p.id from PEOPLE p join HISTFDR h on h.pid = p.id " +
+                            "where (concat(p.FAM, ' ', p.IM, ' ', p.OT) = '" + fio + "' " +
+                            " or concat(h.FAM, ' ', h.IM, ' ', h.OT) = '" + fio + "') " +
+                            "and p.DR  = PARSE('" + dateFormat.format(dr) + "' as date)");
+                    if (resultSet.next()) {
+                        int mo_attach = 0;
+                        if (resultSet.getString(2) != null && !resultSet.getString(2).isEmpty()) {
+                            mo_attach = resultSet.getInt(2);
+                        }
+                        if (resultSet.getString(1) == null || resultSet.getString(1).isEmpty()){
+                            dataFilePatientList.add(new DataFilePatient(
+                                    parseFIO(fio)[0], parseFIO(fio)[1], parseFIO(fio)[2], dr, resultSet.getString(1),
+                                    mo_attach, w, 0, "", diag, null, 76, date_1, null,
+                                    6, resultSet.getLong(3), dataFile));
+                        } else {
+                            dataFilePatientList.add(new DataFilePatient(
+                                    parseFIO(fio)[0], parseFIO(fio)[1], parseFIO(fio)[2], dr, resultSet.getString(1),
+                                    mo_attach, w, 0, "", diag, null, 76, date_1, null,
+                                    1, resultSet.getLong(3), dataFile));
+                        }
+                    } else {
+                        dataFilePatientList.add(new DataFilePatient(
+                                parseFIO(fio)[0], parseFIO(fio)[1], parseFIO(fio)[2], dr, "", 0,
+                                w, 0, "", diag, null, 76, date_1, null,
+                                2, 0L, dataFile));
+
+                    }
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        dataFile.setDataFilePatient(dataFilePatientList);
+        return dataFile;
+    }
 
     private String[] parseFIO(String fio){
         String[] str = new String[3];

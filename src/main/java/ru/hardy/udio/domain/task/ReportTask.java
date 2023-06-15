@@ -2,6 +2,8 @@ package ru.hardy.udio.domain.task;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -9,8 +11,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
-@Data
 @Entity
+@Getter
+@Setter
 @Table(schema = "udio_util")
 public class ReportTask {
 
