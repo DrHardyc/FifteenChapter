@@ -59,6 +59,7 @@ public class ReportView extends VerticalLayout {
         cbItems.add("Все");
         cbItems.add("Снятые");
         cbItems.add("ДН-терапефт");
+        cbItems.add("ДН-онколог");
         cbItems.add("ОНКО");
         cbItems.add("КАРДИО");
 
@@ -99,11 +100,11 @@ public class ReportView extends VerticalLayout {
                                         new ReportTask("ДН-Терапефт", "", TaskStatus.progress, "",
                                                 username, period));
                                 ExcelService excelService = new ExcelService();
-                                excelService.getDNTherapistReportSample(dnGetService.getAllTherapist(),
+                                excelService.getDNOnkoTherapiReportSample(dnGetService.getAllTherapist(),
                                         String.valueOf(monthPickerBeg.getValue().getValue()),
                                         String.valueOf(monthPickerEnd.getValue().getValue()),
                                         yearPickerBeg.getValue().toString(),
-                                        yearPickerEnd.getValue().toString(), filename);
+                                        yearPickerEnd.getValue().toString(), filename, 1);
                                 reportTaskService.updateStatus(TaskStatus.success, "Успешно", filename, id);
                             } catch (Exception err) {
                                 if (id != 0L) {
@@ -155,6 +156,28 @@ public class ReportView extends VerticalLayout {
                                 } else err.getStackTrace();
                             }
                         }).start();
+                    } else if (comboBox.getValue().equals("ДН-онколог")) {
+                        Notification.show("Задача поставлена в очередь выполнения").setPosition(Notification.Position.TOP_END);
+                        new Thread(() -> {
+                            Long id = 0L;
+                            String filename = UUID.randomUUID() + "_ДН-онколог.xlsx";
+                            try {
+                                id = reportTaskService.add(
+                                        new ReportTask("ДН-онколог", "", TaskStatus.progress, "",
+                                                username, period));
+                                ExcelService excelService = new ExcelService();
+                                excelService.getDNOnkoTherapiReportSample(dnGetService.getAllOnkologist(),
+                                        String.valueOf(monthPickerBeg.getValue().getValue()),
+                                        String.valueOf(monthPickerEnd.getValue().getValue()),
+                                        yearPickerBeg.getValue().toString(),
+                                        yearPickerEnd.getValue().toString(), filename, 2);
+                                reportTaskService.updateStatus(TaskStatus.success, "Успешно", filename, id);
+                            } catch (Exception err) {
+                                if (id != 0L) {
+                                    reportTaskService.updateStatus(TaskStatus.error, err.getMessage(), filename, id);
+                                } else err.getStackTrace();
+                            }
+                        }).start();
                     }
                 } else {
                     Notification.show("Введите значения периодов!").setPosition(Notification.Position.TOP_END);
@@ -170,6 +193,8 @@ public class ReportView extends VerticalLayout {
             } else if (e.getValue().equals("Все")) {
                 hideComponent(false);
             } else if (e.getValue().equals("ДН-терапефт")){
+                hideComponent(true);
+            } else if (e.getValue().equals("ДН-онколог")){
                 hideComponent(true);
             } else if (e.getValue().equals("ОНКО")){
                 hideComponent(true);

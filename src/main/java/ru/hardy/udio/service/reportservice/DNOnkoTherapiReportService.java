@@ -14,12 +14,12 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Service
-public class DNTherapistReportService {
+public class DNOnkoTherapiReportService {
 
     private final List<DNGet> dnGets;
     private final UtilService utilService = new UtilService();
 
-    public DNTherapistReportService(List<DNGet> dnGets){
+    public DNOnkoTherapiReportService(List<DNGet> dnGets){
         this.dnGets = dnGets;
     }
 

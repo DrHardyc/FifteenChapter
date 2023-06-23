@@ -4,7 +4,10 @@ import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.H5;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
@@ -14,8 +17,8 @@ import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import ru.hardy.udio.domain.User;
-import ru.hardy.udio.service.UtilService;
 import ru.hardy.udio.service.UserService;
+import ru.hardy.udio.service.UtilService;
 
 @Route("")
 @PermitAll
@@ -24,14 +27,14 @@ public class MainView extends AppLayout {
     @Autowired
     private UserService userService;
 
-    private final Avatar avatar = new Avatar();
+    private final H3 avatar = new H3();
 
     public MainView(){
 
         DrawerToggle toggle = new DrawerToggle();
 
-        H3 title = new H3("Д - наблюдение v1.2");
-        title.getStyle().set("margin", "0");
+        H5 title = new H5("Д - наблюдение v1.2");
+        //title.getStyle().set("margin", "0");
         UtilService su = new UtilService();
         Tabs tabs = su.getTabs();
         tabs.setAutoselect(true);
@@ -42,16 +45,26 @@ public class MainView extends AppLayout {
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.add(avatar);
         verticalLayout.setSizeFull();
-        horizontalLayout.add(title, verticalLayout);
+        horizontalLayout.add(verticalLayout);
         addToNavbar(toggle, horizontalLayout);
-        String authenticationName = SecurityContextHolder.getContext().getAuthentication().getName();
-        avatar.setName(authenticationName);
+//        FlexLayout flexLayout = new FlexLayout(title);
+//        VerticalLayout vlFooter = new VerticalLayout(flexLayout);
+//        vlFooter.setSizeFull();
+//        verticalLayout.expand(flexLayout);
+        addToDrawer(title);
+        //title.getStyle().set("position", "relative");
+        //title.getStyle().set("top", "650px");
+        title.getStyle().set("margin-left", "auto");
+        title.getStyle().set("margin-right", "auto");
+        title.getStyle().set("margin-top", "auto");
     }
 
     @Override
     public void onAttach(AttachEvent attachEvent){
         User user = userService.getWithName(SecurityContextHolder.getContext().getAuthentication().getName());
-        Tooltip.forComponent(avatar).withText(user.getFio()).setPosition(Tooltip.TooltipPosition.BOTTOM_START);
+        avatar.setText(user.getFio());
+        Tooltip.forComponent(avatar).withText(user.getPosition()).setPosition(Tooltip.TooltipPosition.BOTTOM_START);
+        avatar.getStyle().set("margin", "auto");
     }
 
 }

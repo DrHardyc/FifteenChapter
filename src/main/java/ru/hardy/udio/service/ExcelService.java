@@ -8,7 +8,7 @@ import ru.hardy.udio.domain.report.AgeLimit;
 import ru.hardy.udio.domain.report.VisitType;
 import ru.hardy.udio.domain.report.WorkingAgeSex;
 import ru.hardy.udio.domain.struct.*;
-import ru.hardy.udio.service.reportservice.DNTherapistReportService;
+import ru.hardy.udio.service.reportservice.DNOnkoTherapiReportService;
 import ru.hardy.udio.service.reportservice.KARDIOReportService;
 import ru.hardy.udio.service.reportservice.ONKOReportService;
 
@@ -164,9 +164,12 @@ public class ExcelService {
         return currDir;
     }
 
-    public void getDNTherapistReportSample(List<DNGet> dnGets, String monthBeg, String monthEnd, String yearBeg, String yearEnd, String filename){
+    public void getDNOnkoTherapiReportSample(List<DNGet> dnGets, String monthBeg, String monthEnd, String yearBeg, String yearEnd, String filename, int spec){
         try {
-            excelFile = new FileInputStream("C:\\udio\\samples\\DNTh.xlsx");
+            String dir;
+            if (spec == 1) dir = "C:\\udio\\samples\\DNTh.xlsx";
+            else dir = "C:\\udio\\samples\\DNOnko.xlsx";
+            excelFile = new FileInputStream(dir);
             workbook = new XSSFWorkbook(excelFile);
             outputStream = new FileOutputStream("C:\\udio\\reports\\" + filename);
         } catch (IOException e) {
@@ -198,34 +201,64 @@ public class ExcelService {
             if(colIndex > -1) break;
         }
         List<String> diags = new ArrayList<>();
-        diags.add("I20.1, I20.8, I20.9, I25.0, I25.1, I25.2, I25.5, I25.6, I25.8, I25.9");
-        diags.add("I10, I11, I12, I13, I15");
-        diags.add("I50.0, I50.1, I50.9");
-        diags.add("I48");
-        diags.add("I47");
-        diags.add("I65.2");
-        diags.add("R73.0, R73.9");
-        diags.add("E11");
-        diags.add("I69.0, I69.1, I69.2, I69.3, I69.4, I67.8");
-        diags.add("E78");
-        diags.add("K20");
-        diags.add("K21.0");
-        diags.add("K21.0");
-        diags.add("K25");
-        diags.add("K26");
-        diags.add("K29.4; K29.5");
-        diags.add("K31.7");
-        diags.add("K86");
-        diags.add("J44.0, J44.8, J44.9");
-        diags.add("J47.0");
-        diags.add("J45.0, J45.1, J45.8, J45.9");
-        diags.add("J12, J13, J14");
-        diags.add("J84.1");
-        diags.add("N18.1");
-        diags.add("N18.1");
-        diags.add("N18.9");
-        diags.add("M81.5");
-        DNTherapistReportService dnTherapistReportService = new DNTherapistReportService(dnGets);
+        if (spec == 1) {
+            diags.add("I20.1, I20.8, I20.9, I25.0, I25.1, I25.2, I25.5, I25.6, I25.8, I25.9");
+            diags.add("I10, I11, I12, I13, I15");
+            diags.add("I50.0, I50.1, I50.9");
+            diags.add("I48");
+            diags.add("I47");
+            diags.add("I65.2");
+            diags.add("R73.0, R73.9");
+            diags.add("E11");
+            diags.add("I69.0, I69.1, I69.2, I69.3, I69.4, I67.8");
+            diags.add("E78");
+            diags.add("K20");
+            diags.add("K21.0");
+            diags.add("K21.0");
+            diags.add("K25");
+            diags.add("K26");
+            diags.add("K29.4; K29.5");
+            diags.add("K31.7");
+            diags.add("K86");
+            diags.add("J44.0, J44.8, J44.9");
+            diags.add("J47.0");
+            diags.add("J45.0, J45.1, J45.8, J45.9");
+            diags.add("J12, J13, J14");
+            diags.add("J84.1");
+            diags.add("N18.1");
+            diags.add("N18.1");
+            diags.add("N18.9");
+            diags.add("M81.5");
+        } else {
+            diags.add("C44");
+            diags.add(diagStringBuilder(0, 96, "C", 44));
+            diags.add("C00");
+            diags.add(diagStringBuilder(1, 9, "C" ));
+            diags.add(diagStringBuilder(10, 13, "C"));
+            diags.add("C15");
+            diags.add("C16");
+            diags.add("C18");
+            diags.add(diagStringBuilder(19, 21, "C"));
+            diags.add("C22");
+            diags.add("C25");
+            diags.add("C32");
+            diags.add("C33, C34");
+            diags.add("C40, C41");
+            diags.add("C43");
+            diags.add(diagStringBuilder(47, 49, "C"));
+            diags.add("C50");
+            diags.add("C53");
+            diags.add("C54");
+            diags.add("C56");
+            diags.add("C61");
+            diags.add("C64");
+            diags.add("C67");
+            diags.add("C73");
+            diags.add(diagStringBuilder(81, 86, "C") + ", C88, C90, C96");
+            diags.add(diagStringBuilder(91, 95, "C"));
+            diags.add(diagStringBuilder(0, 9, "D"));
+        }
+        DNOnkoTherapiReportService dnOnkoTherapiReportService = new DNOnkoTherapiReportService(dnGets);
 
         DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
         Statement statementBars = dbjdbcConfig.getBars();
@@ -237,63 +270,63 @@ public class ExcelService {
             wasCount = 0;
             for (WorkingAgeSex workingAgeSex : WorkingAgeSex.values()) {
                 sheet.getRow(rowIndex + diagCount).getCell(colIndex + wasCount)
-                        .setCellValue(dnTherapistReportService.getCountDN(workingAgeSex, diag));
+                        .setCellValue(dnOnkoTherapiReportService.getCountDN(workingAgeSex, diag));
                 wasCount++;
             }
 
             for (WorkingAgeSex workingAgeSex : WorkingAgeSex.values()) {
                 sheet.getRow(rowIndex + diagCount).getCell(colIndex + wasCount)
-                        .setCellValue(dnTherapistReportService.getCountDNPr(workingAgeSex, diag, monthBeg, monthEnd, yearBeg, yearEnd, statementBars));
+                        .setCellValue(dnOnkoTherapiReportService.getCountDNPr(workingAgeSex, diag, monthBeg, monthEnd, yearBeg, yearEnd, statementBars));
                 wasCount++;
             }
 
             for (WorkingAgeSex workingAgeSex : WorkingAgeSex.values()) {
                 sheet.getRow(rowIndex + diagCount).getCell(colIndex + wasCount)
-                        .setCellValue(dnTherapistReportService.getCountCalling(workingAgeSex, diag, monthBeg, monthEnd, yearBeg, yearEnd));
+                        .setCellValue(dnOnkoTherapiReportService.getCountCalling(workingAgeSex, diag, monthBeg, monthEnd, yearBeg, yearEnd));
                 wasCount++;
             }
 
             for (WorkingAgeSex workingAgeSex : WorkingAgeSex.values()) {
                 sheet.getRow(rowIndex + diagCount).getCell(colIndex + wasCount)
-                        .setCellValue(dnTherapistReportService.getCountDN(workingAgeSex, diag));
+                        .setCellValue(dnOnkoTherapiReportService.getCountDN(workingAgeSex, diag));
                 wasCount++;
             }
 
             for (WorkingAgeSex workingAgeSex : WorkingAgeSex.values()) {
                 sheet.getRow(rowIndex + diagCount).getCell(colIndex + wasCount)
-                        .setCellValue(dnTherapistReportService.getCountDNPr(workingAgeSex, diag, monthBeg, monthEnd, yearBeg, yearEnd, statementBars));
+                        .setCellValue(dnOnkoTherapiReportService.getCountDNPr(workingAgeSex, diag, monthBeg, monthEnd, yearBeg, yearEnd, statementBars));
                 wasCount++;
             }
 
             for (VisitType visitType : VisitType.values()) {
                 for (WorkingAgeSex workingAgeSex : WorkingAgeSex.values()) {
                     sheet.getRow(rowIndex + diagCount).getCell(colIndex + wasCount)
-                            .setCellValue(dnTherapistReportService.getCountVisit(visitType, workingAgeSex, diag, monthBeg, monthEnd, yearBeg, yearEnd, statementBars));
+                            .setCellValue(dnOnkoTherapiReportService.getCountVisit(visitType, workingAgeSex, diag, monthBeg, monthEnd, yearBeg, yearEnd, statementBars));
                     wasCount++;
                 }
             }
 
             for (WorkingAgeSex workingAgeSex : WorkingAgeSex.values()) {
                 sheet.getRow(rowIndex + diagCount).getCell(colIndex + wasCount)
-                        .setCellValue(dnTherapistReportService.getCountHospitalize(workingAgeSex, diag, monthBeg, monthEnd, yearBeg, yearEnd, statementBars));
+                        .setCellValue(dnOnkoTherapiReportService.getCountHospitalize(workingAgeSex, diag, monthBeg, monthEnd, yearBeg, yearEnd, statementBars));
                 wasCount++;
             }
 
             for (WorkingAgeSex workingAgeSex : WorkingAgeSex.values()) {
                 sheet.getRow(rowIndex + diagCount).getCell(colIndex + wasCount)
-                        .setCellValue(dnTherapistReportService.getCountDeath(workingAgeSex, diag, monthBeg, monthEnd, yearBeg, yearEnd, statementSrz));
+                        .setCellValue(dnOnkoTherapiReportService.getCountDeath(workingAgeSex, diag, monthBeg, monthEnd, yearBeg, yearEnd, statementSrz));
                 wasCount++;
             }
 
             for (WorkingAgeSex workingAgeSex : WorkingAgeSex.values()) {
                 sheet.getRow(rowIndex + diagCount).getCell(colIndex + wasCount)
-                        .setCellValue(dnTherapistReportService.getCountAmbulance(workingAgeSex, diag, monthBeg, monthEnd, yearBeg, yearEnd, statementBars));
+                        .setCellValue(dnOnkoTherapiReportService.getCountAmbulance(workingAgeSex, diag, monthBeg, monthEnd, yearBeg, yearEnd, statementBars));
                 wasCount++;
             }
 
             for (WorkingAgeSex workingAgeSex : WorkingAgeSex.values()) {
                 sheet.getRow(rowIndex + diagCount).getCell(colIndex + wasCount)
-                        .setCellValue(dnTherapistReportService.getCountInv(workingAgeSex, diag));
+                        .setCellValue(dnOnkoTherapiReportService.getCountInv(workingAgeSex, diag));
                 wasCount++;
             }
             diagCount++;
@@ -713,19 +746,29 @@ public class ExcelService {
         return str;
     }
 
-    private String[] parseAddress(String address){
-        String[] str = new String[2];
-        try {
-            str[0] = address.substring(address.indexOf(".") + 1, address.indexOf(",")).trim();
-        } catch (Exception e){
-            str[0] = address;
+    public String diagStringBuilder(int startCount, int endCount, String diag, int exception){
+        StringBuilder result = new StringBuilder();
+        for(int i = startCount; i <= endCount; i++){
+            if (i != exception){
+                if (i < 10){
+                    if (i == startCount){
+                        result.append(diag).append("0").append(i);
+                    } else result.append(", ").append(diag).append("0").append(i);
+                } else result.append(", ").append(diag).append(i);
+            }
         }
-        try {
-            str[1] = address.substring(address.indexOf(".", 5) + 1,
-                    address.indexOf(",", address.indexOf(".", 5) + 1)).trim();
-        } catch (Exception e){
-            str[1] = "";
+        return result.toString();
+    }
+
+    private String diagStringBuilder(int startCount, int endCount, String diag){
+        StringBuilder result = new StringBuilder();
+        for(int i = startCount; i <= endCount; i++){
+            if (i < 10){
+                if (i == startCount){
+                    result.append(diag).append("0").append(i);
+                } else result.append(", ").append(diag).append("0").append(i);
+            } else result.append(", ").append(diag).append(i);
         }
-        return str;
+        return result.toString();
     }
 }

@@ -104,6 +104,7 @@ public class SearchDead extends Thread {
                 reportTaskService.updateStatus(TaskStatus.error, err.getMessage(), "", id);
             } else err.getStackTrace();
         }
+        reportTaskService.updateStatus(TaskStatus.success, "Успешно", "", id);
     }
 
 }

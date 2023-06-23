@@ -44,4 +44,7 @@ public interface DNGetRepo extends JpaRepository<DNGet, Long> {
 
     @Query("select t from People t inner join t.dngets")
     List<DNGet> findAll1();
+
+    @Query("select t from DNGet t where t.specialization = 41")
+    List<DNGet> findAllByOnkologist();
 }
