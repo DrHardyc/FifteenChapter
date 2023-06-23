@@ -52,7 +52,7 @@ public class F003Service{
     }
     public boolean Check(String par) throws IOException {
         if (par.isEmpty()) return false;
-        ServiceUtil su = new ServiceUtil();
+        UtilService su = new UtilService();
         F003Service f003Service = new F003Service();
         List<F003> f003s = f003Service.getF003s(su.getHBBufferedReader("http://nsi.ffoms.ru/nsi-int/api/data?identifier=F003&filters=mcod%7C" + par));
         for (F003 f003 : f003s){

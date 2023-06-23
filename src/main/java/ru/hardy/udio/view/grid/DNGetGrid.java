@@ -8,10 +8,11 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
-import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
+import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.struct.DNGet;
+import ru.hardy.udio.service.UtilService;
 
 import java.util.function.Consumer;
 
@@ -28,9 +29,9 @@ public class DNGetGrid {
         Grid.Column<DNGet> profileCol = grid.addColumn(DNGet::getSpecialization).setResizable(true).setSortable(true);
         Grid.Column<DNGet> ageCol = grid.addColumn(DNGet::getAge).setResizable(true).setSortable(true);
         Grid.Column<DNGet> invCol = grid.addColumn(DNGet::getPeopleInv).setResizable(true).setSortable(true);
-        Grid.Column<DNGet> date1Col = grid.addColumn(new LocalDateTimeRenderer<>(
+        Grid.Column<DNGet> date1Col = grid.addColumn(new LocalDateRenderer<>(
                 DNGet::getLocalDateTimeDate_1, "dd.MM.yyyy")).setResizable(true).setComparator(DNGet::getLocalDateTimeDate_1);
-        Grid.Column<DNGet> dateCallCol = grid.addColumn(new LocalDateTimeRenderer<>(
+        Grid.Column<DNGet> dateCallCol = grid.addColumn(new LocalDateRenderer<>(
                 DNGet::getLocalDateTimeDate_call, "dd.MM.yyyy")).setResizable(true).setComparator(DNGet::getLocalDateTimeDate_call);
 
         DNGetFilter dnGetFilter = new DNGetFilter(dnGetGridListDataView);
@@ -136,11 +137,11 @@ public class DNGetGrid {
             boolean matchesFio = matches(dnGet.getFIO(), fio);
             boolean matchesMo_attach = matches(String.valueOf(dnGet.getMOAttach()), mo_attach);
             boolean matchesMo = matches(String.valueOf(dnGet.getMo()), mo);
-            boolean matchesSex = matches(dnGet.getPeopleSex(), sex);
+            boolean matchesSex = matches(String.valueOf(dnGet.getPeopleSex()), sex);
             boolean matchesDiag = matches(dnGet.getDiag(), diag);
             boolean matchesProfile = matches(String.valueOf(dnGet.getSpecialization()), profile);
             boolean matchesAge = matches(String.valueOf(dnGet.getAge()), age);
-            boolean matchesInv = matches(dnGet.getPeopleInv(), inv);
+            boolean matchesInv = matches(String.valueOf(dnGet.getPeopleInv()), inv);
             boolean matchesDate1 = matches(dnGet.getDate1String(), date_1);
             boolean matchesDateCall = matches(dnGet.getDateCallString(), date_call);
 
@@ -149,8 +150,8 @@ public class DNGetGrid {
         }
 
         private boolean matches(String value, String searchTerm) {
-
-            if (searchTerm != null && searchTerm.equals(age) && parseAge(value, searchTerm)){
+            UtilService utilService = new UtilService();
+            if (searchTerm != null && searchTerm.equals(age) && utilService.parseAge(value, searchTerm)){
                 if(age.contains(">") && !age.substring(1).isEmpty()){
                     return Integer.parseInt(value) > Integer.parseInt(searchTerm.substring(1));
                 }
@@ -161,16 +162,6 @@ public class DNGetGrid {
             return searchTerm == null || searchTerm.isEmpty() || value.toLowerCase().contains(searchTerm.toLowerCase());
         }
 
-        private boolean parseAge(String value, String searchTerm) {
-            try
-            {
-                Integer.parseInt(value);
-                Integer.parseInt(searchTerm.substring(1));
-            } catch (Exception e){
-                return false;
-            }
-            return true;
-        }
     }
     private static Component createFilterHeader(String labelText, Consumer<String> filterChangeConsumer) {
         Label label = new Label(labelText);

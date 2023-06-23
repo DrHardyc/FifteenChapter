@@ -3,6 +3,8 @@ package ru.hardy.udio.view;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -13,26 +15,28 @@ import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
+import com.vaadin.flow.data.renderer.LocalDateRenderer;
+import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.persistence.OrderBy;
 import org.springframework.beans.factory.annotation.Autowired;
-import ru.hardy.udio.config.DBJDBCConfig;
-import ru.hardy.udio.domain.struct.DNGet;
-import ru.hardy.udio.domain.struct.DataFile;
-import ru.hardy.udio.domain.struct.DataFilePatient;
+import org.springframework.security.core.context.SecurityContextHolder;
+import ru.hardy.udio.domain.struct.*;
+import ru.hardy.udio.domain.task.ReportTask;
+import ru.hardy.udio.domain.task.TaskStatus;
 import ru.hardy.udio.service.*;
 import ru.hardy.udio.service.SRZ.DBFSearchService;
+import ru.hardy.udio.service.deamonservice.SearchDead;
+import ru.hardy.udio.service.taskservice.ReportTaskService;
 
+import java.awt.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -58,10 +62,15 @@ public class TestView extends VerticalLayout {
     @Autowired
     private DataFileService dataFileService;
 
+    private final String username;
+
+    @Autowired
+    private SearchDead searchDead = new SearchDead();
+
+
     public TestView() throws SQLException {
 
         Avatar avatar = new Avatar();
-
         Anchor anchor = new Anchor(new StreamResource("DNTh.xlsx",
                 () -> {
                     try {
@@ -71,6 +80,8 @@ public class TestView extends VerticalLayout {
                     }
                 }),
                 "A document");
+
+        username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         anchor.getElement().setAttribute("router-ignore", true);
 
@@ -136,8 +147,8 @@ public class TestView extends VerticalLayout {
             ExcelService excelService = new ExcelService(sexService, dataFilePatientService);
             System.out.println(event.getFileName().substring(0, 6));
             try {
-                peopleService.processingFromExcel(excelService.loadFromExcelOnkoOther(
-                        new DataFile(event.getFileName(), Date.from(Instant.now()), Integer.parseInt(event.getFileName().substring(0, 6)), 1234L),
+                peopleService.processingFromExcel(excelService.tmpLoadDeadNewFormat(
+                        new DataFile(event.getFileName(), Date.from(Instant.now()), 155555, 5555L),
                         buffer.getInputStream(event.getFileName())
                 ));
             } catch (ParseException e) {
@@ -188,7 +199,7 @@ public class TestView extends VerticalLayout {
         Button btnSearchDead = new Button("Поиск умерших");
 
         btnSearchDead.addClickListener(e -> {
-            peopleService.searchDead();
+            searchDead.start();
         });
 
         Button btnSearchNoSearch = new Button("Поиск не добавленных");
@@ -196,7 +207,8 @@ public class TestView extends VerticalLayout {
             boolean flag = true;
             for (DataFilePatient dataFilePatient : dataFilePatientService.getAllLoadSuccess(1)){
                 for (DNGet dnGet: dnGetService.getAll()){
-                    if (dataFilePatient.getFIO().equals(dnGet.getPeople().getFIO()) && dataFilePatient.getEnp().equals((dnGet.getPeople().getEnp()))) {
+                    if (dataFilePatient.getFIO().equals(dnGet.getPeople().getFIO())
+                            && dataFilePatient.getEnp().equals((dnGet.getPeople().getEnp()))) {
                         flag = false;
                         break;
                     }
@@ -205,7 +217,24 @@ public class TestView extends VerticalLayout {
             }
         });
 
-        add(btnSearchInSRZ, btnSearchDead, btnUpdateNotAdd, btnSearchNoSearch);
+        Button btnTestDNGetAll = new Button();
+        btnTestDNGetAll.addClickListener(e -> {
+            Grid<DNGet> dnGetGrid = new Grid<>();
+            List<DNGet> dnGetList = dnGetService.getAll();
+            dnGetGrid.addColumn(DNGet::getFIO).setHeader("ФИО").setSortable(true);
+            dnGetGrid.addColumn(DNGet::getDiag).setHeader("Диагноз").setSortable(true);
+            dnGetGrid.addColumn(new LocalDateRenderer<>(
+                    DNGet::getLocalDateTimeDate_1, "dd.MM.yyyy")).setResizable(true).setComparator(DNGet::getLocalDateTimeDate_1);
+            dnGetGrid.setItems(dnGetList);
+            Dialog dialog = new Dialog();
+            dialog.setSizeFull();
+            dialog.add(dnGetGrid);
+            dnGetGrid.setSizeFull();
+            //add(dialog);
+            dialog.open();
+        });
+
+        add(btnSearchInSRZ, btnSearchDead, btnUpdateNotAdd, btnSearchNoSearch, btnTestDNGetAll);
 
     }
 }

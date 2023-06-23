@@ -17,21 +17,23 @@ import com.vaadin.flow.component.textfield.TextField;
 import org.springframework.stereotype.Service;
 import org.vaadin.olli.FileDownloadWrapper;
 import ru.hardy.udio.domain.struct.DNGet;
+import ru.hardy.udio.domain.struct.DNOut;
 import ru.hardy.udio.service.DNGetService;
 import ru.hardy.udio.service.ExcelService;
 import ru.hardy.udio.service.TokenService;
 import ru.hardy.udio.view.grid.DNGetGrid;
+import ru.hardy.udio.view.grid.DNOutGrid;
 
 import java.io.File;
 import java.util.List;
 
 @Service
-public class DialogView {
+public class DialogViewGen {
 
     private final Dialog dialog = new Dialog();
     private final HorizontalLayout horizontalLayout = new HorizontalLayout();//Костыль Excel
 
-    public DialogView(){
+    public DialogViewGen(){
         Button closeButton = new Button(new Icon(VaadinIcon.CLOSE_SMALL),
                 (event) -> dialog.close());
         closeButton.getStyle().set("margin-left", "auto");
@@ -83,13 +85,65 @@ public class DialogView {
         return dialog;
     }
 
+    public Dialog getDieReportDialog(List<DNOut> dnOuts){
+        Label label = new Label();
+        Grid<DNOut> grid = new Grid<>(DNOut.class, false);
+        Button btnExcel = new Button("Выгрузить в Excel");
+        btnExcel.setEnabled(false);
+        btnExcel.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        DNOutGrid dnOutGrid = new DNOutGrid();
+
+        grid.addItemDoubleClickListener(e -> {
+            Notification.show("Double Click!");
+        });
+
+        grid.setSelectionMode(Grid.SelectionMode.MULTI);
+        grid.addSelectionListener(selectionEvent -> {
+            btnExcel.setEnabled(selectionEvent.getAllSelectedItems().size() > 0);
+        });
+
+        label.getStyle().set("margin-right", "auto");
+        btnExcel.addClickListener(ev -> {
+            horizontalLayout.removeAll();
+            ExcelService excelService = new ExcelService();
+            File file = excelService.getDNOut(grid.getSelectedItems());
+
+            // Костыль имитирующий скачивание в эксель----
+            Button downloadButton = new Button();
+            downloadButton.setHeight("0px"); // что бы не было видно кнопки
+            downloadButton.setWidth("0px");
+            FileDownloadWrapper downloadButtonWrapper = new FileDownloadWrapper(file.getName(), file);
+            downloadButtonWrapper.wrapComponent(downloadButton);
+            horizontalLayout.add(downloadButtonWrapper);
+            downloadButton.clickInClient();
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            //---------------------------------------------
+        });
+
+        grid.setSizeFull();
+        GridListDataView<DNOut> dnOutGridListDataView = grid.setItems(dnOuts);
+        dnOutGrid.getGrid(grid, dnOutGridListDataView);
+        dnOutGridListDataView.addItemCountChangeListener(ev -> {
+            label.setText(String.valueOf(dnOutGridListDataView.getItemCount()));
+        });
+        dialog.getFooter().add(label, btnExcel);
+        dialog.add(grid);
+
+        return dialog;
+
+    }
+
     public Dialog getMainReportDialog(List<DNGet> dnGets){
         Label label = new Label();
         Grid<DNGet> grid = new Grid<>(DNGet.class, false);
         Button btnExcel = new Button("Выгрузить в Excel");
         btnExcel.setEnabled(false);
         btnExcel.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        DNGetGrid DNgetGrid = new DNGetGrid();
+        DNGetGrid dnGetGrid = new DNGetGrid();
 
         grid.addItemDoubleClickListener(e -> {
             Notification.show("Double Click!");
@@ -124,7 +178,7 @@ public class DialogView {
 
         grid.setSizeFull();
         GridListDataView<DNGet> dnGetGridListDataView = grid.setItems(dnGets);
-        DNgetGrid.getGrid(grid, dnGetGridListDataView);
+        dnGetGrid.getGrid(grid, dnGetGridListDataView);
         dnGetGridListDataView.addItemCountChangeListener(ev -> {
             label.setText(String.valueOf(dnGetGridListDataView.getItemCount()));
         });

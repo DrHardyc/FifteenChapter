@@ -30,15 +30,15 @@ public class ReportTaskGrid {
             return new Anchor(new StreamResource(item.getFile_name(),
                     () -> {
                         try {
-                            return new FileInputStream("reports\\" + item.getFile_name());
+                            return new FileInputStream("C:\\udio\\reports\\" + item.getFile_name());
                         } catch (FileNotFoundException e) {
                             throw new RuntimeException(e);
                         }
                     }),
                     item.getFile_name());
         })).setResizable(true).setSortable(true).setWidth("300px");
-        Grid.Column<ReportTask> statusCol = grid.addColumn(ReportTask::getStatus).setResizable(true).setSortable(true);
-        Grid.Column<ReportTask> errCol = grid.addColumn(ReportTask::getResult).setResizable(true).setSortable(true);
+        Grid.Column<ReportTask> statusCol = grid.addColumn(ReportTask::getStatusRUCaption).setResizable(true).setSortable(true);
+        Grid.Column<ReportTask> periodCol = grid.addColumn(ReportTask::getPeriod).setResizable(true).setSortable(true);
         Grid.Column<ReportTask> usernameCol = grid.addColumn(ReportTask::getUsername).setResizable(true).setSortable(true);
         Grid.Column<ReportTask> dateBegCol = grid.addColumn(new LocalDateTimeRenderer<>(
                 ReportTask::getLocalDateTimeDateBeg, "dd.MM.yyyy HH:mm:ss")).setResizable(true)
@@ -53,7 +53,7 @@ public class ReportTaskGrid {
         headerRow.getCell(nameCol).setComponent(createFilterHeader("Наименование", taskReportGrid::setName));
         headerRow.getCell(filenameCol).setComponent(createFilterHeader("Файл excel", taskReportGrid::setFileName));
         headerRow.getCell(statusCol).setComponent(createFilterHeader("Статус", taskReportGrid::setStatus));
-        headerRow.getCell(errCol).setComponent(createFilterHeader("Результат выполнения", taskReportGrid::setErrorText));
+        headerRow.getCell(periodCol).setComponent(createFilterHeader("Период", taskReportGrid::setPeriod));
         headerRow.getCell(usernameCol).setComponent(createFilterHeader("Пользователь", taskReportGrid::setUsername));
         headerRow.getCell(dateBegCol).setComponent(createFilterHeader("Дата начала выполнения", taskReportGrid::setDateBeg));
         headerRow.getCell(dateEditCol).setComponent(createFilterHeader("Дата окончания выполнения", taskReportGrid::setDateEdit));
@@ -69,7 +69,7 @@ public class ReportTaskGrid {
 
         private String status;
 
-        private String error_text;
+        private String period;
 
         private String username;
 
@@ -91,8 +91,8 @@ public class ReportTaskGrid {
             this.dataView.refreshAll();
         }
 
-        public void setErrorText(String error_text) {
-            this.error_text = error_text;
+        public void setPeriod(String period) {
+            this.period = period;
             this.dataView.refreshAll();
         }
 
@@ -123,13 +123,13 @@ public class ReportTaskGrid {
         public boolean refresh(ReportTask reportTask) {
             boolean matchesName = matches(reportTask.getName(), name);
             boolean matchesFilename = matches(reportTask.getFile_name(), file_name);
-            boolean matchesStatus = matches(reportTask.getStatus().toString(), status);
-            boolean matchesErrorText = matches(reportTask.getResult(), error_text);
+            boolean matchesStatus = matches(reportTask.getStatusRUCaption(), status);
+            boolean matchesPeriod = matches(reportTask.getPeriod(), period);
             boolean matchesUsername = matches(reportTask.getUsername(), username);
             boolean matchesDateBeg = matches(reportTask.getDateBegString(), dateBeg);
             boolean matchesDateEdit = matches(reportTask.getDateEditString(), dateEdit);
 
-            return matchesName && matchesFilename && matchesStatus && matchesErrorText && matchesUsername
+            return matchesName && matchesFilename && matchesStatus && matchesPeriod && matchesUsername
                     && matchesDateBeg && matchesDateEdit;
         }
 

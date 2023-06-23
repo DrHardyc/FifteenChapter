@@ -1,11 +1,10 @@
-package ru.hardy.udio.service.report;
+package ru.hardy.udio.service.reportservice;
 
 import org.springframework.stereotype.Service;
-import ru.hardy.udio.config.DBJDBCConfig;
 import ru.hardy.udio.domain.report.AgeLimit;
 import ru.hardy.udio.domain.report.DateInterval;
 import ru.hardy.udio.domain.struct.DNGet;
-import ru.hardy.udio.service.ServiceUtil;
+import ru.hardy.udio.service.UtilService;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,11 +13,11 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Service
-public class ONKOReport {
+public class ONKOReportService {
     private final List<DNGet> dnGets;
-    private final ServiceUtil serviceUtil = new ServiceUtil();
+    private final UtilService utilService = new UtilService();
 
-    public ONKOReport(List<DNGet> dnGets){
+    public ONKOReportService(List<DNGet> dnGets){
         this.dnGets = dnGets;
     }
 
@@ -93,16 +92,16 @@ public class ONKOReport {
                                 "left join nsi.specialities spec on spec.id = sl.prvs " +
                                 "left join nsi_med.med_mkb10 mkb on mkb.id = sl.ds1 " +
                                 "where cb.date_1 between " +
-                                "to_date('" + dateFormat.format(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                                "to_date('" + dateFormat.format(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate))
                                 + "', 'dd.mm.yyyy') and " +
-                                "to_date('" + dateFormat.format(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate))
+                                "to_date('" + dateFormat.format(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate))
                                 + "', 'dd.mm.yyyy') " +
                                 " and upper(cbp.pac_fam) = '" + dnGet.getPeople().getFam().toUpperCase() +
                                 "' and upper(cbp.pac_im)  = '" + dnGet.getPeople().getIm().toUpperCase() +
                                 "' and upper(cbp.pac_ot) = '" + dnGet.getPeople().getOt().toUpperCase() +
                                 "' and cbp.pac_dr  = to_date('" + dateFormat.format(dnGet.getPeople().getDr()) + "', 'DD.MM.YYYY') " +
                                 "and cb.enp  = '" + dnGet.getPeople().getEnp() + "'" +
-                                " and mhc.code in (" + serviceUtil.transformStringArrayForBars(usl_ok) +
+                                " and mhc.code in (" + utilService.transformStringArrayForBars(usl_ok) +
                                 ") and (substring(mkb.mkb_code, 1, 1) = 'C' or substring(mkb.mkb_code, 1, 2) = 'D0')");
 
                 if (resultSet.next()) {

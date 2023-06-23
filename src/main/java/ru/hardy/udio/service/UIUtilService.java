@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 
 @Service
-public class UIUtil {
+public class UIUtilService {
     public Button InitButtonOK(Button button){
         button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         return button;

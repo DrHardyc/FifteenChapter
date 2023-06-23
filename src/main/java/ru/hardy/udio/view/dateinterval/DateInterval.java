@@ -27,7 +27,8 @@ public class DateInterval {
     public ComboBox<Integer> getYearInterval(String name){
         LocalDate now = LocalDate.now(ZoneId.systemDefault());
         List<Integer> selectableYears = IntStream
-                .range(now.getYear() - 2, now.getYear() + 1).boxed()
+                .range(now.getYear() - 130, now.getYear() + 1).boxed()
+                .sorted()
                 .collect(Collectors.toList());
 
         ComboBox<Integer> yearPicker = new ComboBox<>(name, selectableYears);

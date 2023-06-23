@@ -1,7 +1,6 @@
 package ru.hardy.udio.domain.task;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,7 +25,7 @@ public class ReportTask {
     private String file_name;
 
     @Enumerated(EnumType.STRING)
-    private StatusTask status;
+    private TaskStatus status;
 
     private String result;
 
@@ -35,14 +34,17 @@ public class ReportTask {
     private Date dateBeg;
     private Date dateEdit;
 
-    public ReportTask(String name, String file_name, StatusTask statusTask, String result, String username){
+    private String period;
+
+    public ReportTask(String name, String file_name, TaskStatus taskStatus, String result, String username, String periods){
         this.name = name;
         this.file_name = file_name;
-        this.status = statusTask;
+        this.status = taskStatus;
         this.result = result;
         this.username = username;
+        this.period = periods;
         this.dateBeg = Date.from(Instant.now());
-        this.dateEdit = Date.from(Instant.now());
+        //this.dateEdit = Date.from(Instant.now());
     }
 
     public ReportTask() {
@@ -77,5 +79,14 @@ public class ReportTask {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         if (this.getDateEdit() != null) return dateFormat.format(this.getDateEdit());
         return null;
+    }
+
+    public String getStatusRUCaption(){
+         switch (this.getStatus()) {
+             case error -> {return "ошибка";}
+             case progress -> {return "в процессе";}
+             case success -> {return "завершена";}
+             default -> {return "";}
+         }
     }
 }

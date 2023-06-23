@@ -11,8 +11,6 @@ import ru.hardy.udio.repo.DataFilePatientRepo;
 import ru.hardy.udio.repo.PeopleRepo;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -87,4 +85,35 @@ public class DNGetService {
         dnGetRepo.deleteAll(dnGets);
     }
 
+//    public List<DNGetDTO> getAllDTO() {
+//        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
+//        Statement statement = dbjdbcConfig.getUDIO();
+//
+//        List<DNGetDTO> dnGets = new ArrayList<>();
+//        try {
+//            ResultSet resultSet = statement.executeQuery("select concat(p.fam, ' ', p.im, ' ', p.ot), p.mo_attach, " +
+//                    "dg.nhistory, dg.date_1, dg.diag, dg.date_call, dg.specialization, p.dr, p.sex_id, p.inv, dg.mo " +
+//                    "from udio_tfoms.dnget dg " +
+//                    "inner join udio_tfoms.people p on dg.people_id = p.id");
+//
+//            while (resultSet.next()){
+//                dnGets.add(new DNGetDTO(resultSet.getString(1),
+//                                        resultSet.getInt(2),
+//                                        resultSet.getString(3),
+//                                        resultSet.getDate(4),
+//                                        resultSet.getString(5),
+//                                        resultSet.getDate(6),
+//                                        resultSet.getInt(7),
+//                                        resultSet.getDate(8),
+//                                        resultSet.getInt(9),
+//                                        resultSet.getInt(10),
+//                                        resultSet.getInt(11)
+//                        )
+//                );
+//            }
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//        return dnGets;
+//    }
 }

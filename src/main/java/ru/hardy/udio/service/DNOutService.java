@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.struct.DNOut;
 import ru.hardy.udio.repo.DNOutRepo;
 
+import java.util.List;
+
 @Service
 public class DNOutService {
 
@@ -13,5 +15,9 @@ public class DNOutService {
 
     public void add(DNOut dnOut){
         dnOutRepo.save(dnOut);
+    }
+
+    public List<DNOut> getAll(){
+        return dnOutRepo.findAll();
     }
 }

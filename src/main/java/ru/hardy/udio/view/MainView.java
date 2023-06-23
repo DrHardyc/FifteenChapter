@@ -5,7 +5,6 @@ import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.html.H3;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
@@ -15,7 +14,7 @@ import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import ru.hardy.udio.domain.User;
-import ru.hardy.udio.service.ServiceUtil;
+import ru.hardy.udio.service.UtilService;
 import ru.hardy.udio.service.UserService;
 
 
@@ -36,7 +35,7 @@ public class MainView extends AppLayout {
 
         H3 title = new H3("Диспансерное наблюдение v1.1_betta");
         title.getStyle().set("margin", "0");
-        ServiceUtil su = new ServiceUtil();
+        UtilService su = new UtilService();
         Tabs tabs = su.getTabs();
         tabs.setAutoselect(true);
 

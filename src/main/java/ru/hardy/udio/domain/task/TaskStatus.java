@@ -1,6 +1,6 @@
 package ru.hardy.udio.domain.task;
 
-public enum StatusTask {
+public enum TaskStatus {
     progress,
     success,
     error

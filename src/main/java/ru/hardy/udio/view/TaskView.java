@@ -9,7 +9,7 @@ import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.hardy.udio.domain.task.ReportTask;
-import ru.hardy.udio.service.task.ReportTaskService;
+import ru.hardy.udio.service.taskservice.ReportTaskService;
 import ru.hardy.udio.view.grid.ReportTaskGrid;
 
 @Route(layout = MainView.class)

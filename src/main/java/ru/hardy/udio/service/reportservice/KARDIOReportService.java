@@ -1,10 +1,9 @@
-package ru.hardy.udio.service.report;
+package ru.hardy.udio.service.reportservice;
 
 import org.springframework.stereotype.Service;
-import ru.hardy.udio.config.DBJDBCConfig;
 import ru.hardy.udio.domain.report.DateInterval;
 import ru.hardy.udio.domain.struct.DNGet;
-import ru.hardy.udio.service.ServiceUtil;
+import ru.hardy.udio.service.UtilService;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,12 +12,12 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Service
-public class KARDIOReport {
+public class KARDIOReportService {
 
     private final List<DNGet> dnGets;
-    private final ServiceUtil serviceUtil = new ServiceUtil();
+    private final UtilService utilService = new UtilService();
 
-    public KARDIOReport(List<DNGet> dnGets){
+    public KARDIOReportService(List<DNGet> dnGets){
         this.dnGets = dnGets;
     }
 
@@ -42,9 +41,9 @@ public class KARDIOReport {
                         "left join nsi_med.med_mkb10 mkb on mkb.id = cb.ds1 " +
                         "left join nsi_med.med_purp_visit mpv on mpv.id = sl.p_cel " +
                         "where cb.date_1 between " +
-                        "to_date('" + dateFormat.format(serviceUtil.transformDate(monthBeg, yearBeg, DateInterval.minDate))
+                        "to_date('" + dateFormat.format(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate))
                             + "', 'dd.mm.yyyy') and " +
-                        "to_date('" + dateFormat.format(serviceUtil.transformDate(monthEnd, yearEnd, DateInterval.maxDate))
+                        "to_date('" + dateFormat.format(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate))
                             + "', 'dd.mm.yyyy')" +
                         " and upper(cbp.pac_fam) = '" + dnGet.getPeople().getFam().toUpperCase() +
                         "' and upper(cbp.pac_im)  = '" + dnGet.getPeople().getIm().toUpperCase() +

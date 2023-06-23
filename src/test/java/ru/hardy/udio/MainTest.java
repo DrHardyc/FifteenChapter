@@ -6,10 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import ru.hardy.udio.domain.struct.People;
+import ru.hardy.udio.domain.struct.DNGet;
+import ru.hardy.udio.domain.struct.Sex;
 import ru.hardy.udio.repo.DNGetRepo;
 import ru.hardy.udio.repo.DNOutRepo;
 import ru.hardy.udio.repo.PeopleRepo;
+import ru.hardy.udio.repo.SexRepo;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -29,11 +31,22 @@ public class MainTest {
     @Autowired
     private PeopleRepo peopleRepo;
 
+    @Autowired
+    private SexRepo sexRepo;
+
     @Test
     public void test() throws ParseException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
 
-        System.out.println(dnGetRepo.findAllByDate_1Between(dateFormat.parse("26.02.2022"), dateFormat.parse("25.02.2023")));
+        DNGet dnGet = dnGetRepo.getReferenceById(412598L);
+
+
+        Sex sex = sexRepo.searchById(1L);
+        System.out.println(sex.getId());
+
+
+//        System.out.println(Period.between(dateFormat.parse("25.01.2011").toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+//                LocalDate.now()).getYears());
     }
 }

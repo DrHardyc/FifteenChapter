@@ -23,7 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Service
-public class ServiceUtil{
+public class UtilService {
 
     public Tabs getTabs(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -80,11 +80,7 @@ public class ServiceUtil{
             }
             case maxDate -> {
                 try {
-                    if (month.equals("12")){
-                        return dateFormat.parse("25.01." + (Integer.parseInt(year) + 1));
-                    } else {
-                        return dateFormat.parse("25." + (Integer.parseInt(month) + 1) + "." + year);
-                    }
+                    return dateFormat.parse("25." + Integer.parseInt(month) + "." + year);
                 } catch (ParseException e) {
                     throw new RuntimeException(e);
                 }
@@ -110,5 +106,35 @@ public class ServiceUtil{
             count++;
         }
         return resultStr.toString();
+    }
+
+    public String getStringMonth(String month){
+        return switch (month) {
+            case "1" -> "январь";
+            case "2" -> "февраль";
+            case "3" -> "март";
+            case "4" -> "апрель";
+            case "5" -> "май";
+            case "6" -> "июнь";
+            case "7" -> "июль";
+            case "8" -> "август";
+            case "9" -> "сентябрь";
+            case "10" -> "октябрь";
+            case "11" -> "ноябрь";
+            case "12" -> "декабрь";
+            default -> "";
+        };
+    }
+
+
+    public boolean parseAge(String value, String searchTerm) {
+        try
+        {
+            Integer.parseInt(value);
+            Integer.parseInt(searchTerm.substring(1));
+        } catch (Exception e){
+            return false;
+        }
+        return true;
     }
 }

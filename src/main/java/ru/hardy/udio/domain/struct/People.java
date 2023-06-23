@@ -31,6 +31,8 @@ public class People {
     private Integer inv; //инвалидность
     private int mo_attach; //мо прикрепления
 
+    private Date ds; // Дата смерти
+
     @OneToMany(mappedBy="people", fetch = FetchType.LAZY)
     private List<DNGet> dngets; //случаи прохождения д-наблюдения
 
@@ -54,20 +56,6 @@ public class People {
         this.date_edit = Date.from(Instant.now());
     }
 
-//    public People(Long idsrz, String fam, String ot, String im, Date dr, String enp, Sex sex, Integer inv, int mo_attach){
-//        this.idsrz = idsrz;
-//        this.fam = fam;
-//        this.im = im;
-//        this.ot = ot;
-//        this.dr = dr;
-//        this.enp = enp;
-//        this.inv = inv;
-//        this.mo_attach = mo_attach;
-//        this.sex = sex;
-//        this.date_beg = Date.from(Instant.now());
-//        this.date_edit = Date.from(Instant.now());
-//    }
-
     public People() {
 
     }
@@ -84,5 +72,6 @@ public class People {
     public String getSexName(){
         return this.getSex().getName();
     }
+
 
 }

@@ -1,14 +1,12 @@
 package ru.hardy.udio.repo;
 
+import jakarta.persistence.OrderBy;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.hardy.udio.domain.struct.DNGet;
 import ru.hardy.udio.domain.struct.People;
 
-import java.time.Instant;
-import java.time.Month;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +17,8 @@ public interface DNGetRepo extends JpaRepository<DNGet, Long> {
     List<DNGet> findByPeopleId(Long id);
     DNGet findByDiagAndPeople(String diag, People people);
 
+    @Query("select t from DNGet t where exists (select p from People p where t.people = p and p.fam = :fam and p.im = :im and p.ot = :ot)")
+    List<DNGet> findByFamAndImAndOtOrderByFIO(String fam, String im, String ot);
 
     @Query("select t from DNGet t " +
             "where t.date_1 between :dateBeg and :dateEnd")
@@ -40,4 +40,8 @@ public interface DNGetRepo extends JpaRepository<DNGet, Long> {
     @Query("select t from DNGet t " +
             "where t.date_1 between :dateFrom and :dateTo")
     List<DNGet> findAllByDate_1Between(Date dateFrom, Date dateTo);
+
+
+    @Query("select t from People t inner join t.dngets")
+    List<DNGet> findAll1();
 }

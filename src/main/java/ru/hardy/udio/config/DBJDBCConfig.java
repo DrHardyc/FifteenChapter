@@ -14,9 +14,8 @@ public class DBJDBCConfig{
         dataSource.setUsername("expert");
         dataSource.setPassword("123");
 
-        Connection connection = null;
         try {
-            connection = dataSource.getConnection();
+            Connection connection = dataSource.getConnection();
             return connection.createStatement();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -34,6 +33,21 @@ public class DBJDBCConfig{
             Statement statement = connection.createStatement();
             statement.execute("select core.f_sys_set_config('sysuser',core.f_users8get_id_by_name('CherchesovMV')::text)");
             return statement;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Statement getUDIO() {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("org.postgresql.Driver");
+        dataSource.setUrl("jdbc:postgresql://192.168.2.157/udio");
+        dataSource.setUsername("mcherchesov");
+        dataSource.setPassword("123");
+
+        try {
+            Connection connection = dataSource.getConnection();
+            return connection.createStatement();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

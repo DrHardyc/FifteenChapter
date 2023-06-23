@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.util.Date;
@@ -71,13 +72,34 @@ public class DNGet {
         return Period.between(this.getPeople().getDr().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
                 LocalDate.now()).getYears();
     }
-
-    public String getPeopleInv() {
-        return String.valueOf(this.getPeople().getInv());
-    }
-
     public String getFIO() {
         return this.getPeople().getFIO();
+    }
+
+    public int getMOAttach(){
+        return this.getPeople().getMo_attach();
+    }
+
+    public int getPeopleInv(){
+        return this.getPeople().getInv();
+    }
+
+    public LocalDate getLocalDateTimeDate_1() {
+        if (this.date_1 != null) {
+            return this.getDate_1().toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+        }
+        return null;
+    }
+
+    public LocalDate getLocalDateTimeDate_call() {
+        if (this.date_call != null) {
+            return this.getDate_call().toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+        }
+        return null;
     }
 
     public String getDate1String() {
@@ -92,40 +114,18 @@ public class DNGet {
         return null;
     }
 
-    public LocalDateTime getLocalDateTimeDate_1() {
-        if (this.date_1 != null) {
-            return this.date_1.toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDateTime();
-        }
-        return null;
-    }
-
-    public LocalDateTime getLocalDateTimeDate_call() {
-        if (this.date_call != null){
-            return this.date_call.toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDateTime();
-        }
-        return null;
-    }
-
-    public int getMOAttach(){
-        return this.people.getMo_attach();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        DNGet dnGet = (DNGet) o;
-        return this.getPeople().equals(dnGet.getPeople());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.getPeople());
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass())
+//            return false;
+//        DNGet dnGet = (DNGet) o;
+//        return this.getId().equals(dnGet.getId());
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(this.getId());
+//    }
 
 }

@@ -1,10 +1,10 @@
-package ru.hardy.udio.service.task;
+package ru.hardy.udio.service.taskservice;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.hardy.udio.domain.task.ReportTask;
-import ru.hardy.udio.domain.task.StatusTask;
+import ru.hardy.udio.domain.task.TaskStatus;
 import ru.hardy.udio.repo.ReportTaskRepo;
 
 import java.sql.Date;
@@ -22,11 +22,11 @@ public class ReportTaskService {
     }
 
     @Transactional
-    public void updateStatus(StatusTask statusTask, String result, String filname, Long id){
+    public void updateStatus(TaskStatus taskStatus, String result, String filname, Long id){
         ReportTask reportTask = reportTaskRepo.getReferenceById(id);
         reportTask.setDateEdit(Date.from(Instant.now()));
         reportTask.setFile_name(filname);
-        reportTask.setStatus(statusTask);
+        reportTask.setStatus(taskStatus);
         reportTask.setResult(result);
         reportTaskRepo.save(reportTask);
     }

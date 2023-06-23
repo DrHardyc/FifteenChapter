@@ -1,13 +1,11 @@
 package ru.hardy.udio.view;
 
-import com.github.appreciated.apexcharts.ApexCharts;
 import com.linuxense.javadbf.DBFReader;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.textfield.PasswordField;
@@ -18,36 +16,37 @@ import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.hardy.udio.domain.Role;
+import ru.hardy.udio.domain.deamon.Deamon;
 import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.service.*;
-import ru.hardy.udio.view.dialog.DialogView;
+import ru.hardy.udio.service.deamonservice.DeamonService;
+import ru.hardy.udio.service.deamonservice.SearchDead;
+import ru.hardy.udio.view.dialog.DialogViewGen;
 
-import java.sql.SQLException;
 import java.util.Collections;
 
 @Route(layout = MainView.class)
 @RolesAllowed("ROLE_ADMIN")
 public class AdminView extends VerticalLayout{
-
     @Autowired
     private TokenService tokenService;
-
     @Autowired
     private UserService userService;
-
     @Autowired
     private PeopleService peopleService;
-
     @Autowired
     private DataFilePatientService dataFilePatientService;
-
     @Autowired
     private DataFileService dataFileService;
+    @Autowired
+    private DeamonService deamonService;
+    @Autowired
+    private SearchDead searchDead;
 
-
+    private final Grid<Deamon> gridDeamon = new Grid<>();
     public AdminView(){
         TabSheet tabSheet = new TabSheet();
-        Button btnTest = new UIUtil().InitButtonOK(new Button("Test"));
+        Button btnTest = new UIUtilService().InitButtonOK(new Button("Test"));
 
         VerticalLayout vlTestExcel = new VerticalLayout();
         vlTestExcel.add(btnTest);
@@ -79,8 +78,8 @@ public class AdminView extends VerticalLayout{
         VerticalLayout vlKeyGen = new VerticalLayout();
         Button btnKeyGen = new Button("Сгенерировать ключ для ЛПУ");
         btnKeyGen.addClickListener(e -> {
-            DialogView dialogView = new DialogView();
-            Dialog dialog = dialogView.getKeyGenDialog(tokenService);
+            DialogViewGen dialogViewGen = new DialogViewGen();
+            Dialog dialog = dialogViewGen.getKeyGenDialog(tokenService);
             dialog.open();
         });
 
@@ -135,12 +134,36 @@ public class AdminView extends VerticalLayout{
         vlLoads.add(btnLoadFromBars);
         tabSheet.add("Загрузки", vlLoads);
 
+
+        VerticalLayout vlDeamon = new VerticalLayout();
+        gridDeamon.addColumn(Deamon::getName);
+        gridDeamon.addColumn(Deamon::getDeamonStatus);
+        gridDeamon.addColumn(Deamon::getDateStart);
+        gridDeamon.addComponentColumn(deamon -> {
+            Button btnStart = new Button();
+            btnStart.addClickListener(e -> {
+                switch (deamon.getName()){
+                    case "SearchDead" : {
+                        searchDead.setDaemon(true);
+                        searchDead.start();
+                    }
+                    case "2L" : {
+
+                    }
+                }
+            });
+            return btnStart;
+        });
+
+        vlDeamon.add(gridDeamon);
+        tabSheet.add("Демоны", vlDeamon);
+
         add(tabSheet);
     }
 
     @Override
     public void onAttach(AttachEvent attachEvent) {
-        //this.add(createApexChart());
+        gridDeamon.setItems(deamonService.getAll());
     }
 
 //    private ApexCharts createApexChart(){

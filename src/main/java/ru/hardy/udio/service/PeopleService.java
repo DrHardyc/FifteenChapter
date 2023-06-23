@@ -8,7 +8,6 @@ import ru.hardy.udio.config.DBJDBCConfig;
 import ru.hardy.udio.domain.struct.*;
 import ru.hardy.udio.repo.PeopleRepo;
 import ru.hardy.udio.service.SRZ.DBFSearchService;
-import ru.hardy.udio.service.deamon.SearchDead;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -51,6 +50,7 @@ public class PeopleService {
     public List<People> getAll(){
         return peopleRepo.findAll();
     }
+
 
     public List<People> searchFromUdio(DataFile dataFile){
         System.out.println("Сохранение результатов");
@@ -164,13 +164,11 @@ public class PeopleService {
         System.out.println("Processing complete!");
     }
 
-    @Transactional
-    public void searchDead(){
-        SearchDead searchDead = new SearchDead();
-        for (People people : searchDead.search(peopleRepo.findAll())) {
-            dnGetService.deleteAllByPeople(dnGetService.getByPeopleId(people.getId()));
-            dnOutService.add(new DNOut(people, "дата смерти"));
-            System.out.println(people.getFIO() + " " + people.getDr());
-        }
+    public List<People> getAlivePeople(){
+        return peopleRepo.findAlivePeople();
+    }
+
+    public List<People> getAllByDNGets(){
+        return peopleRepo.findAllByDNGets();
     }
 }
