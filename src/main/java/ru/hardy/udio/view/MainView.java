@@ -17,9 +17,6 @@ import ru.hardy.udio.domain.User;
 import ru.hardy.udio.service.UtilService;
 import ru.hardy.udio.service.UserService;
 
-
-
-
 @Route("")
 @PermitAll
 public class MainView extends AppLayout {
@@ -33,7 +30,7 @@ public class MainView extends AppLayout {
 
         DrawerToggle toggle = new DrawerToggle();
 
-        H3 title = new H3("Диспансерное наблюдение v1.1_betta");
+        H3 title = new H3("Д - наблюдение v1.2");
         title.getStyle().set("margin", "0");
         UtilService su = new UtilService();
         Tabs tabs = su.getTabs();

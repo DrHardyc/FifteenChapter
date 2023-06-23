@@ -47,7 +47,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver{
     private LoginI18n CreateLoginI18n(){
         LoginI18n i18n = LoginI18n.createDefault();
         LoginI18n.Form i18nForm = i18n.getForm();
-        i18nForm.setTitle("Диспансеризация и онкология");
+        i18nForm.setTitle("Д - наблюдение");
         i18nForm.setUsername("Имя пользователя");
         i18nForm.setPassword("Пароль");
         i18nForm.setSubmit("Войти");
