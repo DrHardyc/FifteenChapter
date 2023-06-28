@@ -5,10 +5,12 @@ import org.apache.poi.xssf.usermodel.*;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.config.DBJDBCConfig;
 import ru.hardy.udio.domain.report.AgeLimit;
+import ru.hardy.udio.domain.report.Efficiency;
 import ru.hardy.udio.domain.report.VisitType;
 import ru.hardy.udio.domain.report.WorkingAgeSex;
 import ru.hardy.udio.domain.struct.*;
 import ru.hardy.udio.service.reportservice.DNOnkoTherapiReportService;
+import ru.hardy.udio.service.reportservice.EfficiencyService;
 import ru.hardy.udio.service.reportservice.KARDIOReportService;
 import ru.hardy.udio.service.reportservice.ONKOReportService;
 
@@ -729,6 +731,113 @@ public class ExcelService {
         return dataFile;
     }
 
+
+    public void getEfficiencyReport(String monthBeg, String monthEnd, String yearBeg, String yearEnd, String filename, String disp, int part){
+        try {
+            workbook = new XSSFWorkbook();
+            outputStream = new FileOutputStream("C:\\udio\\reports\\" + filename);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Sheet sheet = workbook.createSheet(yearBeg);
+
+        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
+        Statement statement = dbjdbcConfig.getBars();
+        EfficiencyService efficiencyService = new EfficiencyService();
+        List<Efficiency> efficiencies = efficiencyService.getAll(statement, monthBeg, monthEnd, yearBeg, yearEnd, part);
+
+        Row row150007 = sheet.createRow(1);
+        row150007.createCell(1).setCellValue("150007");
+        row150007.createCell(2).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150007") && disp.contains(c.getDisp())).toList().size());
+        row150007.createCell(3).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150007")).toList().size());
+
+        Row row150009 = sheet.createRow(2);
+        row150009.createCell(1).setCellValue("150009");
+        row150009.createCell(2).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150009") && disp.contains(c.getDisp())).toList().size());
+        row150009.createCell(3).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150009")).toList().size());
+
+        Row row150010 = sheet.createRow(3);
+        row150010.createCell(1).setCellValue("150010");
+        row150010.createCell(2).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150010") && disp.contains(c.getDisp())).toList().size());
+        row150010.createCell(3).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150010")).toList().size());
+
+        Row row150012 = sheet.createRow(4);
+        row150012.createCell(1).setCellValue("150012");
+        row150012.createCell(2).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150012") && disp.contains(c.getDisp())).toList().size());
+        row150012.createCell(3).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150012")).toList().size());
+
+        Row row150014 = sheet.createRow(5);
+        row150014.createCell(1).setCellValue("150014");
+        row150014.createCell(2).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150014") && disp.contains(c.getDisp())).toList().size());
+        row150014.createCell(3).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150014")).toList().size());
+
+        Row row150016 = sheet.createRow(6);
+        row150016.createCell(1).setCellValue("150016");
+        row150016.createCell(2).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150016") && disp.contains(c.getDisp())).toList().size());
+        row150016.createCell(3).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150016")).toList().size());
+
+        Row row150019 = sheet.createRow(7);
+        row150019.createCell(1).setCellValue("150019");
+        row150019.createCell(2).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150019") && disp.contains(c.getDisp())).toList().size());
+        row150019.createCell(3).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150019")).toList().size());
+
+        Row row150035 = sheet.createRow(8);
+        row150035.createCell(1).setCellValue("150035");
+        row150035.createCell(2).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150035") && disp.contains(c.getDisp())).toList().size());
+        row150035.createCell(3).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150035")).toList().size());
+
+        Row row150041 = sheet.createRow(9);
+        row150041.createCell(1).setCellValue("150041");
+        row150041.createCell(2).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150041") && disp.contains(c.getDisp())).toList().size());
+        row150041.createCell(3).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150041")).toList().size());
+
+        Row row150036 = sheet.createRow(10);
+        row150036.createCell(1).setCellValue("150036");
+        row150036.createCell(2).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150036") && disp.contains(c.getDisp())).toList().size());
+        row150036.createCell(3).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150036")).toList().size());
+
+        Row row150112 = sheet.createRow(11);
+        row150112.createCell(1).setCellValue("150112");
+        row150112.createCell(2).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150112") && disp.contains(c.getDisp())).toList().size());
+        row150112.createCell(3).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150112")).toList().size());
+
+        Row row150013 = sheet.createRow(12);
+        row150013.createCell(1).setCellValue("150013");
+        row150013.createCell(2).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150013") && disp.contains(c.getDisp())).toList().size());
+        row150013.createCell(3).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150013")).toList().size());
+
+        Row row150048 = sheet.createRow(13);
+        row150048.createCell(1).setCellValue("150048");
+        row150048.createCell(2).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150048") && disp.contains(c.getDisp())).toList().size());
+        row150048.createCell(3).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150048")).toList().size());
+
+        Row row150042 = sheet.createRow(14);
+        row150042.createCell(1).setCellValue("150042");
+        row150042.createCell(2).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150042") && disp.contains(c.getDisp())).toList().size());
+        row150042.createCell(3).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150042")).toList().size());
+
+        Row row150043 = sheet.createRow(15);
+        row150043.createCell(1).setCellValue("150043");
+        row150043.createCell(2).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150043") && disp.contains(c.getDisp())).toList().size());
+        row150043.createCell(3).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150043")).toList().size());
+
+        Row row150044 = sheet.createRow(16);
+        row150044.createCell(1).setCellValue("150044");
+        row150044.createCell(2).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150044") && disp.contains(c.getDisp())).toList().size());
+        row150044.createCell(3).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150044")).toList().size());
+
+        Row row150045 = sheet.createRow(17);
+        row150045.createCell(1).setCellValue("150045");
+        row150045.createCell(2).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150045") && disp.contains(c.getDisp())).toList().size());
+        row150045.createCell(3).setCellValue(efficiencies.stream().filter(c -> c.getMo().equals("150045")).toList().size());
+
+        try {
+            workbook.write(outputStream);
+            workbook.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private String[] parseFIO(String fio){
         String[] str = new String[3];

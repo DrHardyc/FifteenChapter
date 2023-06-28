@@ -40,7 +40,7 @@ public class MainTest {
     public void test() throws ParseException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         ExcelService excelService = new ExcelService();
-        System.out.println(excelService.diagStringBuilder(4, 7, "C", 5));
+        System.out.println("4,7".contains("4"));
 
 
 //        System.out.println(Period.between(dateFormat.parse("25.01.2011").toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),

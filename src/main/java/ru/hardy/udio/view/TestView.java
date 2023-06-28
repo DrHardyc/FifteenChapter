@@ -1,6 +1,7 @@
 package ru.hardy.udio.view;
 
 import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -63,6 +64,9 @@ public class TestView extends VerticalLayout {
     private DataFileService dataFileService;
 
     private final String username;
+
+    @Autowired
+    private ExcelService excelService;
 
     @Autowired
     private SearchDead searchDead = new SearchDead();
@@ -234,7 +238,19 @@ public class TestView extends VerticalLayout {
             dialog.open();
         });
 
-        add(btnSearchInSRZ, btnSearchDead, btnUpdateNotAdd, btnSearchNoSearch, btnTestDNGetAll);
+        TextField monthBeg = new TextField();
+        TextField monthEnd = new TextField();
+        TextField yearBeg = new TextField();
+        TextField yearEnd = new TextField();
+
+        Button btnEfficiency = new Button("Результативность");
+        btnEfficiency.addClickListener(e -> {
+            excelService.getEfficiencyReport(monthBeg.getValue(), monthEnd.getValue(), yearBeg.getValue(), yearEnd.getValue(), "efficiensy23.xlsx", "7", 23);
+            excelService.getEfficiencyReport(monthBeg.getValue(), monthEnd.getValue(), yearBeg.getValue(), yearEnd.getValue(), "efficiensy24.xlsx", "7", 24);
+            excelService.getEfficiencyReport(monthBeg.getValue(), monthEnd.getValue(), yearBeg.getValue(), yearEnd.getValue(), "efficiensy3.xlsx", "4, 7", 3);
+        });
+
+        add(btnSearchInSRZ, btnSearchDead, btnUpdateNotAdd, btnSearchNoSearch, btnTestDNGetAll, btnEfficiency, monthBeg, monthEnd, yearBeg, yearEnd);
 
     }
 }
