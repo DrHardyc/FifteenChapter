@@ -1,10 +1,12 @@
 package ru.hardy.udio.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.hardy.udio.config.DBJDBCConfig;
+import ru.hardy.udio.domain.report.DateInterval;
 import ru.hardy.udio.domain.struct.*;
 import ru.hardy.udio.repo.PeopleRepo;
 import ru.hardy.udio.service.SRZ.DBFSearchService;
@@ -15,6 +17,7 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -46,6 +49,8 @@ public class PeopleService {
 
     @Autowired
     private DataFilePatientService dataFilePatientService;
+
+    private final UtilService utilService = new UtilService();
 
     public List<People> getAll(){
         return peopleRepo.findAll();
@@ -170,5 +175,65 @@ public class PeopleService {
 
     public List<People> getAllByDNGets(){
         return peopleRepo.findAllByDNGets();
+    }
+
+    public List<People> getDNTherapistReport(int ageBeg, int ageEnd, List<String> diag, Sex sex, String spec){
+        return peopleRepo.findDNTherapistReport(ageBeg, ageEnd, diag, sex, spec);
+    }
+    public List<People> getDNTherapistReport(List<String> diag, String spec){
+        return peopleRepo.findDNTherapistReport(diag, spec);
+    }
+    public List<People> getDNTherapistReport(int age, List<String> diag, Sex sex, String spec){
+        return peopleRepo.findDNTherapistReport(age, diag, sex, spec);
+    }
+
+    //с интервалами
+    public List<People> getDNTherapistReport(int ageBeg, int ageEnd, List<String> diags, Sex sex, String spec, List<String> intervals){
+        return peopleRepo.findDNTherapistReport(ageBeg, ageEnd, diags, sex, spec,
+                utilService.transformDate(intervals.get(0), intervals.get(2), DateInterval.minDate),
+                utilService.transformDate(intervals.get(1), intervals.get(3), DateInterval.maxDate));
+    }
+    public List<People> getDNTherapistReport(List<String> diags, String spec, List<String> intervals){
+        return peopleRepo.findDNTherapistReport(diags, spec,
+                utilService.transformDate(intervals.get(0), intervals.get(2), DateInterval.minDate),
+                utilService.transformDate(intervals.get(1), intervals.get(3), DateInterval.maxDate));
+    }
+    public List<People> getDNTherapistReport(int age, List<String> diags, Sex sex, String spec, List<String> intervals){
+        return peopleRepo.findDNTherapistReport(age, diags, sex, spec,
+                utilService.transformDate(intervals.get(0), intervals.get(2), DateInterval.minDate),
+                utilService.transformDate(intervals.get(1), intervals.get(3), DateInterval.maxDate));
+    }
+    //=========
+
+    public List<People> getDNTherapistReportCall(int ageBeg, int ageEnd, List<String> diag, Sex sex, String spec){
+        return peopleRepo.findDNTherapistReportCall(ageBeg, ageEnd, diag, sex, spec);
+    }
+
+    public List<People> getDNTherapistReportCall(List<String> diag, String spec){
+        return peopleRepo.findDNTherapistReportCall(diag, spec);
+    }
+
+    public List<People> getDNTherapistReportCall(int age, List<String> diag, Sex sex, String spec){
+        return peopleRepo.findDNTherapistReportCall(age, diag, sex, spec);
+    }
+
+    public List<People> getDNTherapistReportInv(int ageBeg, int ageEnd, List<String> diag, Sex sex, String spec){
+        return peopleRepo.findDNTherapistReportInv(ageBeg, ageEnd, diag, sex, spec);
+    }
+
+    public List<People> getDNTherapistReportInv(List<String> diag, String spec){
+        return peopleRepo.findDNTherapistReportInv(diag, spec);
+    }
+
+    public List<People> getDNTherapistReportInv(int age, List<String> diag, Sex sex, String spec){
+        return peopleRepo.findDNTherapistReportInv(age, diag, sex, spec);
+    }
+
+    public List<People> getDNKardioReport(){
+        return peopleRepo.findDNKardioReport();
+    }
+
+    public List<People> getDNOnkoReport(){
+        return peopleRepo.findDNOnkoReport();
     }
 }

@@ -58,7 +58,7 @@ public class DNGetGrid {
         headerRow.getCell(date1Col).setComponent(
                 createFilterHeader("Дата взятия", dnGetFilter::setDate_1));
         headerRow.getCell(dateCallCol).setComponent(
-                createFilterHeader("Дата вызова", dnGetFilter::setDate_call));
+                createFilterHeader("Дата информирования", dnGetFilter::setDate_call));
     }
 
     private static class DNGetFilter{

@@ -34,9 +34,6 @@ public interface DNGetRepo extends JpaRepository<DNGet, Long> {
     @Query("select t from DNGet t where substring(t.diag, 1, 1) = 'C' or substring(t.diag, 1, 2) = 'D0'")
     List<DNGet> findAllByONKO();
 
-    @Query("select t from DNGet t where substring(t.diag, 1, 1) = 'I'")
-    List<DNGet> findAllByKARDIO();
-
     @Query("select t from DNGet t " +
             "where t.date_1 between :dateFrom and :dateTo")
     List<DNGet> findAllByDate_1Between(Date dateFrom, Date dateTo);

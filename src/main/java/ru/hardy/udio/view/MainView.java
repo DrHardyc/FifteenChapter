@@ -13,6 +13,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,11 +30,11 @@ public class MainView extends AppLayout {
 
     private final H3 avatar = new H3();
 
-    public MainView(){
+    public MainView() {
 
         DrawerToggle toggle = new DrawerToggle();
 
-        H5 title = new H5("Д - наблюдение v1.2");
+        H5 title = new H5("Д - наблюдение v1.4");
         //title.getStyle().set("margin", "0");
         UtilService su = new UtilService();
         Tabs tabs = su.getTabs();
@@ -57,6 +58,7 @@ public class MainView extends AppLayout {
         title.getStyle().set("margin-left", "auto");
         title.getStyle().set("margin-right", "auto");
         title.getStyle().set("margin-top", "auto");
+       // VaadinSession.getCurrent().getSession().setMaxInactiveInterval(30);
     }
 
     @Override

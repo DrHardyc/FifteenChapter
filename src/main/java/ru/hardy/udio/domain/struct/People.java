@@ -73,5 +73,9 @@ public class People {
         return this.getSex().getName();
     }
 
+    public String getSexId(){
+        return String.valueOf(this.getSex().getId());
+    }
+
 
 }

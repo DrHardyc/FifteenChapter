@@ -7,6 +7,7 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
@@ -21,7 +22,9 @@ import com.vaadin.flow.server.StreamResource;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
-import ru.hardy.udio.domain.struct.*;
+import ru.hardy.udio.domain.struct.DNGet;
+import ru.hardy.udio.domain.struct.DataFile;
+import ru.hardy.udio.domain.struct.DataFilePatient;
 import ru.hardy.udio.service.*;
 import ru.hardy.udio.service.SRZ.DBFSearchService;
 import ru.hardy.udio.service.deamonservice.SearchDead;
@@ -113,7 +116,7 @@ public class TestView extends VerticalLayout {
 
         TextField textField = new TextField("Код МО");
         upload.addSucceededListener(event -> {
-            ExcelService excelService = new ExcelService(sexService, dataFilePatientService);
+            ExcelService excelService = new ExcelService();
             System.out.println(event.getFileName().substring(0, 6));
             try {
                 peopleService.processingFromExcel(excelService.loadFromExcelFromBarsMO(
@@ -126,7 +129,7 @@ public class TestView extends VerticalLayout {
 
         Upload uploadChild = new Upload(buffer);
         uploadChild.addSucceededListener(event -> {
-            ExcelService excelService = new ExcelService(sexService, dataFilePatientService);
+            ExcelService excelService = new ExcelService();
             System.out.println(event.getFileName().substring(0, 6));
             peopleService.processingFromExcel(excelService.loadFromExcelOnkoChild(
                     new DataFile(event.getFileName(), Date.from(Instant.now()), Integer.parseInt(event.getFileName().substring(0, 6)), 1234L),
@@ -141,7 +144,7 @@ public class TestView extends VerticalLayout {
 
         Upload uploadOther = new Upload(buffer);
         uploadOther.addSucceededListener(event -> {
-            ExcelService excelService = new ExcelService(sexService, dataFilePatientService);
+            ExcelService excelService = new ExcelService();
             System.out.println(event.getFileName().substring(0, 6));
             try {
                 peopleService.processingFromExcel(excelService.tmpLoadDeadNewFormat(
@@ -165,6 +168,13 @@ public class TestView extends VerticalLayout {
 
     @Override
     public void onAttach(AttachEvent attachEvent){
+        Notification notification = new Notification();
+        notification.setDuration(3000);
+        Button testNotification = new Button("Test noti");
+        testNotification.addClickListener(e -> {
+
+        });
+
         Button btnSearchInSRZ = new Button("Поиск через дбф");
         btnSearchInSRZ.addClickListener(e -> {
             DBFSearchService dbfSearchService = new DBFSearchService();

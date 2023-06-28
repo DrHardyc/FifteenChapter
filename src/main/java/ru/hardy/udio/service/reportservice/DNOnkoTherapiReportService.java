@@ -1,10 +1,14 @@
 package ru.hardy.udio.service.reportservice;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.report.DateInterval;
 import ru.hardy.udio.domain.report.VisitType;
 import ru.hardy.udio.domain.report.WorkingAgeSex;
 import ru.hardy.udio.domain.struct.DNGet;
+import ru.hardy.udio.domain.struct.People;
+import ru.hardy.udio.service.PeopleService;
+import ru.hardy.udio.service.SexService;
 import ru.hardy.udio.service.UtilService;
 
 import java.sql.ResultSet;
@@ -16,163 +20,40 @@ import java.util.List;
 @Service
 public class DNOnkoTherapiReportService {
 
-    private final List<DNGet> dnGets;
     private final UtilService utilService = new UtilService();
 
-    public DNOnkoTherapiReportService(List<DNGet> dnGets){
-        this.dnGets = dnGets;
-    }
+    @Autowired
+    private PeopleService peopleService;
+
+    @Autowired
+    private SexService sexService;
 
     // Подлежащие/состоящие на дн
-    public int getCountDN(WorkingAgeSex workingAgeSex, String diags){
-        return switch (workingAgeSex){
-            case M_16_60 ->
-                 dnGets
-                    .stream()
-                    .filter(c -> c.getPeople().getAge() >= 16
-                            && c.getPeople().getAge() <= 60
-                            && c.getPeopleSex().equals("1")
-                            && diags.contains(utilService.transformDiag(c.getDiag())))
-                    .toList()
-                    .stream()
-                    .distinct()
-                    .toList()
-                    .size();
-
-            case M_older_60 ->
-                dnGets
-                    .stream()
-                    .filter(c -> c.getPeople().getAge() > 60
-                            && c.getPeopleSex().equals("1")
-                            && diags.contains(utilService.transformDiag(c.getDiag())))
-                    .toList().stream().distinct().toList().size();
-
-            case W_16_55 ->
-                dnGets
-                    .stream()
-                    .filter(c -> c.getPeople().getAge() >= 16
-                            && c.getPeople().getAge() <= 55
-                            && c.getPeopleSex().equals("2")
-                            && diags.contains(utilService.transformDiag(c.getDiag())))
-                    .toList()
-                    .stream()
-                    .distinct()
-                    .toList()
-                    .size();
-
-            case W_older_55 ->
-                dnGets
-                    .stream()
-                    .filter(c -> c.getPeople().getAge() > 55
-                            && c.getPeopleSex().equals("2")
-                            && diags.contains(utilService.transformDiag(c.getDiag())))
-                    .toList()
-                    .stream()
-                    .distinct()
-                    .toList()
-                    .size();
-            case all ->
-                dnGets
-                    .stream()
-                    .filter(c -> diags.contains(utilService.transformDiag(c.getDiag())))
-                    .toList()
-                    .stream()
-                    .distinct()
-                    .toList()
-                    .size();
-        };
+    public int getCountDN(WorkingAgeSex workingAgeSex, List<String> diags, String spec, int vzyt, List<String> intervals){
+        return getCountReport(workingAgeSex, vzyt, diags, spec, intervals).size();
     }
 
     //Впервые выявленные
-    public int getCountDNPr(WorkingAgeSex workingAgeSex, String diags, String monthBeg, String monthEnd,
-                            String yearBeg, String yearEnd, Statement statement){
+    public int getCountDNPr(WorkingAgeSex workingAgeSex, List<String> diags, Statement statement, String spec, int vzyt, List<String> intervals){
         int count = 0;
-
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        List<DNGet> dnGetsPeople = null;
-        switch (workingAgeSex){
-            case M_16_60 ->
-                    dnGetsPeople = dnGets
-                            .stream()
-                            .filter(c -> c.getPeople().getAge() >= 16
-                                    && c.getPeople().getAge() <= 60
-                                    && c.getPeopleSex().equals("1")
-                                    && diags.contains(utilService.transformDiag(c.getDiag()))
-                                    && c.getDate_1().after(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate))
-                                    && c.getDate_1().before(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
-                            .toList()
-                            .stream()
-                            .distinct()
-                            .toList();
-
-            case M_older_60 ->
-                    dnGetsPeople = dnGets
-                            .stream()
-                            .filter(c -> c.getPeople().getAge() > 60
-                                    && c.getPeopleSex().equals("1")
-                                    && diags.contains(utilService.transformDiag(c.getDiag()))
-                                    && c.getDate_1().after(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate))
-                                    && c.getDate_1().before(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
-                            .toList()
-                            .stream()
-                            .distinct()
-                            .toList();
-
-            case W_16_55 ->
-                    dnGetsPeople = dnGets
-                            .stream()
-                            .filter(c -> c.getPeople().getAge() >= 16
-                                    && c.getPeople().getAge() <= 55
-                                    && c.getPeopleSex().equals("2")
-                                    && diags.contains(utilService.transformDiag(c.getDiag()))
-                                    && c.getDate_1().after(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate))
-                                    && c.getDate_1().before(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
-                            .toList()
-                            .stream()
-                            .distinct()
-                            .toList();
-
-            case W_older_55 ->
-                    dnGetsPeople = dnGets
-                            .stream()
-                            .filter(c -> c.getPeople().getAge() > 55
-                                    && c.getPeopleSex().equals("2")
-                                    && diags.contains(utilService.transformDiag(c.getDiag()))
-                                    && c.getDate_1().after(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate))
-                                    && c.getDate_1().before(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
-                            .toList()
-                            .stream()
-                            .distinct()
-                            .toList();
-            case all ->
-                    dnGetsPeople = dnGets
-                            .stream()
-                            .filter(c -> diags.contains(utilService.transformDiag(c.getDiag()))
-                                    && c.getDate_1().after(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate))
-                                    && c.getDate_1().before(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
-                            .toList()
-                            .stream()
-                            .distinct()
-                            .toList();
-        }
+        List<People> dnGetsPeople = getCountReport(workingAgeSex, vzyt, diags, spec, intervals);
 
         assert dnGetsPeople != null;
-        for (DNGet dnGet : dnGetsPeople){
+        for (People people : dnGetsPeople){
             try {
                 ResultSet resultSet = statement.executeQuery("select count(*) from tf_proc.tp_casebill cb " +
                         "inner join tf_proc.tp_casebill_sl sl on sl.pid = cb.id " +
                         "inner join tf_proc.tp_casebill_patient cbp on cbp.id = cb.pid " +
                         "inner join tf_proc.tp_casebill_bill cbb on cbb.id = cb.tp_casebill_bill " +
-                        "where sl.ds1_pr = 1 " +
-                        " and cb.date_1 between to_date('" + dateFormat.format(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate))
-                        + "', 'dd.mm.yyyy') and " +
-                        " to_date('" + dateFormat.format(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate))
-                        + "', 'dd.mm.yyyy') " +
-                        " and upper(cbp.pac_fam) = '" + dnGet.getPeople().getFam().toUpperCase() +
-                        "' and upper(cbp.pac_im)  = '" + dnGet.getPeople().getIm().toUpperCase() +
-                        "' and upper(cbp.pac_ot) = '" + dnGet.getPeople().getOt().toUpperCase() +
-                        "' and cbp.pac_dr  = to_date('" + dateFormat.format(dnGet.getPeople().getDr()) + "', 'DD.MM.YYYY') " +
-                        "and cb.enp  = '" + dnGet.getPeople().getEnp() + "'");
+                        "left join nsi_med.med_mkb10 mkb on mkb.id = cb.ds1 " +
+                        "where (sl.ds1_pr = 1 or sl.pr_d_n = 1) " +
+                        " and upper(cbp.pac_fam) = '" + people.getFam().toUpperCase() +
+                        "' and upper(cbp.pac_im)  = '" + people.getIm().toUpperCase() +
+                        "' and upper(cbp.pac_ot) = '" + people.getOt().toUpperCase() +
+                        "' and cbp.pac_dr  = to_date('" + dateFormat.format(people.getDr()) + "', 'DD.MM.YYYY') " +
+                        " and cb.enp  = '" + people.getEnp() + "'" +
+                        " and mkb.mkb_code in (" +  utilService.transformStringArrayForBars(diags) + ")");
                 while (resultSet.next()) {
                     count = count + resultSet.getInt(1);
                 }
@@ -185,93 +66,26 @@ public class DNOnkoTherapiReportService {
     }
 
     //Проинформированные
-    public int getCountCalling(WorkingAgeSex workingAgeSex, String diags, String monthBeg, String monthEnd, String yearBeg, String yearEnd){
+    public int getCountCalling(WorkingAgeSex workingAgeSex, List<String> diags, String spec){
 
         return switch (workingAgeSex){
             case M_16_60 ->
-                dnGets
-                    .stream()
-                    .filter(c ->
-                         c.getPeople().getAge() >= 16
-                                 && c.getPeople().getAge() <= 60
-                                 && c.getPeopleSex().equals("1")
-                                 && diags.contains(utilService.transformDiag(c.getDiag()))
-                                 && c.getDate_call() != null
-                                 && c.getDate_call().after(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate))
-                                 && c.getDate_call().before(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
-                    .toList()
-                    .stream()
-                    .distinct()
-                    .toList()
-                    .size();
-
+                    peopleService.getDNTherapistReportCall(16, 60, diags, sexService.getById(1L), spec).size();
             case M_older_60 ->
-                dnGets
-                    .stream()
-                    .filter(c ->
-                        c.getPeople().getAge() > 60
-                                && c.getPeopleSex().equals("1")
-                                && diags.contains(utilService.transformDiag(c.getDiag()))
-                                && c.getDate_call() != null
-                                && c.getDate_call().after(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate))
-                                && c.getDate_call().before(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
-                    .toList()
-                    .stream()
-                    .distinct()
-                    .toList()
-                    .size();
-
+                    peopleService.getDNTherapistReportCall(60, diags, sexService.getById(1L), spec).size();
             case W_16_55 ->
-                dnGets
-                    .stream()
-                    .filter(c -> c.getPeople().getAge() >= 16
-                            && c.getPeople().getAge() <= 55
-                            && c.getPeopleSex().equals("2")
-                            && diags.contains(utilService.transformDiag(c.getDiag()))
-                            && c.getDate_call() != null
-                            && c.getDate_call().after(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate))
-                            && c.getDate_call().before(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
-                    .toList()
-                    .stream()
-                    .distinct()
-                    .toList()
-                    .size();
-
+                    peopleService.getDNTherapistReportCall(16, 55, diags, sexService.getById(2L), spec).size();
             case W_older_55 ->
-                dnGets
-                    .stream()
-                    .filter(c -> c.getPeople().getAge() > 55
-                            && c.getPeopleSex().equals("2")
-                            && diags.contains(utilService.transformDiag(c.getDiag()))
-                            && c.getDate_call() != null
-                            && c.getDate_call().after(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate))
-                            && c.getDate_call().before(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
-                    .toList()
-                    .stream()
-                    .distinct()
-                    .toList()
-                    .size();
+                    peopleService.getDNTherapistReportCall(55, diags, sexService.getById(2L), spec).size();
             case all ->
-                dnGets
-                    .stream()
-                    .filter(c -> diags.contains(utilService.transformDiag(c.getDiag()))
-                            && c.getDate_call() != null
-                            && c.getDate_call().after(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate))
-                            && c.getDate_call().before(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
-                    .toList()
-                    .stream()
-                    .distinct()
-                    .toList()
-                    .size();
+                    peopleService.getDNTherapistReportCall(diags, spec).size();
         };
     }
 
     //Визиты поликлиника/дом
     public int getCountVisit(VisitType visitType,
-                             WorkingAgeSex workingAgeSex, String diags, String monthBeg, String monthEnd,
-                             String yearBeg, String yearEnd, Statement statement){
+                             WorkingAgeSex workingAgeSex, List<String> diags, Statement statement){
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         String strVisitType = "";
         String strVisitTypeSearchValue = "";
         switch (visitType){
@@ -300,15 +114,9 @@ public class DNOnkoTherapiReportService {
                             "inner join tf_proc.tp_casebill_sl sl on sl.pid = cb.id " +
                             "inner join tf_proc.tp_casebill_patient cbp on cbp.id = cb.pid " +
                             "inner join tf_proc.tp_casebill_bill cbb on cbb.id = cb.tp_casebill_bill " +
-                            "inner join tf_proc.tp_case c on cb.tp_case = c.id " +
-                            "inner join tf_proc.tp_caseraw_sl crsl on c.caseraw = crsl.pid " +
-                            "inner join tf_proc.tp_caseraw_sl_ext crsle on crsle.xid = crsl.id " +
+                            "inner join tf_proc.tp_casebill_sl_ext crsle on crsle.xid = sl.id " +
                             "left join nsi_med.med_mkb10 mkb on mkb.id = sl.ds1 " +
-                            "where cb.date_1 between to_date('" + dateFormat.format(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate))
-                            + "', 'dd.mm.yyyy') and " +
-                            "to_date('" + dateFormat.format(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate))
-                            + "', 'dd.mm.yyyy')" +
-                            " and coalesce(" + strVisitTypeSearchValue + ", '0') <> '0' " +
+                            "where coalesce(" + strVisitTypeSearchValue + ", '0') <> '0' " +
                             "and date_part('year', age(cb.date_2, cbp.pac_dr)) between 16 and 60 " +
                             "and cbp.pac_w = 1712801 " +
                             "and mkb.mkb_code in (" + utilService.transformStringArrayForBars(diags) +
@@ -326,15 +134,9 @@ public class DNOnkoTherapiReportService {
                             "inner join tf_proc.tp_casebill_sl sl on sl.pid = cb.id " +
                             "inner join tf_proc.tp_casebill_patient cbp on cbp.id = cb.pid " +
                             "inner join tf_proc.tp_casebill_bill cbb on cbb.id = cb.tp_casebill_bill " +
-                            "inner join tf_proc.tp_case c on cb.tp_case = c.id " +
-                            "inner join tf_proc.tp_caseraw_sl crsl on c.caseraw = crsl.pid " +
-                            "inner join tf_proc.tp_caseraw_sl_ext crsle on crsle.xid = crsl.id " +
+                            "inner join tf_proc.tp_casebill_sl_ext crsle on crsle.xid = sl.id " +
                             "left join nsi_med.med_mkb10 mkb on mkb.id = sl.ds1 " +
-                            "where cb.date_1 between to_date('" + dateFormat.format(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate))
-                            + "', 'dd.mm.yyyy') and " +
-                            "to_date('" + dateFormat.format(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate))
-                            + "', 'dd.mm.yyyy')" +
-                            " and coalesce(" + strVisitTypeSearchValue + ", '0') <> '0' " +
+                            "where coalesce(" + strVisitTypeSearchValue + ", '0') <> '0' " +
                             "and date_part('year', age(cb.date_2, cbp.pac_dr)) > 60 " +
                             "and cbp.pac_w = 1712801 " +
                             "and mkb.mkb_code in (" + utilService.transformStringArrayForBars(diags) +
@@ -351,15 +153,9 @@ public class DNOnkoTherapiReportService {
                             "inner join tf_proc.tp_casebill_sl sl on sl.pid = cb.id " +
                             "inner join tf_proc.tp_casebill_patient cbp on cbp.id = cb.pid " +
                             "inner join tf_proc.tp_casebill_bill cbb on cbb.id = cb.tp_casebill_bill " +
-                            "inner join tf_proc.tp_case c on cb.tp_case = c.id " +
-                            "inner join tf_proc.tp_caseraw_sl crsl on c.caseraw = crsl.pid " +
-                            "inner join tf_proc.tp_caseraw_sl_ext crsle on crsle.xid = crsl.id " +
+                            "inner join tf_proc.tp_casebill_sl_ext crsle on crsle.xid = sl.id " +
                             "left join nsi_med.med_mkb10 mkb on mkb.id = sl.ds1 " +
-                            "where cb.date_1 between to_date('" + dateFormat.format(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate))
-                            + "', 'dd.mm.yyyy') and " +
-                            "to_date('" + dateFormat.format(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate))
-                            + "', 'dd.mm.yyyy')" +
-                            " and coalesce(" + strVisitTypeSearchValue + ", '0') <> '0' " +
+                            "where coalesce(" + strVisitTypeSearchValue + ", '0') <> '0' " +
                             "and date_part('year', age(cb.date_2, cbp.pac_dr)) between 16 and 55 " +
                             "and cbp.pac_w = 1712821 " +
                             "and mkb.mkb_code in (" + utilService.transformStringArrayForBars(diags) +
@@ -376,15 +172,9 @@ public class DNOnkoTherapiReportService {
                             "inner join tf_proc.tp_casebill_sl sl on sl.pid = cb.id " +
                             "inner join tf_proc.tp_casebill_patient cbp on cbp.id = cb.pid " +
                             "inner join tf_proc.tp_casebill_bill cbb on cbb.id = cb.tp_casebill_bill " +
-                            "inner join tf_proc.tp_case c on cb.tp_case = c.id " +
-                            "inner join tf_proc.tp_caseraw_sl crsl on c.caseraw = crsl.pid " +
-                            "inner join tf_proc.tp_caseraw_sl_ext crsle on crsle.xid = crsl.id " +
+                            "inner join tf_proc.tp_casebill_sl_ext crsle on crsle.xid = sl.id " +
                             "left join nsi_med.med_mkb10 mkb on mkb.id = sl.ds1 " +
-                            "where cb.date_1 between to_date('" + dateFormat.format(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate))
-                            + "', 'dd.mm.yyyy') and " +
-                            "to_date('" + dateFormat.format(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate))
-                            + "', 'dd.mm.yyyy')" +
-                            " and coalesce(" + strVisitTypeSearchValue + ", '0') <> '0' " +
+                            "where coalesce(" + strVisitTypeSearchValue + ", '0') <> '0' " +
                             "and date_part('year', age(cb.date_2, cbp.pac_dr)) > 55 " +
                             "and cbp.pac_w = 1712821 " +
                             "and mkb.mkb_code in (" + utilService.transformStringArrayForBars(diags) +
@@ -401,15 +191,9 @@ public class DNOnkoTherapiReportService {
                             "inner join tf_proc.tp_casebill_sl sl on sl.pid = cb.id " +
                             "inner join tf_proc.tp_casebill_patient cbp on cbp.id = cb.pid " +
                             "inner join tf_proc.tp_casebill_bill cbb on cbb.id = cb.tp_casebill_bill " +
-                            "inner join tf_proc.tp_case c on cb.tp_case = c.id " +
-                            "inner join tf_proc.tp_caseraw_sl crsl on c.caseraw = crsl.pid " +
-                            "inner join tf_proc.tp_caseraw_sl_ext crsle on crsle.xid = crsl.id " +
+                            "inner join tf_proc.tp_casebill_sl_ext crsle on crsle.xid = sl.id " +
                             "left join nsi_med.med_mkb10 mkb on mkb.id = sl.ds1 " +
-                            "where cb.date_1 between to_date('" + dateFormat.format(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate))
-                            + "', 'dd.mm.yyyy') and " +
-                            "to_date('" + dateFormat.format(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate))
-                            + "', 'dd.mm.yyyy')" +
-                            " and coalesce(" + strVisitTypeSearchValue + ", '0') <> '0' " +
+                            "where coalesce(" + strVisitTypeSearchValue + ", '0') <> '0' " +
                             "and mkb.mkb_code in (" + utilService.transformStringArrayForBars(diags) +
                             ") and sl.dn in (1, 2, 6)");
                     if (resultSet.next())
@@ -423,89 +207,39 @@ public class DNOnkoTherapiReportService {
     }
 
     //Госпитализация
-    public int getCountHospitalize(WorkingAgeSex workingAgeSex, String diags, String monthBeg, String monthEnd,
-                                   String yearBeg, String yearEnd, Statement statement){
+    public int getCountHospitalize(WorkingAgeSex workingAgeSex, List<String> diags, Statement statement, String spec){
         int count = 0;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
-        List<DNGet> dnGetsPeople = null;
+        List<People> dnGetsPeople = null;
         switch (workingAgeSex){
             case M_16_60 ->
-                    dnGetsPeople = dnGets
-                            .stream()
-                            .filter(c -> c.getPeople().getAge() >= 16
-                                    && c.getPeople().getAge() <= 60
-                                    && c.getPeopleSex().equals("1")
-                                    && diags.contains(utilService.transformDiag(c.getDiag())))
-                            .toList()
-                            .stream()
-                            .distinct()
-                            .toList();
-
+                    dnGetsPeople = peopleService.getDNTherapistReport(16, 60, diags, sexService.getById(1L), spec);
             case M_older_60 ->
-                    dnGetsPeople = dnGets
-                            .stream()
-                            .filter(c -> c.getPeople().getAge() > 60
-                                    && c.getPeopleSex().equals("1")
-                                    && diags.contains(utilService.transformDiag(c.getDiag())))
-                            .toList()
-                            .stream()
-                            .distinct()
-                            .toList();
-
+                    dnGetsPeople = peopleService.getDNTherapistReport(60, diags, sexService.getById(1L), spec);
             case W_16_55 ->
-                    dnGetsPeople = dnGets
-                            .stream()
-                            .filter(c -> c.getPeople().getAge() >= 16
-                                    && c.getPeople().getAge() <= 55
-                                    && c.getPeopleSex().equals("2")
-                                    && diags.contains(utilService.transformDiag(c.getDiag())))
-                            .toList()
-                            .stream()
-                            .distinct()
-                            .toList();
-
+                    dnGetsPeople = peopleService.getDNTherapistReport(16, 55, diags, sexService.getById(2L), spec);
             case W_older_55 ->
-                    dnGetsPeople = dnGets
-                            .stream()
-                            .filter(c -> c.getPeople().getAge() > 55
-                                    && c.getPeopleSex().equals("2")
-                                    && diags.contains(utilService.transformDiag(c.getDiag())))
-                            .toList()
-                            .stream()
-                            .distinct()
-                            .toList();
+                    dnGetsPeople = peopleService.getDNTherapistReport(55, diags, sexService.getById(2L), spec);
             case all ->
-                    dnGetsPeople = dnGets
-                            .stream()
-                            .filter(c -> diags.contains(utilService.transformDiag(c.getDiag())))
-                            .toList()
-                            .stream()
-                            .distinct()
-                            .toList();
+                    dnGetsPeople = peopleService.getDNTherapistReport(diags, spec);
         }
 
-        for (DNGet dnGet : dnGetsPeople) {
+        for (People people : dnGetsPeople) {
             try {
-                ResultSet resultSet = statement.executeQuery("select count(*) from tf_proc.tp_casebill cb" +
-                        "    inner join tf_proc.tp_casebill_sl sl on sl.pid = cb.id " +
-                        "    inner join tf_proc.tp_casebill_patient cbp on cbp.id = cb.pid " +
-                        "    inner join tf_proc.tp_casebill_bill cbb on cbb.id = cb.tp_casebill_bill " +
-                        "    inner join tf_proc.tp_case c on cb.tp_case = c.id " +
-                        "    inner join tf_proc.tp_caseraw_sl crsl on c.caseraw = crsl.pid " +
-                        "    inner join tf_proc.tp_caseraw_sl_ext crsle on crsle.xid = crsl.id " +
-                        "    left join nsi_med.med_mkb10 mkb on mkb.id = sl.ds1 " +
-                        "    left join nsi_med.med_help_conditions mhc on mhc.id = cb.usl_ok " +
-                        "where cb.date_1 between to_date('" + dateFormat.format(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate))
-                        + "', 'dd.mm.yyyy') and " +
-                        "to_date('" + dateFormat.format(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate))
-                        + "', 'dd.mm.yyyy')" +
-                        "    and cb.sump > 0" +
-                        " and upper(cbp.pac_fam) = '" + dnGet.getPeople().getFam().toUpperCase() +
-                        "' and upper(cbp.pac_im) = '" + dnGet.getPeople().getIm().toUpperCase() +
-                        "' and upper(cbp.pac_ot) = '" + dnGet.getPeople().getOt().toUpperCase() +
-                        "' and cbp.pac_dr = to_date('" + dateFormat.format(dnGet.getPeople().getDr()) + "', 'dd.mm.yyyy')" +
-                        " and cb.enp = '" + dnGet.getPeople().getEnp() +
+                ResultSet resultSet = statement.executeQuery("select count(*) from tf_proc.tp_casebill cb " +
+                        "inner join tf_proc.tp_casebill_sl sl on sl.pid = cb.id " +
+                        "inner join tf_proc.tp_casebill_patient cbp on cbp.id = cb.pid " +
+                        "inner join tf_proc.tp_casebill_bill cbb on cbb.id = cb.tp_casebill_bill " +
+                        "inner join tf_proc.tp_casebill_sl_ext crsle on crsle.xid = sl.id " +
+                        "left join nsi_med.med_mkb10 mkb on mkb.id = sl.ds1 " +
+                        "left join nsi_med.med_help_conditions mhc on mhc.id = cb.usl_ok " +
+                        "where cb.sump > 0" +
+                        " and upper(cbp.pac_fam) = '" + people.getFam().toUpperCase() +
+                        "' and upper(cbp.pac_im) = '" + people.getIm().toUpperCase() +
+                        "' and upper(cbp.pac_ot) = '" + people.getOt().toUpperCase() +
+                        "' and cbp.pac_dr = to_date('" + dateFormat.format(people.getDr()) + "', 'dd.mm.yyyy')" +
+                        " and cb.enp = '" + people.getEnp() +
                         "' and mhc.code = '1'");
                 while (resultSet.next()) {
                     count = count + resultSet.getInt(1);
@@ -519,78 +253,33 @@ public class DNOnkoTherapiReportService {
 
 
     //Смертность
-    public int getCountDeath(WorkingAgeSex workingAgeSex, String diags, String monthBeg, String monthEnd,
-                             String yearBeg, String yearEnd, Statement statement){
+    public int getCountDeath(WorkingAgeSex workingAgeSex, List<String> diags, Statement statement, String spec){
         int count = 0;
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
-        List<DNGet> dnGetsPeople = null;
+        List<People> dnGetsPeople = null;
         switch (workingAgeSex){
             case M_16_60 ->
-                    dnGetsPeople = dnGets
-                            .stream()
-                            .filter(c -> c.getPeople().getAge() >= 16
-                                    && c.getPeople().getAge() <= 60
-                                    && c.getPeopleSex().equals("1")
-                                    && diags.contains(utilService.transformDiag(c.getDiag())))
-                            .toList()
-                            .stream()
-                            .distinct()
-                            .toList();
-
+                    dnGetsPeople = peopleService.getDNTherapistReport(16, 60, diags, sexService.getById(1L), spec);
             case M_older_60 ->
-                    dnGetsPeople = dnGets
-                            .stream()
-                            .filter(c -> c.getPeople().getAge() > 60
-                                    && c.getPeopleSex().equals("1")
-                                    && diags.contains(utilService.transformDiag(c.getDiag())))
-                            .toList()
-                            .stream()
-                            .distinct()
-                            .toList();
-
+                    dnGetsPeople = peopleService.getDNTherapistReport(60, diags, sexService.getById(1L), spec);
             case W_16_55 ->
-                    dnGetsPeople = dnGets
-                            .stream()
-                            .filter(c -> c.getPeople().getAge() >= 16
-                                    && c.getPeople().getAge() <= 55
-                                    && c.getPeopleSex().equals("2")
-                                    && diags.contains(utilService.transformDiag(c.getDiag())))
-                            .toList()
-                            .stream()
-                            .distinct()
-                            .toList();
-
+                    dnGetsPeople = peopleService.getDNTherapistReport(16, 55, diags, sexService.getById(2L), spec);
             case W_older_55 ->
-                    dnGetsPeople = dnGets
-                            .stream()
-                            .filter(c -> c.getPeople().getAge() > 55
-                                    && c.getPeopleSex().equals("2")
-                                    && diags.contains(utilService.transformDiag(c.getDiag())))
-                            .toList()
-                            .stream()
-                            .distinct()
-                            .toList();
+                    dnGetsPeople = peopleService.getDNTherapistReport(55, diags, sexService.getById(2L), spec);
             case all ->
-                    dnGetsPeople = dnGets
-                            .stream()
-                            .filter(c -> diags.contains(utilService.transformDiag(c.getDiag())))
-                            .toList()
-                            .stream()
-                            .distinct()
-                            .toList();
+                    dnGetsPeople = peopleService.getDNTherapistReport(diags, spec);
         }
 
-        for (DNGet dnGet : dnGetsPeople) {
+        for (People people : dnGetsPeople) {
             try {
                 ResultSet resultSet = statement.executeQuery("select count(*) from PEOPLE p where " +
-                        "p.FAM = '" + dnGet.getPeople().getFam() + "' " +
-                        "and p.IM = '" + dnGet.getPeople().getIm() + "' " +
-                        "and p.OT = '" + dnGet.getPeople().getOt() + "' " +
-                        "and p.dr = PARSE('" + dnGet.getPeople().getDr() + "' as date) " +
-                        "and p.enp = '" + dnGet.getPeople().getEnp() + "' " +
-                        "and p.ds between PARSE('" + dateFormat.format(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate)) + "' as date) " +
-                        "and PARSE('" + dateFormat.format(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate)) + "' as date)");
+                        "p.FAM = '" + people.getFam() + "' " +
+                        "and p.IM = '" + people.getIm() + "' " +
+                        "and p.OT = '" + people.getOt() + "' " +
+                        "and p.dr = PARSE('" + people.getDr() + "' as date) " +
+                        "and p.enp = '" + people.getEnp() + "'");
+//                        "and p.ds between PARSE('" + dateFormat.format(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate)) + "' as date) " +
+//                        "and PARSE('" + dateFormat.format(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate)) + "' as date)");
                 while (resultSet.next()) {
                     count = count + resultSet.getInt(1);
                 }
@@ -602,80 +291,26 @@ public class DNOnkoTherapiReportService {
     }
 
     //Скорая помощь
-    public int getCountAmbulance(WorkingAgeSex workingAgeSex, String diags, String monthBeg, String monthEnd,
-                                 String yearBeg, String yearEnd, Statement statement){
+    public int getCountAmbulance(WorkingAgeSex workingAgeSex, List<String> diags, Statement statement, String spec){
         int count = 0;
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        List<DNGet> dnGetsPeople = null;
+        List<People> dnGetsPeople = null;
         switch (workingAgeSex){
             case M_16_60 ->
-                    dnGetsPeople = dnGets
-                            .stream()
-                            .filter(c -> c.getPeople().getAge() >= 16
-                                    && c.getPeople().getAge() <= 60
-                                    && c.getPeopleSex().equals("1")
-                                    && diags.contains(utilService.transformDiag(c.getDiag()))
-                                    && c.getDate_1().after(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate))
-                                    && c.getDate_1().before(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
-                            .toList()
-                            .stream()
-                            .distinct()
-                            .toList();
-
+                    dnGetsPeople = peopleService.getDNTherapistReport(16, 60, diags, sexService.getById(1L), spec);
             case M_older_60 ->
-                    dnGetsPeople = dnGets
-                            .stream()
-                            .filter(c -> c.getPeople().getAge() > 60
-                                    && c.getPeopleSex().equals("1")
-                                    && diags.contains(utilService.transformDiag(c.getDiag()))
-                                    && c.getDate_1().after(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate))
-                                    && c.getDate_1().before(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
-                            .toList()
-                            .stream()
-                            .distinct()
-                            .toList();
-
+                    dnGetsPeople = peopleService.getDNTherapistReport(60, diags, sexService.getById(1L), spec);
             case W_16_55 ->
-                    dnGetsPeople = dnGets
-                            .stream()
-                            .filter(c -> c.getPeople().getAge() >= 16
-                                    && c.getPeople().getAge() <= 55
-                                    && c.getPeopleSex().equals("2")
-                                    && diags.contains(utilService.transformDiag(c.getDiag()))
-                                    && c.getDate_1().after(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate))
-                                    && c.getDate_1().before(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
-                            .toList()
-                            .stream()
-                            .distinct()
-                            .toList();
-
+                    dnGetsPeople = peopleService.getDNTherapistReport(16, 55, diags, sexService.getById(2L), spec);
             case W_older_55 ->
-                    dnGetsPeople = dnGets
-                            .stream()
-                            .filter(c -> c.getPeople().getAge() > 55
-                                    && c.getPeopleSex().equals("2")
-                                    && diags.contains(utilService.transformDiag(c.getDiag()))
-                                    && c.getDate_1().after(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate))
-                                    && c.getDate_1().before(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
-                            .toList()
-                            .stream()
-                            .distinct()
-                            .toList();
+                    dnGetsPeople = peopleService.getDNTherapistReport(55, diags, sexService.getById(2L), spec);
             case all ->
-                    dnGetsPeople = dnGets
-                            .stream()
-                            .filter(c -> diags.contains(utilService.transformDiag(c.getDiag()))
-                                    && c.getDate_1().after(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate))
-                                    && c.getDate_1().before(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate)))
-                            .toList()
-                            .stream()
-                            .distinct()
-                            .toList();
+                    dnGetsPeople = peopleService.getDNTherapistReport(diags, spec);
         }
 
         assert dnGetsPeople != null;
-        for (DNGet dnGet : dnGetsPeople){
+        for (People people : dnGetsPeople){
             try {
                 ResultSet resultSet = statement.executeQuery("select count(*) from tf_proc.tp_casebill cb " +
                         "inner join tf_proc.tp_casebill_sl sl on sl.pid = cb.id " +
@@ -683,15 +318,11 @@ public class DNOnkoTherapiReportService {
                         "inner join tf_proc.tp_casebill_bill cbb on cbb.id = cb.tp_casebill_bill " +
                         "left join nsi_med.med_purp_visit mpv on mpv.id = sl.p_cel " +
                         "where mpv.code = '1.1' " +
-                        " and cb.date_1 between to_date('" + dateFormat.format(utilService.transformDate(monthBeg, yearBeg, DateInterval.minDate))
-                        + "', 'dd.mm.yyyy') and " +
-                        "to_date('" + dateFormat.format(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate))
-                        + "', 'dd.mm.yyyy')" +
-                        " and cbp.pac_fam = '" + dnGet.getPeople().getFam() +
-                        "' and cbp.pac_im  = '" + dnGet.getPeople().getIm() +
-                        "' and cbp.pac_ot = '" + dnGet.getPeople().getOt() +
-                        "' and cbp.pac_dr  = to_date('" + dateFormat.format(dnGet.getPeople().getDr()) + "', 'DD.MM.YYYY') " +
-                        "and cb.enp  = '" + dnGet.getPeople().getEnp() + "'");
+                        " and cbp.pac_fam = '" + people.getFam() +
+                        "' and cbp.pac_im  = '" + people.getIm() +
+                        "' and cbp.pac_ot = '" + people.getOt() +
+                        "' and cbp.pac_dr  = to_date('" + dateFormat.format(people.getDr()) + "', 'DD.MM.YYYY') " +
+                        "and cb.enp  = '" + people.getEnp() + "'");
                 while (resultSet.next()) {
                     count = count + resultSet.getInt(1);
                 }
@@ -703,76 +334,49 @@ public class DNOnkoTherapiReportService {
     }
 
     //Инвалиды
-    public int getCountInv(WorkingAgeSex workingAgeSex, String diags){
+    public int getCountInv(WorkingAgeSex workingAgeSex, List<String> diags, String spec){
         return switch (workingAgeSex){
             case M_16_60 ->
-                dnGets
-                    .stream()
-                    .filter(c -> c.getPeople().getAge() >= 16
-                            && c.getPeople().getAge() <= 60
-                            && c.getPeopleSex().equals("1")
-                            && diags.contains(utilService.transformDiag(c.getDiag()))
-                            && c.getPeople().getInv() != 0
-                            && c.getPeople().getInv() != null)
-                    .toList()
-                    .stream()
-                    .distinct()
-                    .toList()
-                    .size();
-
+                    peopleService.getDNTherapistReportInv(16, 60, diags, sexService.getById(1L), spec).size();
             case M_older_60 ->
-                dnGets
-                    .stream()
-                    .filter(c -> c.getPeople().getAge() > 60
-                            && c.getPeopleSex().equals("1")
-                            && diags.contains(utilService.transformDiag(c.getDiag()))
-                            && c.getPeople().getInv() != 0)
-                    .toList()
-                    .stream()
-                    .distinct()
-                    .toList()
-                    .size();
-
+                    peopleService.getDNTherapistReportInv(60, diags, sexService.getById(1L), spec).size();
             case W_16_55 ->
-                 dnGets
-                    .stream()
-                    .filter(c -> c.getPeople().getAge() >= 16
-                            && c.getPeople().getAge() <= 55
-                            && c.getPeopleSex().equals("2")
-                            && diags.contains(utilService.transformDiag(c.getDiag()))
-                            && c.getPeople().getInv() != 0
-                            && c.getPeople().getInv() != null)
-                    .toList()
-                    .stream()
-                    .distinct()
-                    .toList()
-                    .size();
-
+                    peopleService.getDNTherapistReportInv(16, 55, diags, sexService.getById(2L), spec).size();
             case W_older_55 ->
-                 dnGets
-                    .stream()
-                    .filter(c -> c.getPeople().getAge() > 55
-                            && c.getPeopleSex().equals("2")
-                            && diags.contains(utilService.transformDiag(c.getDiag()))
-                            && c.getPeople().getInv() != 0
-                            && c.getPeople().getInv() != null)
-                    .toList()
-                    .stream()
-                    .distinct()
-                    .toList()
-                    .size();
-
+                    peopleService.getDNTherapistReportInv(55, diags, sexService.getById(2L), spec).size();
             case all ->
-                    dnGets
-                            .stream()
-                            .filter(c -> diags.contains(utilService.transformDiag(c.getDiag()))
-                                    && c.getPeople().getInv() != 0
-                                    && c.getPeople().getInv() != null)
-                            .toList()
-                            .stream()
-                            .distinct()
-                            .toList()
-                            .size();
+                    peopleService.getDNTherapistReportInv(diags, spec).size();
         };
+    }
+
+    private List<People> getCountReport(WorkingAgeSex workingAgeSex, int vzyt, List<String> diags, String spec, List<String> intervals){
+        switch (workingAgeSex){
+            case M_16_60 -> {
+                if (vzyt == 1)
+                    return peopleService.getDNTherapistReport(16, 60, diags, sexService.getById(1L), spec, intervals);
+                else return peopleService.getDNTherapistReport(16, 60, diags, sexService.getById(1L), spec);
+            }
+            case M_older_60 -> {
+                if (vzyt == 1)
+                    return peopleService.getDNTherapistReport(60, diags, sexService.getById(1L), spec, intervals);
+                else return peopleService.getDNTherapistReport(60, diags, sexService.getById(1L), spec);
+            }
+            case W_16_55 -> {
+                if (vzyt == 1)
+                    return peopleService.getDNTherapistReport(16, 55, diags, sexService.getById(2L), spec, intervals);
+                else return peopleService.getDNTherapistReport(16, 55, diags, sexService.getById(2L), spec);
+            }
+            case W_older_55 ->{
+                if (vzyt == 1)
+                    return peopleService.getDNTherapistReport(56, diags, sexService.getById(2L), spec, intervals);
+                else return peopleService.getDNTherapistReport(56, diags, sexService.getById(2L), spec);
+            }
+            case all ->{
+                if (vzyt == 1)
+                    return peopleService.getDNTherapistReport(diags, spec, intervals);
+                else return peopleService.getDNTherapistReport(diags, spec);
+            }
+        };
+        return null;
     }
 }

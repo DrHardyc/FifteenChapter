@@ -10,7 +10,6 @@ import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
-import ru.hardy.udio.domain.struct.DNGet;
 import ru.hardy.udio.domain.struct.DNOut;
 import ru.hardy.udio.domain.task.ReportTask;
 import ru.hardy.udio.domain.task.TaskStatus;
@@ -40,6 +39,9 @@ public class ReportView extends VerticalLayout {
 
     @Autowired
     private DNOutService dnOutService;
+
+    @Autowired
+    private ExcelService excelService;
 
     private final String username;
     private final UtilService utilService = new UtilService();
@@ -99,12 +101,12 @@ public class ReportView extends VerticalLayout {
                                 id = reportTaskService.add(
                                         new ReportTask("ДН-Терапефт", "", TaskStatus.progress, "",
                                                 username, period));
-                                ExcelService excelService = new ExcelService();
-                                excelService.getDNOnkoTherapiReportSample(dnGetService.getAllTherapist(),
+
+                                excelService.getDNOnkoTherapiReportSample(
                                         String.valueOf(monthPickerBeg.getValue().getValue()),
                                         String.valueOf(monthPickerEnd.getValue().getValue()),
-                                        yearPickerBeg.getValue().toString(),
-                                        yearPickerEnd.getValue().toString(), filename, 1);
+                                        yearPickerBeg.getValue().toString(), yearPickerEnd.getValue().toString(),
+                                        filename, "76");
                                 reportTaskService.updateStatus(TaskStatus.success, "Успешно", filename, id);
                             } catch (Exception err) {
                                 if (id != 0L) {
@@ -121,8 +123,7 @@ public class ReportView extends VerticalLayout {
                             try {
                                 id = reportTaskService.add(
                                         new ReportTask("ОНКО", "", TaskStatus.progress, "", username, period));
-                                ExcelService excelService = new ExcelService();
-                                excelService.getONKOReport(dnGetService.getAllONKO(),
+                                excelService.getONKOReport(
                                         String.valueOf(monthPickerBeg.getValue().getValue()),
                                         String.valueOf(monthPickerEnd.getValue().getValue()),
                                         yearPickerBeg.getValue().toString(),
@@ -143,8 +144,7 @@ public class ReportView extends VerticalLayout {
                             try {
                                 id = reportTaskService.add(
                                         new ReportTask("КАРДИО", "", TaskStatus.progress, "", username, period));
-                                ExcelService excelService = new ExcelService();
-                                excelService.getKARDIOReport(dnGetService.getAllKARDIO(),
+                                excelService.getKARDIOReport(
                                         String.valueOf(monthPickerBeg.getValue().getValue()),
                                         String.valueOf(monthPickerEnd.getValue().getValue()),
                                         yearPickerBeg.getValue().toString(),
@@ -165,12 +165,11 @@ public class ReportView extends VerticalLayout {
                                 id = reportTaskService.add(
                                         new ReportTask("ДН-онколог", "", TaskStatus.progress, "",
                                                 username, period));
-                                ExcelService excelService = new ExcelService();
-                                excelService.getDNOnkoTherapiReportSample(dnGetService.getAllOnkologist(),
+                                excelService.getDNOnkoTherapiReportSample(
                                         String.valueOf(monthPickerBeg.getValue().getValue()),
                                         String.valueOf(monthPickerEnd.getValue().getValue()),
-                                        yearPickerBeg.getValue().toString(),
-                                        yearPickerEnd.getValue().toString(), filename, 2);
+                                        yearPickerBeg.getValue().toString(), yearPickerEnd.getValue().toString(),
+                                        filename, "41");
                                 reportTaskService.updateStatus(TaskStatus.success, "Успешно", filename, id);
                             } catch (Exception err) {
                                 if (id != 0L) {
@@ -211,17 +210,6 @@ public class ReportView extends VerticalLayout {
         monthPickerEnd.setVisible(flag);
     }
 
-    private List<DNGet> changeDataFromDateInterval(){
-        if (monthPickerBeg.getValue() != null && monthPickerEnd.getValue() != null && yearPickerBeg.getValue() != null
-                && yearPickerEnd.getValue() != null) {
-            return dnGetService.getAllWithDateInterval(
-                    utilService.transformDate(String.valueOf(monthPickerBeg.getValue().getValue()),
-                            yearPickerBeg.getValue().toString(), ru.hardy.udio.domain.report.DateInterval.minDate),
-                    utilService.transformDate(String.valueOf(monthPickerEnd.getValue().getValue()),
-                            yearPickerEnd.getValue().toString(), ru.hardy.udio.domain.report.DateInterval.maxDate));
-        }
-        return null;
-    }
     private boolean checkNullDateInterval(String cbValue) {
         if (cbValue.equals("Все")) {
             return monthPickerBeg.getValue() != null && monthPickerEnd.getValue() != null && yearPickerBeg.getValue() != null

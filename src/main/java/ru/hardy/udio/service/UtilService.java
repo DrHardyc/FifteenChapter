@@ -20,7 +20,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class UtilService {
@@ -95,17 +97,31 @@ public class UtilService {
         } else return diag;
     }
 
-    public String transformStringArrayForBars(String diags){
+    public String transformDiag(List<String> diags){
+        StringBuilder returnDiag = new StringBuilder();
+        int diagCount = 0;
+        if (diags != null){
+            for (String diag : diags){
+                if (diagCount == 0){
+                    returnDiag.append(diag);
+                } else returnDiag.append(", ").append(diag);
+
+                diagCount ++;
+            }
+        }
+        return returnDiag.toString();
+    }
+
+    public String transformStringArrayForBars(List<String> diags){
         int count = 0;
-        StringBuilder resultStr = new StringBuilder();
-        String[] str = diags.replaceAll("\\s", "").trim().split(",");
-        while (count < str.length){
-            if (count == 0){
-                resultStr.append("'").append(str[count]).append("'");
-            } else  resultStr.append(",'").append(str[count]).append("'");
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String diag : diags){
+            if (count == 0)
+                stringBuilder.append("'").append(diag).append("'");
+            else stringBuilder.append(", '").append(diag).append("'");
             count++;
         }
-        return resultStr.toString();
+        return stringBuilder.toString();
     }
 
     public String getStringMonth(String month){
@@ -136,5 +152,46 @@ public class UtilService {
             return false;
         }
         return true;
+    }
+
+    public List<String> diagStringBuilder(int startCount, int endCount, String diag, int exception){
+        List<String> strings = new ArrayList<>();
+        for(int i = startCount; i <= endCount; i++){
+            if (i != exception) {
+                strings.add(diag);
+                for (int j = 0; j < 10; j++) {
+                    if (i < 10) {
+                        strings.add(diag + "0" + i + "." + j);
+                    } else strings.add(diag + i + "." + j);
+                }
+            }
+        }
+        return strings;
+    }
+
+    public List<String> diagStringBuilder(int startCount, int endCount, String diag){
+        List<String> strings = new ArrayList<>();
+        for(int i = startCount; i <= endCount; i++) {
+            if (i < 10){
+                strings.add(diag + "0" + i);
+            } else strings.add(diag + i);
+            for (int j = 0; j < 10; j++) {
+                if (i < 10) {
+                    strings.add(diag + "0" + i + "." + j);
+                } else strings.add(diag + i + "." + j);
+            }
+        }
+        return strings;
+    }
+
+    public List<String> diagStringBuilder(List<String> diags){
+        List<String> strings = new ArrayList<>();
+        for(String diag : diags) {
+            strings.add(diag);
+            for (int j = 0; j < 10; j++) {
+                strings.add(diag + "." + j);
+            }
+        }
+        return strings;
     }
 }

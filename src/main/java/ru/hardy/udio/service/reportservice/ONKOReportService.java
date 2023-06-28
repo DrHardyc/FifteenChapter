@@ -1,9 +1,11 @@
 package ru.hardy.udio.service.reportservice;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.report.AgeLimit;
 import ru.hardy.udio.domain.report.DateInterval;
-import ru.hardy.udio.domain.struct.DNGet;
+import ru.hardy.udio.domain.struct.People;
+import ru.hardy.udio.service.PeopleService;
 import ru.hardy.udio.service.UtilService;
 
 import java.sql.ResultSet;
@@ -14,35 +16,27 @@ import java.util.List;
 
 @Service
 public class ONKOReportService {
-    private final List<DNGet> dnGets;
-    private final UtilService utilService = new UtilService();
 
-    public ONKOReportService(List<DNGet> dnGets){
-        this.dnGets = dnGets;
-    }
+    @Autowired
+    private PeopleService peopleService;
+    private final UtilService utilService = new UtilService();
 
     public int getCountOnko(AgeLimit ageLimit){
         return switch (ageLimit){
             case older_18 ->
-                    dnGets
+                    peopleService.getDNOnkoReport()
                             .stream()
-                            .filter(c -> c.getPeople().getAge() >= 18)
-                            .toList()
-                            .stream()
-                            .distinct()
+                            .filter(c -> c.getAge() >= 18)
                             .toList()
                             .size();
             case younger_18 ->
-                    dnGets
+                    peopleService.getDNOnkoReport()
                             .stream()
-                            .filter(c -> c.getPeople().getAge() < 18)
-                            .toList()
-                            .stream()
-                            .distinct()
+                            .filter(c -> c.getAge() < 18)
                             .toList()
                             .size();
             case all ->
-                    dnGets
+                    peopleService.getDNOnkoReport()
                             .stream()
                             .distinct()
                             .toList()
@@ -51,38 +45,29 @@ public class ONKOReportService {
     }
 
     public int getCountOnkoSpec(AgeLimit ageLimit, String monthBeg, String monthEnd, String yearBeg,
-                                String yearEnd, String spec, String usl_ok, Statement statement){
+                                String yearEnd, String spec, List<String> usl_ok, Statement statement){
         int count = 0;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
-        List<DNGet> dnGetsPeople = null;
+        List<People> dnGetsPeople = null;
         switch (ageLimit){
             case older_18 ->
-                    dnGetsPeople = dnGets
+                    dnGetsPeople = peopleService.getDNOnkoReport()
                             .stream()
-                            .filter(c -> c.getPeople().getAge() >= 18)
-                            .toList()
-                            .stream()
-                            .distinct()
+                            .filter(c -> c.getAge() >= 18)
                             .toList();
             case younger_18 ->
-                    dnGetsPeople = dnGets
+                    dnGetsPeople = peopleService.getDNOnkoReport()
                             .stream()
-                            .filter(c -> c.getPeople().getAge() < 18)
-                            .toList()
-                            .stream()
-                            .distinct()
+                            .filter(c -> c.getAge() < 18)
                             .toList();
             case all ->
-                    dnGetsPeople = dnGets
+                    dnGetsPeople = peopleService.getDNOnkoReport()
                             .stream()
-                            .toList()
-                            .stream()
-                            .distinct()
                             .toList();
         }
 
-        for (DNGet dnGet : dnGetsPeople) {
+        for (People people : dnGetsPeople) {
             try {
                 ResultSet resultSet = statement.executeQuery("select count(distinct(cbp.pac_fam, cbp.pac_im, cbp.pac_ot, cbp.pac_dr, cb.enp)) " +
                                 "from tf_proc.tp_casebill cb " +
@@ -96,11 +81,11 @@ public class ONKOReportService {
                                 + "', 'dd.mm.yyyy') and " +
                                 "to_date('" + dateFormat.format(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate))
                                 + "', 'dd.mm.yyyy') " +
-                                " and upper(cbp.pac_fam) = '" + dnGet.getPeople().getFam().toUpperCase() +
-                                "' and upper(cbp.pac_im)  = '" + dnGet.getPeople().getIm().toUpperCase() +
-                                "' and upper(cbp.pac_ot) = '" + dnGet.getPeople().getOt().toUpperCase() +
-                                "' and cbp.pac_dr  = to_date('" + dateFormat.format(dnGet.getPeople().getDr()) + "', 'DD.MM.YYYY') " +
-                                "and cb.enp  = '" + dnGet.getPeople().getEnp() + "'" +
+                                " and upper(cbp.pac_fam) = '" + people.getFam().toUpperCase() +
+                                "' and upper(cbp.pac_im)  = '" + people.getIm().toUpperCase() +
+                                "' and upper(cbp.pac_ot) = '" + people.getOt().toUpperCase() +
+                                "' and cbp.pac_dr  = to_date('" + dateFormat.format(people.getDr()) + "', 'DD.MM.YYYY') " +
+                                "and cb.enp  = '" + people.getEnp() + "'" +
                                 " and mhc.code in (" + utilService.transformStringArrayForBars(usl_ok) +
                                 ") and (substring(mkb.mkb_code, 1, 1) = 'C' or substring(mkb.mkb_code, 1, 2) = 'D0')");
 

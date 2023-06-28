@@ -77,10 +77,6 @@ public class DNGetService {
         return dnGetRepo.findAllByDate_1Between(dateBeg, dateEnd);
     }
 
-    public List<DNGet> getAllKARDIO() {
-        return dnGetRepo.findAllByKARDIO();
-    }
-
     public void deleteAllByPeople(List<DNGet> dnGets) {
         dnGetRepo.deleteAll(dnGets);
     }
