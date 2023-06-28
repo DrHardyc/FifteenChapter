@@ -1,7 +1,6 @@
 package ru.hardy.udio.view;
 
 import com.vaadin.flow.component.AttachEvent;
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -17,22 +16,16 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
-import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.persistence.OrderBy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import ru.hardy.udio.domain.struct.*;
-import ru.hardy.udio.domain.task.ReportTask;
-import ru.hardy.udio.domain.task.TaskStatus;
 import ru.hardy.udio.service.*;
 import ru.hardy.udio.service.SRZ.DBFSearchService;
 import ru.hardy.udio.service.deamonservice.SearchDead;
-import ru.hardy.udio.service.taskservice.ReportTaskService;
 
-import java.awt.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
@@ -69,7 +62,7 @@ public class TestView extends VerticalLayout {
     private ExcelService excelService;
 
     @Autowired
-    private SearchDead searchDead = new SearchDead();
+    private SearchDead searchDead;
 
 
     public TestView() throws SQLException {
@@ -200,12 +193,6 @@ public class TestView extends VerticalLayout {
             peopleService.searchFromUdio(peopleService.searchFromSRZ(dataFile));
         });
 
-        Button btnSearchDead = new Button("Поиск умерших");
-
-        btnSearchDead.addClickListener(e -> {
-            searchDead.start();
-        });
-
         Button btnSearchNoSearch = new Button("Поиск не добавленных");
         btnSearchNoSearch.addClickListener(e -> {
             boolean flag = true;
@@ -250,7 +237,7 @@ public class TestView extends VerticalLayout {
             excelService.getEfficiencyReport(monthBeg.getValue(), monthEnd.getValue(), yearBeg.getValue(), yearEnd.getValue(), "efficiensy3.xlsx", "4, 7", 3);
         });
 
-        add(btnSearchInSRZ, btnSearchDead, btnUpdateNotAdd, btnSearchNoSearch, btnTestDNGetAll, btnEfficiency, monthBeg, monthEnd, yearBeg, yearEnd);
+        add(btnSearchInSRZ, btnUpdateNotAdd, btnSearchNoSearch, btnTestDNGetAll, btnEfficiency, monthBeg, monthEnd, yearBeg, yearEnd);
 
     }
 }

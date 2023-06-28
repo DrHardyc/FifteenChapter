@@ -1,6 +1,9 @@
 package ru.hardy.udio.service.deamonservice;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class SearchDead extends Thread {
 
     @Autowired
@@ -39,23 +44,15 @@ public class SearchDead extends Thread {
     @Autowired
     private ReportTaskService reportTaskService;
 
+    private static final String CRON = "0 0 23 * * *";
 
-//    public SearchDead(DNGetService dnGetService, DNOutService dnOutService){
-//        this.dnGetService = dnGetService;
-//        this.dnOutService = dnOutService;
-//    }
     private List<People> search(List<People> peopleList){
-        System.out.println("Поиск в срз...");
         List<People> newPeopleList = new ArrayList<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
         Statement statement = dbjdbcConfig.getSRZ();
-        int count = 0;
-        int size = peopleList.size();
         try {
             for (People people : peopleList) {
-                System.out.println(people.getFIO() + " " + count + "/" + size);
-                count++;
                 ResultSet resultSet = statement.executeQuery("select p.ds from PEOPLE p join HISTFDR h on h.pid = p.id " +
                         " where (concat(p.FAM, ' ', p.IM, ' ', p.OT) = '" + people.getFIO() + "'" +
                         " or concat(h.FAM, ' ', h.IM, ' ', h.OT) = '" + people.getFIO() + "')" +
@@ -73,31 +70,21 @@ public class SearchDead extends Thread {
     }
 
     @Transactional
-    public void run(){
+    @Scheduled(cron = CRON)
+    public void start(){
         Long id = 0L;
         try {
             id = reportTaskService.add(
                     new ReportTask("Поиск умерших", "", TaskStatus.progress, "", "System", ""));
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("HH");
-            long sleep = 27 - Long.parseLong(dateFormat.format(Date.from(Instant.now())));
-//        try {
-//            Thread.sleep(sleep * 3600L);
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
-            int percCount = 0;
             List<People> peopleList = search(peopleService.getAlivePeople());
             System.out.println("Сохраняем результаты");
-            int size = peopleList.size();
             for (People people : peopleList) {
                 for (DNGet dnGet : dnGetService.getByPeopleId(people.getId())) {
                     dnOutService.add(new DNOut(dnGet, people, 1));
                 }
                 dnGetService.deleteAllByPeople(dnGetService.getByPeopleId(people.getId()));
                 peopleService.save(people);
-                System.out.println(people.getFIO() + " " + people.getDr() + " " + percCount + "/" + size);
-                percCount++;
             }
         } catch (Exception err){
             if (id != 0L){
