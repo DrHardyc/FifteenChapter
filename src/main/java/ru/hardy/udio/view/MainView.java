@@ -34,7 +34,7 @@ public class MainView extends AppLayout {
 
         DrawerToggle toggle = new DrawerToggle();
 
-        H5 title = new H5("Д - наблюдение v1.4");
+        H5 title = new H5("Д - наблюдение v1.4.1");
         //title.getStyle().set("margin", "0");
         UtilService su = new UtilService();
         Tabs tabs = su.getTabs();
