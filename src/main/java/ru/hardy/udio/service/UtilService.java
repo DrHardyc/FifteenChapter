@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public class UtilService {
         url = new URL(strURL);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
-        return new BufferedReader(new InputStreamReader(con.getInputStream()));
+        return new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8));
     }
 
     public Date transformDate(String month, String year, DateInterval dateinterval){

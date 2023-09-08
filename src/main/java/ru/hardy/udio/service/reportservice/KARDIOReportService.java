@@ -3,7 +3,6 @@ package ru.hardy.udio.service.reportservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.report.DateInterval;
-import ru.hardy.udio.domain.struct.DNGet;
 import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.service.PeopleService;
 import ru.hardy.udio.service.UtilService;
@@ -41,10 +40,10 @@ public class KARDIOReportService {
                             + "', 'dd.mm.yyyy') and " +
                         "to_date('" + dateFormat.format(utilService.transformDate(monthEnd, yearEnd, DateInterval.maxDate))
                             + "', 'dd.mm.yyyy')" +
-                        " and upper(cbp.pac_fam) = '" + people.getFam().toUpperCase() +
-                        "' and upper(cbp.pac_im)  = '" + people.getIm().toUpperCase() +
-                        "' and upper(cbp.pac_ot) = '" + people.getOt().toUpperCase() +
-                        "' and cbp.pac_dr  = to_date('" + dateFormat.format(people.getDr()) + "', 'DD.MM.YYYY') " +
+                        " and upper(cbp.pac_fam) = '" + people.getSurname().toUpperCase() +
+                        "' and upper(cbp.pac_im)  = '" + people.getName().toUpperCase() +
+                        "' and upper(cbp.pac_ot) = '" + people.getPatronymic().toUpperCase() +
+                        "' and cbp.pac_dr  = to_date('" + dateFormat.format(people.getDateBirth()) + "', 'DD.MM.YYYY') " +
                         "and cb.enp  = '" + people.getEnp() + "'" +
                         "and substring(mkb.mkb_code, 1, 1) = 'I' " +
                         "and mpv.code = '1.3'");

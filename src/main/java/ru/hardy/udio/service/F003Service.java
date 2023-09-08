@@ -62,4 +62,16 @@ public class F003Service{
         }
         return true;
     }
+
+    public F003 getWithCode(int code){
+        F003Service f003Service = new F003Service();
+        UtilService su = new UtilService();
+        List<F003> f003s;
+        try {
+            f003s = f003Service.getF003s(su.getHBBufferedReader("http://nsi.ffoms.ru/nsi-int/api/data?identifier=F003&filters=mcod%7C" + code));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return f003s.get(0);
+    }
 }

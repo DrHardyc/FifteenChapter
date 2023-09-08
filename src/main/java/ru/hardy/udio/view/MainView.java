@@ -7,6 +7,7 @@ import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.H5;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -17,6 +18,7 @@ import com.vaadin.flow.server.VaadinSession;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import ru.hardy.udio.config.ShellConfig;
 import ru.hardy.udio.domain.User;
 import ru.hardy.udio.service.UserService;
 import ru.hardy.udio.service.UtilService;
@@ -33,9 +35,7 @@ public class MainView extends AppLayout {
     public MainView() {
 
         DrawerToggle toggle = new DrawerToggle();
-
-        H5 title = new H5("Д - наблюдение v1.4.1");
-        //title.getStyle().set("margin", "0");
+        H5 titleVersion = new H5("Д - наблюдение v1.4.1");
         UtilService su = new UtilService();
         Tabs tabs = su.getTabs();
         tabs.setAutoselect(true);
@@ -48,17 +48,14 @@ public class MainView extends AppLayout {
         verticalLayout.setSizeFull();
         horizontalLayout.add(verticalLayout);
         addToNavbar(toggle, horizontalLayout);
-//        FlexLayout flexLayout = new FlexLayout(title);
-//        VerticalLayout vlFooter = new VerticalLayout(flexLayout);
-//        vlFooter.setSizeFull();
-//        verticalLayout.expand(flexLayout);
-        addToDrawer(title);
-        //title.getStyle().set("position", "relative");
-        //title.getStyle().set("top", "650px");
-        title.getStyle().set("margin-left", "auto");
-        title.getStyle().set("margin-right", "auto");
-        title.getStyle().set("margin-top", "auto");
-       // VaadinSession.getCurrent().getSession().setMaxInactiveInterval(30);
+
+        HorizontalLayout hlVersion = new HorizontalLayout();
+        hlVersion.setHeight("80%");
+        hlVersion.setAlignSelf(FlexComponent.Alignment.END, titleVersion);
+        titleVersion.getStyle().set("margin-left", "auto");
+        titleVersion.getStyle().set("margin-right", "auto");
+        hlVersion.add(titleVersion);
+        addToDrawer(hlVersion);
     }
 
     @Override
@@ -68,5 +65,4 @@ public class MainView extends AppLayout {
         Tooltip.forComponent(avatar).withText(user.getPosition()).setPosition(Tooltip.TooltipPosition.BOTTOM_START);
         avatar.getStyle().set("margin", "auto");
     }
-
 }

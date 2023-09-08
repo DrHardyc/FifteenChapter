@@ -15,7 +15,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Table(schema = "udio_tfoms")
-public class DNOut{
+public class DNOut {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "dnget_seq")
@@ -70,8 +70,8 @@ public class DNOut{
     }
 
     public LocalDateTime getLocalDateDr(){
-        if (this.getPeople().getDr() != null) {
-            return this.getPeople().getDr().toInstant()
+        if (this.getPeople().getDateBirth() != null) {
+            return this.getPeople().getDateBirth().toInstant()
                     .atZone(ZoneId.systemDefault())
                     .toLocalDateTime();
         }
@@ -80,7 +80,7 @@ public class DNOut{
 
     public LocalDate getLocalDate_1(){
         if (this.getDate_1() != null) {
-            return this.getPeople().getDr().toInstant()
+            return this.getPeople().getDateBirth().toInstant()
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate();
         }
@@ -96,13 +96,14 @@ public class DNOut{
         return null;
     }
 
+    
     public String getEnp(){
         return this.getPeople().getEnp();
     }
 
     public String getDate_1String(){
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        if (this.getDate_1() != null) return dateFormat.format(this.getPeople().getDr());
+        if (this.getDate_1() != null) return dateFormat.format(this.getPeople().getDateBirth());
         return null;
     }
 
@@ -112,11 +113,7 @@ public class DNOut{
         return null;
     }
 
-    public String getAge() {
-        return String.valueOf(this.getPeople().getAge());
-    }
-
     public String getSex() {
-        return String.valueOf(this.getPeople().getSex().getId());
+        return String.valueOf(this.getPeople().getSex());
     }
 }

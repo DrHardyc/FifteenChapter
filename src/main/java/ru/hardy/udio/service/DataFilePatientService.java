@@ -2,30 +2,16 @@ package ru.hardy.udio.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.hardy.udio.config.DBJDBCConfig;
-import ru.hardy.udio.domain.struct.DataFile;
 import ru.hardy.udio.domain.struct.DataFilePatient;
 import ru.hardy.udio.repo.DataFilePatientRepo;
 import ru.hardy.udio.repo.PeopleRepo;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
 public class DataFilePatientService {
     @Autowired
     private DataFilePatientRepo dataFilePatientRepo;
-
-    @Autowired
-    private DataFileService dataFileService;
-
-    @Autowired
-    private SexService sexService;
 
     @Autowired
     private PeopleRepo peopleRepo;
@@ -35,7 +21,7 @@ public class DataFilePatientService {
     }
 
     public boolean searchFromPeople(DataFilePatient dataFilePatient) {
-        return peopleRepo.findPeopleByFamIgnoreCaseAndImIgnoreCaseAndOtIgnoreCaseAndDrAndEnp(dataFilePatient.getFam(), dataFilePatient.getIm(),
+        return peopleRepo.findPeopleBySurnameIgnoreCaseAndNameIgnoreCaseAndPatronymicIgnoreCaseAndDateBirthAndEnp(dataFilePatient.getFam(), dataFilePatient.getIm(),
                 dataFilePatient.getOt(), dataFilePatient.getDr(), dataFilePatient.getEnp()) == null;
     }
 

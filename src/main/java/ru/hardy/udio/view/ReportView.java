@@ -4,13 +4,19 @@ import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import ru.hardy.udio.domain.button.BtnVariant;
+import ru.hardy.udio.domain.button.UdioButton;
+import ru.hardy.udio.domain.combobox.UdioCombobox;
 import ru.hardy.udio.domain.struct.DNOut;
+import ru.hardy.udio.domain.struct.dto.DNOutDto;
 import ru.hardy.udio.domain.task.ReportTask;
 import ru.hardy.udio.domain.task.TaskStatus;
 import ru.hardy.udio.service.DNGetService;
@@ -44,18 +50,45 @@ public class ReportView extends VerticalLayout {
     private ExcelService excelService;
 
     private final String username;
-    private final UtilService utilService = new UtilService();
-    private final DateInterval dateInterval = new DateInterval();
-    private final ComboBox<Month> monthPickerBeg = dateInterval.getMonthInterval("Месяц начала периода");
-    private final ComboBox<Month> monthPickerEnd = dateInterval.getMonthInterval("Месяц окончания периода");
-    private final ComboBox<Integer> yearPickerBeg = dateInterval.getYearInterval("Год начала периода");
-    private final ComboBox<Integer> yearPickerEnd = dateInterval.getYearInterval("Год окончания периода");
-    private final Button btnSearch = new Button("Найти");
 
-    private final ComboBox<String> comboBox = new ComboBox<>("Данные");
+    private final HorizontalLayout hlBegPeriod = new HorizontalLayout();
+    private final HorizontalLayout hlEndPeriod = new HorizontalLayout();
+    private final DateInterval dateInterval = new DateInterval();
+    private final ComboBox<Month> monthPickerBeg = dateInterval.getMonthInterval();
+    private final ComboBox<Month> monthPickerEnd = dateInterval.getMonthInterval();
+    private final ComboBox<Integer> yearPickerBeg = dateInterval.getYearInterval();
+    private final ComboBox<Integer> yearPickerEnd = dateInterval.getYearInterval();
+    private final Button btnSearch = new UdioButton("Найти", BtnVariant.SEARCH);
+
+    private final ComboBox<String> comboBox = new UdioCombobox<>();
 
 
     public ReportView() {
+        FormLayout formLayout = new FormLayout();
+
+        hlBegPeriod.setPadding(false);
+        hlBegPeriod.setSpacing(false);
+        hlBegPeriod.add(monthPickerBeg, yearPickerBeg);
+        hlBegPeriod.getThemeList().add("spacing-xs");
+
+        hlEndPeriod.setPadding(false);
+        hlEndPeriod.setSpacing(false);
+        hlEndPeriod.add(monthPickerEnd, yearPickerEnd);
+        hlEndPeriod.getThemeList().add("spacing-xs");
+
+        formLayout.addFormItem(comboBox, "Данные");
+        formLayout.addFormItem(hlBegPeriod, "c");
+        formLayout.addFormItem(hlEndPeriod, "по");
+
+        formLayout.setColspan(btnSearch, 1);
+        formLayout.setWidth("26%");
+        formLayout.setResponsiveSteps(
+                new FormLayout.ResponsiveStep("0", 1),
+                new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP),
+                new FormLayout.ResponsiveStep("200px", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE)
+        //    new FormLayout.ResponsiveStep("400px", 2)
+        );
+
         List<String> cbItems = new ArrayList<>();
         cbItems.add("Файлы");
         cbItems.add("Все");
@@ -68,7 +101,7 @@ public class ReportView extends VerticalLayout {
         username = SecurityContextHolder.getContext().getAuthentication().getName();
         comboBox.setItems(cbItems);
 
-        add(comboBox, yearPickerBeg, yearPickerEnd, monthPickerBeg, monthPickerEnd, btnSearch);
+        add(formLayout, btnSearch);
     }
 
     @Override
@@ -79,8 +112,8 @@ public class ReportView extends VerticalLayout {
             if (comboBox.getValue().equals("Файлы")){
 
             }else if (comboBox.getValue().equals("Снятые")){
-                List<DNOut> dnOuts = dnOutService.getAll();
-                Dialog dialog = dialogViewGen.getDieReportDialog(dnOuts);
+                List<DNOutDto> dnOutsDtos = dnOutService.getAll();
+                Dialog dialog = dialogViewGen.getDieReportDialog(dnOutsDtos);
                 add(dialog);
                 dialog.open();
             } else if (comboBox.getValue().equals("Все")) {
@@ -186,28 +219,26 @@ public class ReportView extends VerticalLayout {
 
         comboBox.addValueChangeListener(e -> {
             if (e.getValue().equals("Файлы")){
-                hideComponent(false);
+                enabledComponent(false);
             } else if (e.getValue().equals("Снятые")){
-                hideComponent(false);
+                enabledComponent(false);
             } else if (e.getValue().equals("Все")) {
-                hideComponent(false);
+                enabledComponent(false);
             } else if (e.getValue().equals("ДН-терапефт")){
-                hideComponent(true);
+                enabledComponent(true);
             } else if (e.getValue().equals("ДН-онколог")){
-                hideComponent(true);
+                enabledComponent(true);
             } else if (e.getValue().equals("ОНКО")){
-                hideComponent(true);
+                enabledComponent(true);
             } else if (e.getValue().equals("КАРДИО")){
-                hideComponent(true);
+                enabledComponent(true);
             }
         });
     }
 
-    private void hideComponent(boolean flag) {
-        yearPickerBeg.setVisible(flag);
-        yearPickerEnd.setVisible(flag);
-        monthPickerBeg.setVisible(flag);
-        monthPickerEnd.setVisible(flag);
+    private void enabledComponent(boolean flag) {
+        hlBegPeriod.setEnabled(flag);
+        hlEndPeriod.setEnabled(flag);
     }
 
     private boolean checkNullDateInterval(String cbValue) {

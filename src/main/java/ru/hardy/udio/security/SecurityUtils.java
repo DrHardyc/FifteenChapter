@@ -3,6 +3,7 @@ package ru.hardy.udio.security;
 import com.vaadin.flow.server.HandlerHelper;
 import com.vaadin.flow.shared.ApplicationConstants;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -36,5 +37,13 @@ public class SecurityUtils{
         final String parameterValue = request.getParameter(ApplicationConstants.REQUEST_TYPE_PARAMETER);
         return parameterValue != null
                 && Stream.of(HandlerHelper.RequestType.values()).anyMatch(r -> r.getIdentifier().equals(parameterValue));
+    }
+
+    public String encodeString(String token){
+        return new String(Base64.encodeBase64(token.getBytes()));
+    }
+
+    public String decodeString(String encodeToken){
+        return new String(Base64.decodeBase64(encodeToken.getBytes()));
     }
 }

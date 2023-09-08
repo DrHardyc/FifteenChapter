@@ -11,8 +11,8 @@
     <groupId>ru.hardy</groupId>
     <artifactId>udio</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>udio</name>
-    <description>udio</description>
+    <name>FifteenChapter</name>
+    <description>FifteenChapter</description>
     <properties>
         <java.version>19</java.version>
         <vaadin.version>24.0.4</vaadin.version>
@@ -97,6 +97,22 @@
             <groupId>org.vaadin.olli</groupId>
             <artifactId>file-download-wrapper</artifactId>
             <version>7.0.0</version>
+        </dependency>
+<!--        -->
+<!--        SOAP-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web-services</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+        </dependency>
+<!--    Encrypt    -->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.16.0</version>
         </dependency>
 <!--        -->
     </dependencies>
@@ -199,6 +215,26 @@
                                 </configuration>
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>jaxb2-maven-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>xjc</id>
+                                <goals>
+                                    <goal>xjc</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <sources>
+                                <source>src/main/resources/countries.xsd</source>
+                            </sources>
+                            <outputDirectory>src/main/java</outputDirectory>
+                            <clearOutputDir>false</clearOutputDir>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

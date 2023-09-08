@@ -15,5 +15,14 @@ public class Token{
     private Long id;
 
     private String key;
-    private String lpu;
+    private Integer lpu;
+
+    public Token(String token, int codeMO){
+        this.key = token;
+        this.lpu = codeMO;
+    }
+
+    public Token() {
+
+    }
 }

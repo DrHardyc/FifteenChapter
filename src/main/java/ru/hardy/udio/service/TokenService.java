@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.Token;
 import ru.hardy.udio.repo.TokenRepo;
+import ru.hardy.udio.security.SecurityUtils;
 
 import java.util.UUID;
 
@@ -14,35 +15,32 @@ public class TokenService {
     @Autowired
     private TokenRepo tokenRepo;
 
-    private final Base64 base64 = new Base64();
 
-    public Token genToken(String lpu){
-        if (checkLpu(lpu)){ // false - если не находим
-            return tokenRepo.findByLpu(lpu);
-        }
-        String generatedString = UUID.randomUUID().toString();
-        Token token = new Token();
-        token.setLpu(lpu);
-        token.setKey(generatedString);
-        return tokenRepo.save(token);
-    }
-
-    private boolean checkLpu(String lpu){
-        return tokenRepo.findByLpu(lpu) != null;
-    }
-
-    public boolean checkHashKey(String lpu, String keyLpu){
-        if (keyLpu.isEmpty()){
-            return false;
-        }
-        return getKeyWithLpu(lpu).equals(new String(base64.decode((keyLpu.getBytes()))));
+    public boolean checkToken(String token){
+        return tokenRepo.findToken(getCryptToken(token)) != null;
     }
 
     private String getKeyWithLpu(String lpu){
         return tokenRepo.findByLpu(lpu).getKey();
     }
 
-    public String getHashWithKey(String key) {
-        return new String(base64.encode(key.getBytes()));
+    public int getCodeMOWithToken(String token) {
+        if (tokenRepo.findToken(token) != null) {
+            return tokenRepo.findToken(token).getLpu();
+        } else return 0;
     }
+
+    public String getCryptToken(String token){
+        SecurityUtils securityUtils = new SecurityUtils();
+        return securityUtils.encodeString(token);
+    }
+
+    public String getUnCryptToken(String cryptToken){
+        SecurityUtils securityUtils = new SecurityUtils();
+        return securityUtils.decodeString(cryptToken);
+    }
+
+    public void addNewToken(String token, int codeMO){
+        tokenRepo.save(new Token(token, codeMO));
+    };
 }

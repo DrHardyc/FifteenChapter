@@ -9,47 +9,47 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
-import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import ru.hardy.udio.domain.struct.DNOut;
+import ru.hardy.udio.domain.struct.dto.DNOutDto;
 import ru.hardy.udio.service.UtilService;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.function.Consumer;
 
-public class DNOutGrid {
+public class DNOutDtoGrid {
 
-    public void getGrid(Grid<DNOut> grid, GridListDataView<DNOut> DNOutGridListDataView) {
-        Grid.Column<DNOut> fioCol = grid.addColumn(DNOut::getFIO).setResizable(true).setSortable(true).setWidth("300px");
-        Grid.Column<DNOut> ageCol = grid.addColumn(DNOut::getAge).setResizable(true).setSortable(true);
-        Grid.Column<DNOut> sexCol = grid.addColumn(DNOut::getSex).setResizable(true).setSortable(true);
-        Grid.Column<DNOut> diagCol = grid.addColumn(DNOut::getDiag).setResizable(true).setSortable(true);
-        Grid.Column<DNOut> dsCol = grid.addColumn(new LocalDateRenderer<>(
-                DNOut::getLocalDateDs, "dd.MM.yyyy")).setResizable(true).setComparator(DNOut::getLocalDateDr);
-        Grid.Column<DNOut> date1Col = grid.addColumn(new LocalDateRenderer<>(
-                DNOut::getLocalDate_1, "dd.MM.yyyy")).setResizable(true).setComparator(DNOut::getLocalDate_1);
+    public void getGrid(Grid<DNOutDto> grid, GridListDataView<DNOutDto> DNOutDtoGridListDataView) {
+        Grid.Column<DNOutDto> fioCol = grid.addColumn(DNOutDto::getFIO).setResizable(true).setSortable(true).setWidth("300px");
+        Grid.Column<DNOutDto> ageCol = grid.addColumn(DNOutDto::getAge).setResizable(true).setSortable(true);
+        Grid.Column<DNOutDto> sexCol = grid.addColumn(DNOutDto::getNumberSex).setResizable(true).setSortable(true);
+        Grid.Column<DNOutDto> diagCol = grid.addColumn(DNOutDto::getDiags).setResizable(true).setSortable(true);
+        Grid.Column<DNOutDto> dsCol = grid.addColumn(new LocalDateRenderer<>(
+                DNOutDto::getLocalDateDs, "dd.MM.yyyy")).setResizable(true).setComparator(DNOutDto::getLocalDateDs);
+        Grid.Column<DNOutDto> date1Col = grid.addColumn(DNOutDto::getDate_1).setResizable(true).setComparator(DNOutDto::getDate_1);
 
-        DNOutGrid.DNOutFilter DNOutFilter = new DNOutGrid.DNOutFilter(DNOutGridListDataView);
+        DNOutDtoFilter DNOutDtoFilter = new DNOutDtoFilter(DNOutDtoGridListDataView);
         grid.getHeaderRows().clear();
         grid.setMultiSort(true, Grid.MultiSortPriority.APPEND);
         HeaderRow headerRow = grid.appendHeaderRow();
 
         headerRow.getCell(fioCol).setComponent(
-                createFilterHeader("ФИО", DNOutFilter::setFio));
+                createFilterHeader("ФИО", DNOutDtoFilter::setFio));
         headerRow.getCell(ageCol).setComponent(
-                createFilterHeader("Возраст", DNOutFilter::setAge));
+                createFilterHeader("Возраст", DNOutDtoFilter::setAge));
         headerRow.getCell(sexCol).setComponent(
-                createFilterHeader("Пол", DNOutFilter::setSex));
+                createFilterHeader("Пол", DNOutDtoFilter::setSex));
         headerRow.getCell(diagCol).setComponent(
-                createFilterHeader("Диагноз", DNOutFilter::setDiag));
+                createFilterHeader("Диагноз", DNOutDtoFilter::setDiag));
         headerRow.getCell(dsCol).setComponent(
-                createFilterHeader("Дата смерти", DNOutFilter::setDs));
+                createFilterHeader("Дата смерти", DNOutDtoFilter::setDs));
         headerRow.getCell(date1Col).setComponent(
-                createFilterHeader("Дата взятия", DNOutFilter::setDate_1));
+                createFilterHeader("Дата взятия", DNOutDtoFilter::setDate_1));
     }
 
-    private static class DNOutFilter{
-        private final GridListDataView<DNOut> dataView;
-
+    private static class DNOutDtoFilter {
+        private final GridListDataView<DNOutDto> dataView;
         private String fio;
         private String age;
         private String sex;
@@ -91,18 +91,19 @@ public class DNOutGrid {
             return String.valueOf(dataView.getItemCount());
         }
 
-        public DNOutFilter(GridListDataView<DNOut> dataView) {
+        public DNOutDtoFilter(GridListDataView<DNOutDto> dataView) {
             this.dataView = dataView;
             this.dataView.addFilter(this::refresh);
         }
-        public boolean refresh(DNOut DNOut) {
-            boolean matchesFio = matches(DNOut.getFIO(), fio);
-            boolean matchesEnp = matches(DNOut.getAge(), age);
-            boolean matchesSex = matches(DNOut.getSex(), sex);
-            boolean matchesDiag = matches(DNOut.getDiag(), diag);
-            boolean matchesDs = matches(DNOut.getDsString(), ds);
-            boolean matchesDate1 = matches(DNOut.getDate_1String(), date_1);
+        public boolean refresh(DNOutDto dnOutDto) {
+            DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
+            boolean matchesFio = matches(dnOutDto.getFIO(), fio);
+            boolean matchesEnp = matches(String.valueOf(dnOutDto.getAge()), age);
+            boolean matchesSex = matches(dnOutDto.getStringSexId(), sex);
+            boolean matchesDiag = matches(dnOutDto.getDiags(), diag);
+            boolean matchesDs = matches(dateFormat.format(dnOutDto.getDs()), ds);
+            boolean matchesDate1 = matches(dnOutDto.getDate_1(), date_1);
 
             return matchesFio && matchesEnp && matchesDs && matchesDate1 && matchesSex && matchesDiag;
         }

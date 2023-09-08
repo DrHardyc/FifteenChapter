@@ -17,11 +17,21 @@ public class ResponseAnswerUdio {
     private ResponseAnswerCode result;
     private String description;
     private DataUdioRespIdenty dataUdioResp;
+    private Object object;
 
     @JsonIgnore
     private Date date_beg;
     @JsonIgnore
     private Date date_edit;
+
+    public ResponseAnswerUdio(ResponseAnswerCode responseAnswerCode, String description, DataUdioRespIdenty dataUdioResp, Object o){
+        this.setResult(responseAnswerCode);
+        this.setDescription(description);
+        this.setDataUdioResp(dataUdioResp);
+        this.date_beg = Date.from(Instant.now());
+        this.date_edit = Date.from(Instant.now());
+        this.setObject(o);
+    }
 
     public ResponseAnswerUdio(ResponseAnswerCode responseAnswerCode, String description, DataUdioRespIdenty dataUdioResp){
         this.setResult(responseAnswerCode);

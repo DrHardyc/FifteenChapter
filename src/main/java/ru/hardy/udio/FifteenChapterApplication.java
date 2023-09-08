@@ -6,12 +6,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableScheduling
 @SpringBootApplication
-public class UdioApplication {
-
+public class FifteenChapterApplication {
 
     public static void main(String[] args) {
 
-        SpringApplication.run(UdioApplication.class, args);
+        SpringApplication.run(FifteenChapterApplication.class, args);
 
     }
 }

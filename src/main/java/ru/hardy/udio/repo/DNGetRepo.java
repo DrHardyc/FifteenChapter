@@ -17,7 +17,7 @@ public interface DNGetRepo extends JpaRepository<DNGet, Long> {
     List<DNGet> findByPeopleId(Long id);
     DNGet findByDiagAndPeople(String diag, People people);
 
-    @Query("select t from DNGet t where exists (select p from People p where t.people = p and p.fam = :fam and p.im = :im and p.ot = :ot)")
+    @Query("select t from DNGet t where exists (select p from People p where t.people = p and p.surname = :fam and p.name = :im and p.patronymic = :ot)")
     List<DNGet> findByFamAndImAndOtOrderByFIO(String fam, String im, String ot);
 
     @Query("select t from DNGet t " +

@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.hardy.udio.config.DBJDBCConfig;
@@ -18,12 +17,10 @@ import ru.hardy.udio.service.DNOutService;
 import ru.hardy.udio.service.PeopleService;
 import ru.hardy.udio.service.taskservice.ReportTaskService;
 
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,7 +53,7 @@ public class SearchDead extends Thread {
                 ResultSet resultSet = statement.executeQuery("select p.ds from PEOPLE p join HISTFDR h on h.pid = p.id " +
                         " where (concat(p.FAM, ' ', p.IM, ' ', p.OT) = '" + people.getFIO() + "'" +
                         " or concat(h.FAM, ' ', h.IM, ' ', h.OT) = '" + people.getFIO() + "')" +
-                        " and p.DR  = PARSE('" + dateFormat.format(people.getDr()) + "' as date)" +
+                        " and p.DR  = PARSE('" + dateFormat.format(people.getDateBirth()) + "' as date)" +
                         " and coalesce(p.ds, 0) <> 0");
                 if (resultSet.next()){
                     people.setDs(resultSet.getDate(1));

@@ -3,6 +3,7 @@ package ru.hardy.udio.view;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
@@ -21,17 +22,17 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
+import ru.hardy.udio.domain.button.BtnVariant;
+import ru.hardy.udio.domain.button.UdioButton;
+import ru.hardy.udio.domain.combobox.UdioCombobox;
 import ru.hardy.udio.domain.struct.DNGet;
 import ru.hardy.udio.domain.struct.DataFile;
 import ru.hardy.udio.domain.struct.DataFilePatient;
 import ru.hardy.udio.service.*;
 import ru.hardy.udio.service.SRZ.DBFSearchService;
-import ru.hardy.udio.service.deamonservice.SearchDead;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.time.Instant;
 import java.util.Date;
@@ -45,30 +46,16 @@ public class TestView extends VerticalLayout {
     private PeopleService peopleService;
 
     @Autowired
-    private SexService sexService;
-
-    @Autowired
     private DataFilePatientService dataFilePatientService;
 
     @Autowired
     private DNGetService dnGetService;
 
     @Autowired
-    private DNOutService dnOutService;
-
-    @Autowired
-    private DataFileService dataFileService;
-
-    private final String username;
-
-    @Autowired
     private ExcelService excelService;
 
-    @Autowired
-    private SearchDead searchDead;
 
-
-    public TestView() throws SQLException {
+    public TestView() {
 
         Avatar avatar = new Avatar();
         Anchor anchor = new Anchor(new StreamResource("DNTh.xlsx",
@@ -81,11 +68,8 @@ public class TestView extends VerticalLayout {
                 }),
                 "A document");
 
-        username = SecurityContextHolder.getContext().getAuthentication().getName();
-
         anchor.getElement().setAttribute("router-ignore", true);
 
-        Button button = new Button("Test");
         Span span = new Span(String.valueOf(22));
         Tooltip tooltip = Tooltip.forComponent(span);
         tooltip.setText(span.getText() + " выполненных новых задач");
@@ -114,49 +98,57 @@ public class TestView extends VerticalLayout {
         MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
         Upload upload = new Upload(buffer);
 
-        TextField textField = new TextField("Код МО");
-        upload.addSucceededListener(event -> {
-            ExcelService excelService = new ExcelService();
-            System.out.println(event.getFileName().substring(0, 6));
-            try {
-                peopleService.processingFromExcel(excelService.loadFromExcelFromBarsMO(
-                        new DataFile(event.getFileName(), Date.from(Instant.now()), Integer.parseInt(event.getFileName().substring(0, 6)), 123123L),
-                        buffer.getInputStream(event.getFileName())));
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
+//        TextField textField = new TextField("Код МО");
+//        upload.addSucceededListener(event -> {
+//            ExcelService excelService = new ExcelService();
+//            System.out.println(event.getFileName().substring(0, 6));
+//            try {
+//                peopleService.processingFromExcel(excelService.loadFromExcelFromBarsMO(
+//                        new DataFile(event.getFileName(), Date.from(Instant.now()), Integer.parseInt(event.getFileName().substring(0, 6)), 123123L),
+//                        buffer.getInputStream(event.getFileName())));
+//            } catch (ParseException e) {
+//                throw new RuntimeException(e);
+//            }
+//        });
+//
+//        Upload uploadChild = new Upload(buffer);
+//        uploadChild.addSucceededListener(event -> {
+//            ExcelService excelService = new ExcelService();
+//            System.out.println(event.getFileName().substring(0, 6));
+//            peopleService.processingFromExcel(excelService.loadFromExcelOnkoChild(
+//                    new DataFile(event.getFileName(), Date.from(Instant.now()), Integer.parseInt(event.getFileName().substring(0, 6)), 1234L),
+//                    buffer.getInputStream(event.getFileName())
+//            ));
+//        });
+//        //add(avatar);
+//        add(horizontalLayout);
+//
+//        Upload uploadOther = new Upload(buffer);
+//        uploadOther.addSucceededListener(event -> {
+//            ExcelService excelService = new ExcelService();
+//            System.out.println(event.getFileName().substring(0, 6));
+//            try {
+//                peopleService.processingFromExcel(excelService.tmpLoadDeadNewFormat(
+//                        new DataFile(event.getFileName(), Date.from(Instant.now()), 155555, 5555L),
+//                        buffer.getInputStream(event.getFileName())
+//                ));
+//            } catch (ParseException e) {
+//                throw new RuntimeException(e);
+//            }
+//        });
+
+        Button button = new UdioButton("", BtnVariant.XLS);
+        button.addClickListener(e -> {
+
+            F003Service f003Service = new F003Service();
+            Notification.show(f003Service.getWithCode(150001).getNam_mop());
+
         });
 
-        Upload uploadChild = new Upload(buffer);
-        uploadChild.addSucceededListener(event -> {
-            ExcelService excelService = new ExcelService();
-            System.out.println(event.getFileName().substring(0, 6));
-            peopleService.processingFromExcel(excelService.loadFromExcelOnkoChild(
-                    new DataFile(event.getFileName(), Date.from(Instant.now()), Integer.parseInt(event.getFileName().substring(0, 6)), 1234L),
-                    buffer.getInputStream(event.getFileName())
-            ));
-        });
-        //add(avatar);
-        add(horizontalLayout);
-        button.addClickListener(ev -> {
+        ComboBox<String> stringComboBox = new UdioCombobox<>();
+        stringComboBox.setItems("asdfasdf", "asdfasdf");
 
-        });
-
-        Upload uploadOther = new Upload(buffer);
-        uploadOther.addSucceededListener(event -> {
-            ExcelService excelService = new ExcelService();
-            System.out.println(event.getFileName().substring(0, 6));
-            try {
-                peopleService.processingFromExcel(excelService.tmpLoadDeadNewFormat(
-                        new DataFile(event.getFileName(), Date.from(Instant.now()), 155555, 5555L),
-                        buffer.getInputStream(event.getFileName())
-                ));
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
-        });
-
-        add(button, anchor, textField, upload, uploadChild, uploadOther);
+        add(stringComboBox, button, anchor, upload);
     }
 
     private Span createBadge(int value) {
@@ -182,40 +174,6 @@ public class TestView extends VerticalLayout {
             dataFile.setDataFilePatient(dataFilePatientService.getNoSearchFromSRZ());
             DataFile dataFile1 = dbfSearchService.getDataFromDBF(dataFile);
             System.out.println(dataFile1.getDataFilePatient());
-        });
-
-        Button btnUpdateNotAdd = new Button("Добавить не добавленных");
-        btnUpdateNotAdd.addClickListener(e -> {
-            DataFile dataFile = new DataFile();
-
-            String fios = "";
-
-            int countDelimiter = 0;
-            for (DNGet dnGet : dnGetService.getAll()) {
-                if (countDelimiter == 0)
-                    fios = fios + "'" + dnGet.getFIO() + dnGet.getPeople().getEnp() + "'";
-                else {
-                    fios = fios + ", '" + dnGet.getFIO() + dnGet.getPeople().getEnp() + "'";
-                }
-                countDelimiter++;
-            }
-
-            peopleService.searchFromUdio(peopleService.searchFromSRZ(dataFile));
-        });
-
-        Button btnSearchNoSearch = new Button("Поиск не добавленных");
-        btnSearchNoSearch.addClickListener(e -> {
-            boolean flag = true;
-            for (DataFilePatient dataFilePatient : dataFilePatientService.getAllLoadSuccess(1)){
-                for (DNGet dnGet: dnGetService.getAll()){
-                    if (dataFilePatient.getFIO().equals(dnGet.getPeople().getFIO())
-                            && dataFilePatient.getEnp().equals((dnGet.getPeople().getEnp()))) {
-                        flag = false;
-                        break;
-                    }
-                }
-                if (flag) System.out.println(dataFilePatient); else flag = true;
-            }
         });
 
         Button btnTestDNGetAll = new Button();
@@ -247,7 +205,7 @@ public class TestView extends VerticalLayout {
             excelService.getEfficiencyReport(monthBeg.getValue(), monthEnd.getValue(), yearBeg.getValue(), yearEnd.getValue(), "efficiensy3.xlsx", "4, 7", 3);
         });
 
-        add(btnSearchInSRZ, btnUpdateNotAdd, btnSearchNoSearch, btnTestDNGetAll, btnEfficiency, monthBeg, monthEnd, yearBeg, yearEnd);
+        add(btnSearchInSRZ, btnTestDNGetAll, btnEfficiency, monthBeg, monthEnd, yearBeg, yearEnd);
 
     }
 }

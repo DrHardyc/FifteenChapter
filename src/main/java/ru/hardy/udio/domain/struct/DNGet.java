@@ -5,11 +5,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.util.Date;
-import java.util.Objects;
 
 @Entity
 @Setter
@@ -65,11 +63,11 @@ public class DNGet {
     }
 
     public String getPeopleSex() {
-        return String.valueOf(this.getPeople().getSex().getId());
+        return String.valueOf(this.getPeople().getSex());
     }
 
     public int getAge() {
-        return Period.between(this.getPeople().getDr().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+        return Period.between(this.getPeople().getDateBirth().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
                 LocalDate.now()).getYears();
     }
     public String getFIO() {

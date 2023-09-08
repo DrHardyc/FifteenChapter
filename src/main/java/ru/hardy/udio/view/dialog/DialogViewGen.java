@@ -1,12 +1,15 @@
 package ru.hardy.udio.view.dialog;
 
 
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.dataview.GridListDataView;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
@@ -14,15 +17,20 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.theme.lumo.LumoUtility;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.stereotype.Service;
 import org.vaadin.olli.FileDownloadWrapper;
+import ru.hardy.udio.domain.button.BtnVariant;
+import ru.hardy.udio.domain.button.UdioButton;
 import ru.hardy.udio.domain.struct.DNGet;
-import ru.hardy.udio.domain.struct.DNOut;
+import ru.hardy.udio.domain.struct.dto.DNOutDto;
 import ru.hardy.udio.service.DNGetService;
 import ru.hardy.udio.service.ExcelService;
 import ru.hardy.udio.service.TokenService;
 import ru.hardy.udio.view.grid.DNGetGrid;
-import ru.hardy.udio.view.grid.DNOutGrid;
+import ru.hardy.udio.view.grid.DNOutDtoGrid;
 
 import java.io.File;
 import java.util.List;
@@ -48,33 +56,6 @@ public class DialogViewGen {
         dialog.setModal(false);
     }
 
-    public Dialog getKeyGenDialog(TokenService tokenService){
-        Button btnKeyGen = new Button("Создать");
-
-        TextField tfKeyGen = new TextField();
-        tfKeyGen.setWidthFull();
-
-        TextField tfLpu = new TextField();
-        tfLpu.setWidthFull();
-        tfKeyGen.setReadOnly(true);
-
-        VerticalLayout vlKeyGen = new VerticalLayout();
-        vlKeyGen.setHorizontalComponentAlignment(FlexComponent.Alignment.END, btnKeyGen);
-        vlKeyGen.setWidth("500px");
-
-        btnKeyGen.addClickListener(e -> {
-            if(tfLpu.getValue().isEmpty()) Notification.show("Введите код LPU");
-            else {
-                tfKeyGen.setValue(tokenService.getHashWithKey(tokenService.genToken(tfLpu.getValue()).getKey()));
-            }
-        });
-
-        vlKeyGen.add(tfLpu, tfKeyGen, btnKeyGen);
-        dialog.add(vlKeyGen);
-
-        return dialog;
-    }
-
     public Dialog getDNGetDialog(DNGetService dnGetService, Long peopleId){
         Grid<DNGet> grid = new Grid<>(DNGet.class, false);
         grid.addColumn(DNGet::getNhistory);
@@ -85,13 +66,13 @@ public class DialogViewGen {
         return dialog;
     }
 
-    public Dialog getDieReportDialog(List<DNOut> dnOuts){
+    public Dialog getDieReportDialog(List<DNOutDto> dnOutDtos){
         Label label = new Label();
-        Grid<DNOut> grid = new Grid<>(DNOut.class, false);
-        Button btnExcel = new Button("Выгрузить в Excel");
+        Grid<DNOutDto> grid = new Grid<>(DNOutDto.class, false);
+        Button btnExcel = new UdioButton(".xlsx", BtnVariant.XLS);
         btnExcel.setEnabled(false);
         btnExcel.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        DNOutGrid dnOutGrid = new DNOutGrid();
+        DNOutDtoGrid dnOutDtoGrid = new DNOutDtoGrid();
 
         grid.addItemDoubleClickListener(e -> {
             Notification.show("Double Click!");
@@ -106,7 +87,7 @@ public class DialogViewGen {
         btnExcel.addClickListener(ev -> {
             horizontalLayout.removeAll();
             ExcelService excelService = new ExcelService();
-            File file = excelService.getDNOut(grid.getSelectedItems());
+            File file = excelService.getDNOutDto(grid.getSelectedItems());
 
             // Костыль имитирующий скачивание в эксель----
             Button downloadButton = new Button();
@@ -125,8 +106,8 @@ public class DialogViewGen {
         });
 
         grid.setSizeFull();
-        GridListDataView<DNOut> dnOutGridListDataView = grid.setItems(dnOuts);
-        dnOutGrid.getGrid(grid, dnOutGridListDataView);
+        GridListDataView<DNOutDto> dnOutGridListDataView = grid.setItems(dnOutDtos);
+        dnOutDtoGrid.getGrid(grid, dnOutGridListDataView);
         dnOutGridListDataView.addItemCountChangeListener(ev -> {
             label.setText(String.valueOf(dnOutGridListDataView.getItemCount()));
         });
@@ -140,7 +121,7 @@ public class DialogViewGen {
     public Dialog getMainReportDialog(List<DNGet> dnGets){
         Label label = new Label();
         Grid<DNGet> grid = new Grid<>(DNGet.class, false);
-        Button btnExcel = new Button("Выгрузить в Excel");
+        Button btnExcel = new UdioButton(".xlsx", BtnVariant.XLS);
         btnExcel.setEnabled(false);
         btnExcel.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         DNGetGrid dnGetGrid = new DNGetGrid();
@@ -186,5 +167,58 @@ public class DialogViewGen {
         dialog.add(grid);
 
         return dialog;
+    }
+
+    public Dialog getDetailDialog(boolean bPolicy){
+        dialog.setHeight("50vh");
+        dialog.setWidth("50vw");
+
+        FormLayout formLayout = new FormLayout();
+
+        TextField tfRegAddress = new UdioTextField();
+        TextField tfLocationAddress = new UdioTextField();
+        TextField tfMOAttach = new UdioTextField();
+        Span spPolicy;
+        if (bPolicy){
+            spPolicy = new Span(createIcon(VaadinIcon.CHECK),
+                    new Span("Действующий"));
+            spPolicy.addClassNames(LumoUtility.TextColor.SUCCESS,
+                    LumoUtility.Padding.SMALL,
+                    LumoUtility.Background.BASE,
+                    LumoUtility.BoxShadow.XSMALL,
+                    LumoUtility.BorderRadius.LARGE);
+        } else
+        {
+            spPolicy = new Span(createIcon(VaadinIcon.EXCLAMATION_CIRCLE_O),
+                    new Span("Погашен"));
+            spPolicy.getElement().getThemeList().add("badge error");
+        }
+
+        TextField tfCause = new UdioTextField();
+
+        formLayout.addFormItem(tfRegAddress, "Адрес регистрации");
+        formLayout.addFormItem(tfLocationAddress, "Адрес места жительства");
+        formLayout.addFormItem(tfMOAttach, "МО прикрепления");
+        formLayout.addFormItem(spPolicy, "Полис");
+        formLayout.addFormItem(tfCause, "Причина");
+        dialog.add(formLayout);
+
+        return dialog;
+    }
+
+    private Icon createIcon(VaadinIcon vaadinIcon) {
+        Icon icon = vaadinIcon.create();
+        icon.getStyle().set("padding", "var(--lumo-space-xs");
+        return icon;
+    }
+
+
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    private static class UdioTextField extends TextField{
+
+        public UdioTextField(){
+            this.setReadOnly(true);
+        }
     }
 }

@@ -31,9 +31,9 @@ public class DataUdioResp {
     private Date date_edit;
 
     public DataUdioResp(People people, String codeResp){
-        this.fam = people.getFam();
-        this.im = people.getIm();
-        this.ot = people.getOt();
+        this.fam = people.getSurname();
+        this.im = people.getName();
+        this.ot = people.getPatronymic();
        // this.enp = people.getEnp();
         this.codeResp = codeResp;
         this.date_beg = Date.from(Instant.now());

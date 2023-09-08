@@ -19,7 +19,7 @@ public class SecurityConfig extends VaadinWebSecurity {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().requestMatchers("/people", "/people/*", "people/**", "samples/**");
+        web.ignoring().requestMatchers("samples/**", "/api/**");
         super.configure(web);
     }
 }

@@ -11,6 +11,7 @@ import ru.hardy.udio.domain.report.Efficiency;
 import ru.hardy.udio.domain.report.VisitType;
 import ru.hardy.udio.domain.report.WorkingAgeSex;
 import ru.hardy.udio.domain.struct.*;
+import ru.hardy.udio.domain.struct.dto.DNOutDto;
 import ru.hardy.udio.service.reportservice.DNOnkoTherapiReportService;
 import ru.hardy.udio.service.reportservice.EfficiencyService;
 import ru.hardy.udio.service.reportservice.KARDIOReportService;
@@ -20,6 +21,7 @@ import java.io.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,7 +46,7 @@ public class ExcelService {
 
     }
 
-    public File getDNOut(Collection<DNOut> dnOutList){
+    public File getDNOutDto(Collection<DNOutDto> dnOutList){
         FileOutputStream outputStream;
         XSSFWorkbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Общий отчет");
@@ -57,15 +59,16 @@ public class ExcelService {
         createHeaderCell(header, "Дата смерти", 4, workbook);
         createHeaderCell(header, "Дата взятия", 5, workbook);
 
+        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         int indexCount = 1;
-        for (DNOut dnOut : dnOutList){
+        for (DNOutDto dnOutDto : dnOutList){
             Row row = sheet.createRow(indexCount);
-            createValueCell(row, dnOut.getFIO(), 0, workbook);
-            createValueCell(row, dnOut.getAge(), 1, workbook);
-            createValueCell(row, dnOut.getSex(), 2, workbook);
-            createValueCell(row, dnOut.getDiag(), 3, workbook);
-            createValueCell(row, dnOut.getDsString(), 4, workbook);
-            createValueCell(row, dnOut.getDate_1String(), 5, workbook);
+            createValueCell(row, dnOutDto.getFIO(), 0, workbook);
+            createValueCell(row, String.valueOf(dnOutDto.getAge()), 1, workbook);
+            createValueCell(row, dnOutDto.getStringSexId(), 2, workbook);
+            createValueCell(row, dnOutDto.getDiags(), 3, workbook);
+            createValueCell(row, dateFormat.format(dnOutDto.getDs()), 4, workbook);
+            createValueCell(row, dnOutDto.getDate_1(), 5, workbook);
 
             indexCount++;
         }
