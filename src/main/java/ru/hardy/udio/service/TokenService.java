@@ -25,8 +25,9 @@ public class TokenService {
     }
 
     public int getCodeMOWithToken(String token) {
-        if (tokenRepo.findToken(token) != null) {
-            return tokenRepo.findToken(token).getLpu();
+        Token tokenFromDB = tokenRepo.findToken(getCryptToken(token));
+        if (tokenFromDB != null) {
+            return tokenFromDB.getLpu();
         } else return 0;
     }
 

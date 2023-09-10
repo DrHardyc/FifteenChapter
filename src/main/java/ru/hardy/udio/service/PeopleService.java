@@ -25,27 +25,7 @@ import java.util.List;
 public class PeopleService {
 
     @Autowired
-    private DataFileService dataFileService;
-    @Autowired
     private PeopleRepo peopleRepo;
-
-    @Autowired
-    private DBFSearchService dbfSearchService;
-
-    @Autowired
-    private DataUdioRespService dataUdioRespService;
-
-    @Autowired
-    private DataUdioRespIdentyService dataUdioRespIdentyService;
-
-    @Autowired
-    private DNGetService dnGetService;
-
-    @Autowired
-    private SexService sexService;
-
-    @Autowired
-    private DataFilePatientService dataFilePatientService;
 
     private final UtilService utilService = new UtilService();
 
@@ -315,5 +295,11 @@ public class PeopleService {
 
     public List<People> getDNOnkoReport(){
         return peopleRepo.findDNOnkoReport();
+    }
+
+    public People searchWithChoosingMORequestRecord(ChoosingMORequestRecord choosingMORequestRecord) {
+       return peopleRepo.findPeopleBySurnameIgnoreCaseAndNameIgnoreCaseAndPatronymicIgnoreCaseAndDateBirthAndEnp(choosingMORequestRecord.getSurname(),
+               choosingMORequestRecord.getName(), choosingMORequestRecord.getPatronymic(), choosingMORequestRecord.getDateBirth(),
+               choosingMORequestRecord.getEnp());
     }
 }

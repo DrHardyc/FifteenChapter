@@ -147,8 +147,9 @@ public class AdminView extends VerticalLayout{
             SecurityUtils securityUtils = new SecurityUtils();
             String cryptToken = securityUtils.encodeString(tfClearToken.getValue());
             tfCryptToken.setValue(cryptToken);
-            tokenService.addNewToken(cryptToken, Integer.parseInt(tfCodeMO.getValue()));
-
+            if (!tokenService.checkToken(tfClearToken.getValue())) {
+                tokenService.addNewToken(cryptToken, Integer.parseInt(tfCodeMO.getValue()));
+            }
         });
         add(tfCodeMO, tfClearToken, tfCryptToken, btnCryptToken);
     }

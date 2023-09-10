@@ -6,4 +6,5 @@ import ru.hardy.udio.domain.api.ChoosingMOResponseRecord;
 
 @Repository
 public interface ChoosingMOResponseRecordRepo extends JpaRepository<ChoosingMOResponseRecord, Long> {
+
 }
