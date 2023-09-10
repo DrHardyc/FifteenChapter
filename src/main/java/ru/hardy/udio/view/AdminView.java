@@ -30,8 +30,8 @@ import java.util.Collections;
 public class AdminView extends VerticalLayout{
     @Autowired
     private TokenService tokenService;
-    @Autowired
-    private UserService userService;
+//    @Autowired
+//    private UserService userService;
     @Autowired
     private PeopleService peopleService;
     @Autowired
@@ -64,7 +64,7 @@ public class AdminView extends VerticalLayout{
         vlUsers.add(tfUserName, pfPassword, btnAddNewUser);
 
         btnAddNewUser.addClickListener(e -> {
-            userService.addUser(tfUserName.getValue(), pfPassword.getValue(), Collections.singleton(Role.ROLE_USER));
+            //userService.addUser(tfUserName.getValue(), pfPassword.getValue(), Collections.singleton(Role.ROLE_USER));
         });
 
         //генерация ключей

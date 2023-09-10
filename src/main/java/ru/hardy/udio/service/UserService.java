@@ -14,7 +14,6 @@ import ru.hardy.udio.domain.User;
 import ru.hardy.udio.repo.UserRepo;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 

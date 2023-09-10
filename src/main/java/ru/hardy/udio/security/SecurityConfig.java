@@ -20,7 +20,23 @@ public class SecurityConfig extends VaadinWebSecurity {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().requestMatchers("samples/**", "/api/**");
+
         super.configure(web);
     }
+
+//    @Bean
+//    public UserDetailsManager userDetailsService() {
+//        UserDetails user =
+//                User.withUsername("user")
+//                        .password("{noop}user")
+//                        .roles("USER")
+//                        .build();
+//        UserDetails admin =
+//                User.withUsername("admin")
+//                        .password("admin")
+//                        .roles("ADMIN", "USER")
+//                        .build();
+//        return new InMemoryUserDetailsManager(user, admin);
+//    }
 }
 

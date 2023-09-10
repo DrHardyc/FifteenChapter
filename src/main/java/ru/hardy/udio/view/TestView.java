@@ -20,8 +20,11 @@ import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
+import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.hardy.udio.domain.button.BtnVariant;
 import ru.hardy.udio.domain.button.UdioButton;
 import ru.hardy.udio.domain.combobox.UdioCombobox;
@@ -39,7 +42,7 @@ import java.util.Date;
 import java.util.List;
 
 @Route(layout = MainView.class)
-@RolesAllowed({"ROLE_ADMIN"})
+@RolesAllowed("ROLE_ADMIN")
 public class TestView extends VerticalLayout {
 
     @Autowired
@@ -53,6 +56,7 @@ public class TestView extends VerticalLayout {
 
     @Autowired
     private ExcelService excelService;
+
 
 
     public TestView() {
@@ -148,6 +152,10 @@ public class TestView extends VerticalLayout {
         ComboBox<String> stringComboBox = new UdioCombobox<>();
         stringComboBox.setItems("asdfasdf", "asdfasdf");
 
+
+
+
+
         add(stringComboBox, button, anchor, upload);
     }
 
@@ -205,7 +213,15 @@ public class TestView extends VerticalLayout {
             excelService.getEfficiencyReport(monthBeg.getValue(), monthEnd.getValue(), yearBeg.getValue(), yearEnd.getValue(), "efficiensy3.xlsx", "4, 7", 3);
         });
 
-        add(btnSearchInSRZ, btnTestDNGetAll, btnEfficiency, monthBeg, monthEnd, yearBeg, yearEnd);
+        Button buttonGen = new UdioButton("Генерация", BtnVariant.OK);
+        buttonGen.setText("asdf");
+        buttonGen.addClickListener(e -> {
+
+        });
+
+        add(buttonGen, btnSearchInSRZ, btnTestDNGetAll, btnEfficiency, monthBeg, monthEnd, yearBeg, yearEnd);
+
+
 
     }
 }

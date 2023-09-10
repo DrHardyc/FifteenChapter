@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.hardy.udio.config.DBJDBCConfig;
+import ru.hardy.udio.domain.api.ChoosingMORequestRecord;
 import ru.hardy.udio.domain.api.PatientOnkoCaseRequestRecord;
 import ru.hardy.udio.domain.report.DateInterval;
 import ru.hardy.udio.domain.struct.*;
@@ -110,33 +111,51 @@ public class PeopleService {
         } else return people;
     }
 
-    private DataFile searchFromSRZ(DataFile dataFile) {
-        //System.out.println("Поиск в срз");
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
-        Statement statement = dbjdbcConfig.getSRZ();
-        for (DataFilePatient dataFilePatient : dataFile.getDataFilePatient()){
-            System.out.println(dataFilePatient.getFIO() + " " + dataFilePatient.getEnp());
-            if (dataFilePatientService.searchFromPeople(dataFilePatient)) {
-                try {
-                    ResultSet resultSet = statement.executeQuery("" +
-                            "select p.id, p.LPU from people p where p.fam = '" + dataFilePatient.getFam() +
-                            "' and p.im = '" + dataFilePatient.getIm() + "' and p.ot = '" +  dataFilePatient.getOt() +
-                            "' and p.dr = PARSE('" + dateFormat.format(dataFilePatient.getDr()) + "' as date) and p.enp = '"
-                            + dataFilePatient.getEnp() + "'");
-                    while (resultSet.next()){
-                        dataFilePatient.setIdsrz(resultSet.getLong(1));
-                        if (resultSet.getString(2) != null && !resultSet.getString(2).isEmpty()){
-                            dataFilePatient.setMo_attach(resultSet.getInt(2));
-                        }
-                    }
-                } catch(SQLException e){
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-        return dataFile;
+    public People search(ChoosingMORequestRecord choosingMORequestRecord){
+        People people;
+        people = peopleRepo.findPeopleBySurnameIgnoreCaseAndNameIgnoreCaseAndPatronymicIgnoreCaseAndDateBirthAndEnp(
+                choosingMORequestRecord.getSurname().toUpperCase(),
+                choosingMORequestRecord.getName().toUpperCase(), choosingMORequestRecord.getPatronymic().toUpperCase(),
+                choosingMORequestRecord.getDateBirth(), choosingMORequestRecord.getEnp());
+        if (people == null){
+            people = peopleRepo.findPeopleByEnp(choosingMORequestRecord.getEnp());
+            if (people == null){
+                if (searchFromSRZ(choosingMORequestRecord)){
+                    people = new People(choosingMORequestRecord);
+                    peopleRepo.save(people);
+                    return people;
+                } else return null;
+            } else return people;
+        } else return people;
     }
+
+//    private DataFile searchFromSRZ(DataFile dataFile) {
+//        //System.out.println("Поиск в срз");
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+//        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
+//        Statement statement = dbjdbcConfig.getSRZ();
+//        for (DataFilePatient dataFilePatient : dataFile.getDataFilePatient()){
+//            System.out.println(dataFilePatient.getFIO() + " " + dataFilePatient.getEnp());
+//            if (dataFilePatientService.searchFromPeople(dataFilePatient)) {
+//                try {
+//                    ResultSet resultSet = statement.executeQuery("" +
+//                            "select p.id, p.LPU from people p where p.fam = '" + dataFilePatient.getFam() +
+//                            "' and p.im = '" + dataFilePatient.getIm() + "' and p.ot = '" +  dataFilePatient.getOt() +
+//                            "' and p.dr = PARSE('" + dateFormat.format(dataFilePatient.getDr()) + "' as date) and p.enp = '"
+//                            + dataFilePatient.getEnp() + "'");
+//                    while (resultSet.next()){
+//                        dataFilePatient.setIdsrz(resultSet.getLong(1));
+//                        if (resultSet.getString(2) != null && !resultSet.getString(2).isEmpty()){
+//                            dataFilePatient.setMo_attach(resultSet.getInt(2));
+//                        }
+//                    }
+//                } catch(SQLException e){
+//                    throw new RuntimeException(e);
+//                }
+//            }
+//        }
+//        return dataFile;
+//    }
 
     private boolean searchFromSRZ(PatientOnkoCaseRequestRecord patientOnkoCaseRequestRecord) {
         //System.out.println("Поиск в срз");
@@ -161,6 +180,29 @@ public class PeopleService {
         return false;
     }
 
+
+    private boolean searchFromSRZ(ChoosingMORequestRecord choosingMORequestRecord) {
+        //System.out.println("Поиск в срз");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
+        Statement statement = dbjdbcConfig.getSRZ();
+
+        try {
+            ResultSet resultSet = statement.executeQuery("" +
+                    "select count(*) from people p where p.fam = '" + choosingMORequestRecord.getSurname() +
+                    "' and p.im = '" + choosingMORequestRecord.getName() + "' and p.ot = '" +  choosingMORequestRecord.getPatronymic() +
+                    "' and p.dr = PARSE('" + dateFormat.format(choosingMORequestRecord.getDateBirth()) + "' as date) and p.enp = '"
+                    + choosingMORequestRecord.getEnp() + "'");
+            while (resultSet.next()){
+                if (resultSet.getInt(1) >= 1) {
+                    return true;
+                }
+            }
+        } catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
     @Transactional
     public People save(People people){
         return peopleRepo.save(people);

@@ -31,6 +31,7 @@ public class UtilService {
     public Tabs getTabs(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Tabs tabs = new Tabs();
+
         if (authentication.getAuthorities().stream()
                 .anyMatch(r -> r.getAuthority().equals("ROLE_ADMIN"))) {
             tabs.add(createTab(VaadinIcon.TERMINAL, "Админка", "Админская страница", AdminView.class));
@@ -90,27 +91,6 @@ public class UtilService {
             }
         }
         return null;
-    }
-
-    public String transformDiag(String diag){
-        if(diag!= null && diag.substring(diag.indexOf(".") + 1).equals("0") && diag.length() == 5){
-            return diag.substring(0, 3);
-        } else return diag;
-    }
-
-    public String transformDiag(List<String> diags){
-        StringBuilder returnDiag = new StringBuilder();
-        int diagCount = 0;
-        if (diags != null){
-            for (String diag : diags){
-                if (diagCount == 0){
-                    returnDiag.append(diag);
-                } else returnDiag.append(", ").append(diag);
-
-                diagCount ++;
-            }
-        }
-        return returnDiag.toString();
     }
 
     public String transformStringArrayForBars(List<String> diags){

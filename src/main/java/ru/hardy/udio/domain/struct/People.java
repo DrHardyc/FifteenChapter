@@ -3,6 +3,7 @@ package ru.hardy.udio.domain.struct;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import ru.hardy.udio.domain.api.ChoosingMORequestRecord;
 import ru.hardy.udio.domain.api.InsuredPerson;
 import ru.hardy.udio.domain.api.PatientOnkoCaseRequestRecord;
 
@@ -47,6 +48,17 @@ public class People extends InsuredPerson {
         this.setDateBirth(patientOnkoCaseRequestRecord.getDateBirth());
         this.setEnp(patientOnkoCaseRequestRecord.getEnp());
         this.setSex(patientOnkoCaseRequestRecord.getSex());
+        this.date_beg = Date.from(Instant.now());
+        this.date_edit = Date.from(Instant.now());
+    }
+
+    public People(ChoosingMORequestRecord choosingMORequestRecord){
+        this.setSurname(choosingMORequestRecord.getSurname());
+        this.setPatronymic(choosingMORequestRecord.getPatronymic());
+        this.setName(choosingMORequestRecord.getName());
+        this.setDateBirth(choosingMORequestRecord.getDateBirth());
+        this.setEnp(choosingMORequestRecord.getEnp());
+        this.setSex(choosingMORequestRecord.getSex());
         this.date_beg = Date.from(Instant.now());
         this.date_edit = Date.from(Instant.now());
     }
