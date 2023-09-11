@@ -3,9 +3,9 @@ package ru.hardy.udio.domain.struct;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import ru.hardy.udio.domain.api.ChoosingMORequestRecord;
+import ru.hardy.udio.domain.api.choosingmo.ChoosingMORequestRecord;
 import ru.hardy.udio.domain.api.InsuredPerson;
-import ru.hardy.udio.domain.api.PatientOnkoCaseRequestRecord;
+import ru.hardy.udio.domain.api.patientonkocase.PatientOnkoCaseRequestRecord;
 
 import java.time.Instant;
 import java.time.LocalDate;

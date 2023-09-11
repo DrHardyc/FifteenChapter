@@ -1,20 +1,16 @@
-package ru.hardy.udio.service.apiservice;
+package ru.hardy.udio.service.apiservice.choosingmoservice;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.stylesheets.LinkStyle;
-import ru.hardy.udio.domain.api.ChoosingMO;
-import ru.hardy.udio.domain.api.ChoosingMORequestRecord;
-import ru.hardy.udio.domain.api.ChoosingMOResponseRecord;
+import ru.hardy.udio.domain.api.choosingmo.ChoosingMO;
+import ru.hardy.udio.domain.api.choosingmo.ChoosingMORequestRecord;
 import ru.hardy.udio.domain.struct.People;
-import ru.hardy.udio.repo.apirepo.ChoosingMORepo;
-import ru.hardy.udio.repo.apirepo.ChoosingMOResponseRepo;
+import ru.hardy.udio.repo.apirepo.choosingmorepo.ChoosingMORepo;
 import ru.hardy.udio.service.PeopleService;
 import ru.hardy.udio.service.TokenService;
 
 import java.time.Instant;
 import java.util.Date;
-import java.util.List;
 
 @Service
 public class ChoosingMOService {

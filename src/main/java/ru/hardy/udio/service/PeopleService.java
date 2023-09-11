@@ -5,12 +5,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.hardy.udio.config.DBJDBCConfig;
-import ru.hardy.udio.domain.api.ChoosingMORequestRecord;
-import ru.hardy.udio.domain.api.PatientOnkoCaseRequestRecord;
+import ru.hardy.udio.domain.api.choosingmo.ChoosingMORequestRecord;
+import ru.hardy.udio.domain.api.patientonkocase.PatientOnkoCaseRequestRecord;
 import ru.hardy.udio.domain.report.DateInterval;
 import ru.hardy.udio.domain.struct.*;
 import ru.hardy.udio.repo.PeopleRepo;
-import ru.hardy.udio.service.SRZ.DBFSearchService;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
