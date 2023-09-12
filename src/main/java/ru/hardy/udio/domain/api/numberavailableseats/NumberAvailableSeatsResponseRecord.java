@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import ru.hardy.udio.domain.api.patientonkocase.PatientOnkoCaseResponse;
 
 import java.time.Instant;
 import java.util.Date;
@@ -20,8 +19,8 @@ public class NumberAvailableSeatsResponseRecord {
     @JsonIgnore
     private Long id;
 
-    private int code;
-    private String name;
+    private int codeDep;
+    private String nameDep;
 
     @ManyToOne
     @JoinColumn(name = "response_id", nullable = false)
@@ -36,13 +35,12 @@ public class NumberAvailableSeatsResponseRecord {
     @JsonIgnore
     private Date date_edit;
 
-    public NumberAvailableSeatsResponseRecord(NumberAvailableSeatsRequestRecord department,
+    public NumberAvailableSeatsResponseRecord(NumberAvailableSeatsRequestRecord departmentRequest,
                                               NumberAvailableSeatsResponse numberAvailableSeatsResponse,
                                               int errCode, String errMess) {
-
+        this.setCodeDep(departmentRequest.getCodeDep());
+        this.setNameDep(departmentRequest.getNameDep());
         this.setResponse(numberAvailableSeatsResponse);
-        this.setCode(department.getCode());
-        this.setName(department.getName());
         this.setDate_beg(Date.from(Instant.now()));
         this.setDate_edit(Date.from(Instant.now()));
         this.response = numberAvailableSeatsResponse;

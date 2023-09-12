@@ -26,7 +26,7 @@ public class NumberAvailableSeatsResponse {
     private int numberRecordsProcessed;
 
     @OneToMany(mappedBy = "response", fetch = FetchType.LAZY)
-    private List<NumberAvailableSeatsResponseRecord> departments;
+    private List<NumberAvailableSeatsResponseRecord> departmentResponse;
 
     @JsonIgnore
     private Date date_beg;

@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import ru.hardy.udio.domain.api.choosingmo.ChoosingMORequestRecord;
-import ru.hardy.udio.domain.api.InsuredPerson;
+import ru.hardy.udio.domain.abstractclasses.InsuredPerson;
 import ru.hardy.udio.domain.api.patientonkocase.PatientOnkoCaseRequestRecord;
 
 import java.time.Instant;

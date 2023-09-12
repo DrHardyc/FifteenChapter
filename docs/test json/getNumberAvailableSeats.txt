@@ -1,0 +1,46 @@
+
+token: e/SGvhPZm?usABQ9RT-gf9lyeVvYpztQG779xYQZhPyaDZolE=QNldo3ka/chYxrV4Z4mhBMCwtOLouOXihizs0XLEA0RVcLaUmI79L6ZetOl7x8=dDi4ntQ?WRMbI/?
+
+{
+  "reqID":"asdf-adfg-asdqer-adfqeh-erg3",
+  "departments":
+  [
+    {
+      "code":"78",
+      "name":"Терапефтическое",
+      "numberPlacesCurrentDay":"2",
+      "NumberPlacesNext10Days":"6",
+      "dateNumberVacantPlaces":
+      [
+        {
+	      "earliestReleaseDate":"2023-11-11",
+    	  "numberPlacesAvailableSoon":"1"
+        },
+        {
+	      "earliestReleaseDate":"2023-11-12",
+    	  "numberPlacesAvailableSoon":"3"
+        },
+        {
+	      "earliestReleaseDate":"2023-11-13",
+    	  "numberPlacesAvailableSoon":"1"
+        },
+        {
+	      "earliestReleaseDate":"2023-11-15",
+    	  "numberPlacesAvailableSoon":"1"
+        },
+        {
+	      "earliestReleaseDate":"2023-11-16",
+    	  "numberPlacesAvailableSoon":"1"
+        },
+        {
+	      "earliestReleaseDate":"2023-11-17",
+    	  "numberPlacesAvailableSoon":"2"
+        },
+        {
+	      "earliestReleaseDate":"2023-11-18",
+    	  "numberPlacesAvailableSoon":"1"
+        }
+      ]
+    }
+  ]
+}

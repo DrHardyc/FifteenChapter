@@ -18,10 +18,6 @@ public class ChoosingMOResponseRecordService {
     private ChoosingMOService choosingMOService;
 
     public void addAll(List<ChoosingMOResponseRecord> choosingMOResponseRecords){
-        choosingMOResponseRecords.forEach(patient -> {
-            if (patient.getRespCode() != 502){
-                choosingMOResponseRecordRepo.save(patient);
-            }
-        });
+        choosingMOResponseRecordRepo.saveAll(choosingMOResponseRecords);
     }
 }

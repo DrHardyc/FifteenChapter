@@ -2,16 +2,13 @@ package ru.hardy.udio.service.apiservice.numberavailableseatsservice;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.hardy.udio.domain.api.choosingmo.ChoosingMORequestRecord;
-import ru.hardy.udio.domain.api.choosingmo.ChoosingMOResponse;
-import ru.hardy.udio.domain.api.choosingmo.ChoosingMOResponseRecord;
+import ru.hardy.udio.domain.Token;
 import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsRequest;
 import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsRequestRecord;
 import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsResponse;
 import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsResponseRecord;
-import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.repo.apirepo.numberavailableseatsrepo.NumberAvailableSeatsResponseRepo;
-import ru.hardy.udio.service.PeopleService;
+import ru.hardy.udio.service.TokenService;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -28,17 +25,20 @@ public class NumberAvailableSeatsResponseService {
     private NumberAvailableSeatsResponseRecordService numberAvailableSeatsResponseRecordService;
 
     @Autowired
-    private NumberAvailableSeatsResponseService numberAvailableSeatsResponseService;
+    private NumberAvailableSeatsService numberAvailableSeatsService;
 
     @Autowired
-    private NumberAvailableSeatsService numberAvailableSeatsService;
+    private TokenService tokenService;
+
+    @Autowired
+    private NumberAvailableSeatsRequestRecordService numberAvailableSeatsRequestRecordService;
 
     public void add(NumberAvailableSeatsResponse numberAvailableSeatsResponse){
         numberAvailableSeatsResponseRepo.save(numberAvailableSeatsResponse);
     }
 
-    public NumberAvailableSeatsResponse getWithReqId(String reqID) {
-        return numberAvailableSeatsResponseRepo.findChoosingMOResponseByReqID(reqID);
+    public List<NumberAvailableSeatsResponse> getWithReqId(String reqID, String token) {
+        return numberAvailableSeatsResponseRepo.findAllByReqIDAndCodeMO(reqID, tokenService.getCodeMOWithToken(token));
     }
 
     public NumberAvailableSeatsResponse processing(NumberAvailableSeatsRequest numberAvailableSeatsRequest,
@@ -48,22 +48,27 @@ public class NumberAvailableSeatsResponseService {
         int count = 0;
         List<NumberAvailableSeatsResponseRecord> numberAvailableSeatsResponseRecords = new ArrayList<>();
 
-        for (NumberAvailableSeatsRequestRecord department : numberAvailableSeatsRequest.getDepartments()){
-            department.setDate_beg(Date.from(Instant.now()));
-            department.setDate_edit(Date.from(Instant.now()));
-            numberAvailableSeatsResponseRecords.add(new NumberAvailableSeatsResponseRecord(department,
+        numberAvailableSeatsRequest.getDepartments().forEach(department ->
+                department.setRequest(numberAvailableSeatsRequest));
+        numberAvailableSeatsRequestRecordService.addAll(numberAvailableSeatsRequest.getDepartments());
+
+        for (NumberAvailableSeatsRequestRecord departmentRequest : numberAvailableSeatsRequest.getDepartments()){
+            departmentRequest.setDate_beg(Date.from(Instant.now()));
+            departmentRequest.setDate_edit(Date.from(Instant.now()));
+
+            numberAvailableSeatsService.add(departmentRequest, token);
+            numberAvailableSeatsResponse.setNumberRecordsProcessed(count);
+            add(numberAvailableSeatsResponse);
+
+            numberAvailableSeatsResponseRecords.add(new NumberAvailableSeatsResponseRecord(departmentRequest,
                     numberAvailableSeatsResponse,
                     errCode, errMess));
             count++;
 
-            numberAvailableSeatsService.add(department, token);
-            numberAvailableSeatsResponse.setNumberRecordsProcessed(count);
-            numberAvailableSeatsResponseService.add(numberAvailableSeatsResponse);
         }
 
-
         numberAvailableSeatsResponseRecordService.addAll(numberAvailableSeatsResponseRecords);
-        numberAvailableSeatsResponse.setDepartments(numberAvailableSeatsResponseRecords);
+        numberAvailableSeatsResponse.setDepartmentResponse(numberAvailableSeatsResponseRecords);
         numberAvailableSeatsResponse.setNumberRecordsProcessed(count);
         numberAvailableSeatsResponse.setReqID(numberAvailableSeatsRequest.getReqID());
         add(numberAvailableSeatsResponse);

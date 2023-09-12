@@ -8,4 +8,6 @@ import ru.hardy.udio.domain.struct.People;
 @Repository
 public interface ChoosingMORepo extends JpaRepository<ChoosingMO, Long> {
     ChoosingMO findChoosingMOByPeople(People people);
+
+    ChoosingMO findChoosingMOByPeopleAndCodeMO(People people, int codeMO);
 }

@@ -18,7 +18,7 @@ import java.time.Instant;
 import java.util.Date;
 
 @RestController
-public class GetNumberAvailableSeats {
+public class NumberAvailableSeatsController {
 
     @Autowired
     private NumberAvailableSeatsResponseService numberAvailableSeatsResponseService;
@@ -38,15 +38,16 @@ public class GetNumberAvailableSeats {
             @RequestBody NumberAvailableSeatsRequest numberAvailableSeatsRequest) {
 
         NumberAvailableSeatsResponse numberAvailableSeatsResponse = new NumberAvailableSeatsResponse();
-        numberAvailableSeatsResponse.setResultRequestCode(201);
-        numberAvailableSeatsResponseService.add(numberAvailableSeatsResponse);
-
-
 
         if (tokenService.checkToken(token)) {
-            NumberAvailableSeatsResponse numberAvailableSeatsResponseFromDB =
-                    numberAvailableSeatsResponseService.getWithReqId(numberAvailableSeatsRequest.getReqID());
-            if (numberAvailableSeatsResponseFromDB != null){
+            numberAvailableSeatsResponse.setResultRequestCode(201);
+            numberAvailableSeatsResponse.setDate_beg(Date.from(Instant.now()));
+            numberAvailableSeatsResponse.setDate_edit(Date.from(Instant.now()));
+            numberAvailableSeatsResponse.setReqID(numberAvailableSeatsRequest.getReqID());
+            numberAvailableSeatsResponse.setCodeMO(tokenService.getCodeMOWithToken(token));
+            numberAvailableSeatsResponseService.add(numberAvailableSeatsResponse);
+
+            if (numberAvailableSeatsRequestService.getWithReqId(numberAvailableSeatsRequest.getReqID(), token).size() > 0){
                 numberAvailableSeatsResponse.setResultRequestCode(402);
                 return ResponseEntity.ok(numberAvailableSeatsResponse);
             }
@@ -56,18 +57,10 @@ public class GetNumberAvailableSeats {
             }
 
             try {
-                numberAvailableSeatsResponse.setCodeMO(tokenService.getCodeMOWithToken(token));
-                numberAvailableSeatsResponse.setDate_beg(Date.from(Instant.now()));
-                numberAvailableSeatsResponse.setDate_edit(Date.from(Instant.now()));
-                numberAvailableSeatsResponseService.add(numberAvailableSeatsResponse);
-
                 numberAvailableSeatsRequest.setCodeMO(tokenService.getCodeMOWithToken(token));
                 numberAvailableSeatsRequest.setDate_beg(Date.from(Instant.now()));
                 numberAvailableSeatsRequest.setDate_edit(Date.from(Instant.now()));
                 numberAvailableSeatsRequestService.add(numberAvailableSeatsRequest);
-
-                numberAvailableSeatsRequest.getDepartments().forEach(department -> department.setRequest(numberAvailableSeatsRequest));
-                numberAvailableSeatsRequestRecordService.addAll(numberAvailableSeatsRequest.getDepartments());
 
                 numberAvailableSeatsResponse.setResultRequestCode(200);
                 numberAvailableSeatsResponseService.add(numberAvailableSeatsResponse);

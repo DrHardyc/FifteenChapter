@@ -3,6 +3,7 @@ package ru.hardy.udio.service.apiservice.choosingmoservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.api.choosingmo.ChoosingMO;
+import ru.hardy.udio.domain.api.choosingmo.ChoosingMORequest;
 import ru.hardy.udio.domain.api.choosingmo.ChoosingMORequestRecord;
 import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.repo.apirepo.choosingmorepo.ChoosingMORepo;
@@ -24,21 +25,17 @@ public class ChoosingMOService {
     @Autowired
     private PeopleService peopleService;
 
-    public void add(People people, String token){
+    public void add(People people, ChoosingMORequest choosingMORequest, String token){
         ChoosingMO choosingMO = new ChoosingMO();
         choosingMO.setPeople(people);
         choosingMO.setDate_beg(Date.from(Instant.now()));
         choosingMO.setDate_edit(Date.from(Instant.now()));
         choosingMO.setCodeMO(tokenService.getCodeMOWithToken(token));
+        choosingMO.setRequest(choosingMORequest);
         choosingMORepo.save(choosingMO);
     }
 
-
-    public ChoosingMO search(ChoosingMORequestRecord choosingMORequestRecord) {
-        People people = peopleService.searchWithChoosingMORequestRecord(choosingMORequestRecord);
-        if (people != null){
-            return choosingMORepo.findChoosingMOByPeople(people);
-        } else return null;
+    public boolean checkPatient(People people, String token) {
+        return choosingMORepo.findChoosingMOByPeopleAndCodeMO(people, tokenService.getCodeMOWithToken(token)) != null;
     }
-
 }
