@@ -6,10 +6,10 @@ token: e/SGvhPZm?usABQ9RT-gf9lyeVvYpztQG779xYQZhPyaDZolE=QNldo3ka/chYxrV4Z4mhBMC
   "departments":
   [
     {
-      "code":"78",
-      "name":"Терапефтическое",
+      "codeDep:"78",
+      "nameDep":"Терапефтическое",
       "numberPlacesCurrentDay":"2",
-      "NumberPlacesNext10Days":"6",
+      "numberPlacesNext10Days":"6",
       "dateNumberVacantPlaces":
       [
         {

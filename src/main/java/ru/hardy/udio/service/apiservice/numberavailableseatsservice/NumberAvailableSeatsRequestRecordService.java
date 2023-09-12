@@ -22,6 +22,6 @@ public class NumberAvailableSeatsRequestRecordService {
     }
 
     public NumberAvailableSeatsRequestRecord getById(Long id) {
-        return numberAvailableSeatsRequestRecordRepo.findByRequestID(id);
+        return numberAvailableSeatsRequestRecordRepo.getReferenceById(id);
     }
 }

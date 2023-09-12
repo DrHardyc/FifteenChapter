@@ -29,9 +29,6 @@ public class NumberAvailableSeatsController {
     @Autowired
     private NumberAvailableSeatsRequestService numberAvailableSeatsRequestService;
 
-    @Autowired
-    private NumberAvailableSeatsRequestRecordService numberAvailableSeatsRequestRecordService;
-
     @PostMapping("/api/1.1/getNumberAvailableSeats")
     public ResponseEntity<NumberAvailableSeatsResponse> registerNumberAvailableSeats(
             @RequestHeader(name = "token") String token,
@@ -49,10 +46,12 @@ public class NumberAvailableSeatsController {
 
             if (numberAvailableSeatsRequestService.getWithReqId(numberAvailableSeatsRequest.getReqID(), token).size() > 0){
                 numberAvailableSeatsResponse.setResultRequestCode(402);
+                numberAvailableSeatsResponseService.add(numberAvailableSeatsResponse);
                 return ResponseEntity.ok(numberAvailableSeatsResponse);
             }
             if (numberAvailableSeatsRequest.getDepartments() == null){
                 numberAvailableSeatsResponse.setResultRequestCode(400);
+                numberAvailableSeatsResponseService.add(numberAvailableSeatsResponse);
                 return ResponseEntity.ok(numberAvailableSeatsResponse);
             }
 

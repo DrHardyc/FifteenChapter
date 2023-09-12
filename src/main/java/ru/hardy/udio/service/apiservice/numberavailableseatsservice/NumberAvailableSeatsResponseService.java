@@ -37,10 +37,6 @@ public class NumberAvailableSeatsResponseService {
         numberAvailableSeatsResponseRepo.save(numberAvailableSeatsResponse);
     }
 
-    public List<NumberAvailableSeatsResponse> getWithReqId(String reqID, String token) {
-        return numberAvailableSeatsResponseRepo.findAllByReqIDAndCodeMO(reqID, tokenService.getCodeMOWithToken(token));
-    }
-
     public NumberAvailableSeatsResponse processing(NumberAvailableSeatsRequest numberAvailableSeatsRequest,
                              NumberAvailableSeatsResponse numberAvailableSeatsResponse, String token) {
         String errMess = "Запись успешно обработана";
@@ -56,7 +52,7 @@ public class NumberAvailableSeatsResponseService {
             departmentRequest.setDate_beg(Date.from(Instant.now()));
             departmentRequest.setDate_edit(Date.from(Instant.now()));
 
-            numberAvailableSeatsService.add(departmentRequest, token);
+            numberAvailableSeatsService.add(departmentRequest, tokenService.getCodeMOWithToken(token));
             numberAvailableSeatsResponse.setNumberRecordsProcessed(count);
             add(numberAvailableSeatsResponse);
 

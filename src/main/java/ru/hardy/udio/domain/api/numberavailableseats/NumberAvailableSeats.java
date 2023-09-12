@@ -13,14 +13,14 @@ import java.util.List;
 @Setter
 @Entity
 @Table(schema = "udio_tfoms")
-public class NumberAvailableSeats extends Department {
+public class NumberAvailableSeats {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "department_id")
-    private List<DateNumberVacantPlaces> dateNumberVacantPlaces;
+    private int codeMO;
+    private int codeDep;
+    private String nameDep;
 
     @OneToOne(fetch = FetchType.LAZY)
     private NumberAvailableSeatsRequestRecord departmentRequest;

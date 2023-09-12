@@ -18,43 +18,32 @@ public class NumberAvailableSeatsService {
     @Autowired
     private NumberAvailableSeatsRepo numberAvailableSeatsRepo;
 
-    @Autowired
-    private TokenService tokenService;
-
-    @Autowired
-    private NumberAvailableSeatsRequestRecordService numberAvailableSeatsRequestRecordService;
-
-    public void add(NumberAvailableSeatsRequestRecord departmentRequest, String token){
-        int codeMO = tokenService.getCodeMOWithToken(token);
+    public void add(NumberAvailableSeatsRequestRecord departmentRequest, int codeMo){
         NumberAvailableSeats numberAvailableSeats = numberAvailableSeatsRepo.
-                findNumberAvailableSeatsByCodeDepAndNameDepAndCodeMO(departmentRequest.getCodeMO(),
-                        departmentRequest.getNameDep(), codeMO);
+                findNumberAvailableSeatsByCodeDepAndNameDep(departmentRequest.getCodeDep(), departmentRequest.getNameDep());
         if (numberAvailableSeats != null){
             update(numberAvailableSeats, departmentRequest);
-        } else addNew(departmentRequest, codeMO);
+        } else addNew(departmentRequest, codeMo);
     }
 
     private void update(NumberAvailableSeats department, NumberAvailableSeatsRequestRecord departmentRequest){
         department.setDepartmentRequest(departmentRequest);
-        department.setNumberPlacesCurrentDay(departmentRequest.getNumberPlacesCurrentDay());
-        department.setNumberPlacesNext10Days(departmentRequest.getNumberPlacesNext10Days());
-        department.setDateNumberVacantPlaces(departmentRequest.getDateNumberVacantPlaces());
+        department.setCodeDep(departmentRequest.getCodeDep());
+        department.setNameDep(departmentRequest.getNameDep());
         department.setDate_edit(Date.from(Instant.now()));
         numberAvailableSeatsRepo.save(department);
     }
 
     private void addNew(NumberAvailableSeatsRequestRecord departmentRequest, int codeMO){
         NumberAvailableSeats department = new NumberAvailableSeats();
-        department.setDepartmentRequest(departmentRequest);
         department.setCodeMO(codeMO);
+        department.setDepartmentRequest(departmentRequest);
         department.setCodeDep(departmentRequest.getCodeDep());
         department.setNameDep(departmentRequest.getNameDep());
-        department.setNumberPlacesNext10Days(departmentRequest.getNumberPlacesNext10Days());
-        department.setNumberPlacesCurrentDay(departmentRequest.getNumberPlacesCurrentDay());
-
-        //получаем отдельную ссылку на объект так как нельзя сохранять ссылку на объект если она уже есть в другой коллекции
-        List<DateNumberVacantPlaces> dateNumberVacantPlaces = numberAvailableSeatsRequestRecordService.getById(departmentRequest.getId()).getDateNumberVacantPlaces();
-        department.setDateNumberVacantPlaces(dateNumberVacantPlaces);
+        department.setDate_beg(Date.from(Instant.now()));
+        department.setDate_edit(Date.from(Instant.now()));
         numberAvailableSeatsRepo.save(department);
+
+
     }
 }
