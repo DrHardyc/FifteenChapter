@@ -4,10 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import ru.hardy.udio.domain.abstractclasses.Department;
 
 import java.util.Date;
-import java.util.List;
 
 @Getter
 @Setter
@@ -26,8 +24,8 @@ public class NumberAvailableSeats {
     private NumberAvailableSeatsRequestRecord departmentRequest;
 
     @JsonIgnore
-    private Date date_beg;
+    private Date dateBeg;
     @JsonIgnore
-    private Date date_edit;
+    private Date dateEdit;
 
 }

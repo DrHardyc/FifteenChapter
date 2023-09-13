@@ -2,11 +2,9 @@ package ru.hardy.udio.service.apiservice.numberavailableseatsservice;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.hardy.udio.domain.api.numberavailableseats.DateNumberVacantPlaces;
 import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeats;
 import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsRequestRecord;
 import ru.hardy.udio.repo.apirepo.numberavailableseatsrepo.NumberAvailableSeatsRepo;
-import ru.hardy.udio.service.TokenService;
 
 import java.time.Instant;
 import java.util.Date;
@@ -18,19 +16,25 @@ public class NumberAvailableSeatsService {
     @Autowired
     private NumberAvailableSeatsRepo numberAvailableSeatsRepo;
 
-    public void add(NumberAvailableSeatsRequestRecord departmentRequest, int codeMo){
-        NumberAvailableSeats numberAvailableSeats = numberAvailableSeatsRepo.
-                findNumberAvailableSeatsByCodeDepAndNameDep(departmentRequest.getCodeDep(), departmentRequest.getNameDep());
-        if (numberAvailableSeats != null){
-            update(numberAvailableSeats, departmentRequest);
-        } else addNew(departmentRequest, codeMo);
+    public void add(NumberAvailableSeatsRequestRecord departmentRequest, int codeMO){
+        NumberAvailableSeats numberAvailableSeatsBef9 = numberAvailableSeatsRepo.
+                findByAllCodeDepAndCodeMOBef9(departmentRequest.getCodeDep(), codeMO);
+        if (numberAvailableSeatsBef9 != null){
+            update(numberAvailableSeatsBef9, departmentRequest);
+        } else {
+            NumberAvailableSeats numberAvailableSeatsAft9 = numberAvailableSeatsRepo.
+                findAllByCodeDepAndCodeMOAft9(departmentRequest.getCodeDep(), codeMO);
+            if (numberAvailableSeatsAft9 != null)
+                update(numberAvailableSeatsAft9, departmentRequest);
+            else addNew(departmentRequest, codeMO);
+        }
     }
 
     private void update(NumberAvailableSeats department, NumberAvailableSeatsRequestRecord departmentRequest){
         department.setDepartmentRequest(departmentRequest);
         department.setCodeDep(departmentRequest.getCodeDep());
         department.setNameDep(departmentRequest.getNameDep());
-        department.setDate_edit(Date.from(Instant.now()));
+        department.setDateEdit(Date.from(Instant.now()));
         numberAvailableSeatsRepo.save(department);
     }
 
@@ -40,10 +44,8 @@ public class NumberAvailableSeatsService {
         department.setDepartmentRequest(departmentRequest);
         department.setCodeDep(departmentRequest.getCodeDep());
         department.setNameDep(departmentRequest.getNameDep());
-        department.setDate_beg(Date.from(Instant.now()));
-        department.setDate_edit(Date.from(Instant.now()));
+        department.setDateBeg(Date.from(Instant.now()));
+        department.setDateEdit(Date.from(Instant.now()));
         numberAvailableSeatsRepo.save(department);
-
-
     }
 }
