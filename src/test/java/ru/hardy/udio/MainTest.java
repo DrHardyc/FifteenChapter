@@ -11,6 +11,7 @@ import ru.hardy.udio.repo.apirepo.numberavailableseatsrepo.NumberAvailableSeatsR
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
@@ -28,20 +29,11 @@ public class MainTest {
     public void test() throws ParseException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        NumberAvailableSeats numberAvailableSeats = numberAvailableSeatsRepo.
-                findAllByCodeDepAndCodeMOAft9(78, -1);
-
-//                .stream().filter(numberAvailableSeats1 ->
-//                {
-//                    try {
-//                        return dateFormat.parse(dateFormat.format(numberAvailableSeats1.getDateBeg())).equals(
-//                                dateFormat.parse(dateFormat.format(Date.from(Instant.now()))));
-//                    } catch (ParseException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                });
-
-        //System.out.println(numberAvailableSeats.size());
+//        NumberAvailableSeats numberAvailableSeats = numberAvailableSeatsRepo.
+//                findByAllCodeDepAndCodeMOBef9(78, -1, Instant.now().minus(Duration.ofDays(1)));
+//
+//        System.out.println(numberAvailableSeats);
+        System.out.println(Integer.parseInt(new SimpleDateFormat("HH").format(Date.from(Instant.now()))));
 
     }
 }

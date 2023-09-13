@@ -6,6 +6,8 @@ import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeats;
 import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsRequestRecord;
 import ru.hardy.udio.repo.apirepo.numberavailableseatsrepo.NumberAvailableSeatsRepo;
 
+import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
@@ -17,13 +19,15 @@ public class NumberAvailableSeatsService {
     private NumberAvailableSeatsRepo numberAvailableSeatsRepo;
 
     public void add(NumberAvailableSeatsRequestRecord departmentRequest, int codeMO){
-        NumberAvailableSeats numberAvailableSeatsBef9 = numberAvailableSeatsRepo.
-                findByAllCodeDepAndCodeMOBef9(departmentRequest.getCodeDep(), codeMO);
-        if (numberAvailableSeatsBef9 != null){
-            update(numberAvailableSeatsBef9, departmentRequest);
+        if (Integer.parseInt(new SimpleDateFormat("HH").format(Date.from(Instant.now()))) < 9) {
+            NumberAvailableSeats numberAvailableSeatsBef9 = numberAvailableSeatsRepo.
+                    findByAllCodeDepAndCodeMOBef9(departmentRequest.getCodeDep(), codeMO, Instant.now().minus(Duration.ofDays(1)));
+            if (numberAvailableSeatsBef9 != null) {
+                update(numberAvailableSeatsBef9, departmentRequest);
+            } else addNew(departmentRequest, codeMO);
         } else {
             NumberAvailableSeats numberAvailableSeatsAft9 = numberAvailableSeatsRepo.
-                findAllByCodeDepAndCodeMOAft9(departmentRequest.getCodeDep(), codeMO);
+                    findAllByCodeDepAndCodeMOAft9(departmentRequest.getCodeDep(), codeMO, Instant.now().plus(Duration.ofDays(1)));
             if (numberAvailableSeatsAft9 != null)
                 update(numberAvailableSeatsAft9, departmentRequest);
             else addNew(departmentRequest, codeMO);
