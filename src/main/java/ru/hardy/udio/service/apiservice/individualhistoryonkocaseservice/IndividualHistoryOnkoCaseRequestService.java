@@ -1,4 +1,4 @@
-package ru.hardy.udio.service.apiservice.individualhistoryonkocase;
+package ru.hardy.udio.service.apiservice.individualhistoryonkocaseservice;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
