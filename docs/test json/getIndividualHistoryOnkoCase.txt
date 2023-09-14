@@ -1,0 +1,6 @@
+
+http://localhost:8080/api/1.1/getIndividualHistoryOnkoCase/Черчесов/Михаил/Владимирович/1984-06-29/1344335565443456/1
+
+token: e/SGvhPZm?usABQ9RT-gf9lyeVvYpztQG779xYQZhPyaDZolE=QNldo3ka/chYxrV4Z4mhBMCwtOLouOXihizs0XLEA0RVcLaUmI79L6ZetOl7x8=dDi4ntQ?WRMbI/?
+
+
