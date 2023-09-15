@@ -6,6 +6,9 @@ import java.util.Date;
 
 @Data
 public class IndividualHistoryOnkoCaseResponseRecord {
+    private int codeMOAttach;
+    private int codeMO;
+    private String contactDetails;
     private String invoiceNumber;
     private Date invoiceDate;
     private String insuranceCaseName;
@@ -17,10 +20,14 @@ public class IndividualHistoryOnkoCaseResponseRecord {
     private String resultSeeking;
     private String informationDO;
 
-    public IndividualHistoryOnkoCaseResponseRecord(String invoiceNumber, Date invoiceDate, String insuranceCaseName,
+    public IndividualHistoryOnkoCaseResponseRecord(int codeMOAttach, int codeMO, String contactDetails,
+                                                   String invoiceNumber, Date invoiceDate, String insuranceCaseName,
                                                    Date treatmentStartDate, Date treatmentEndDate, String mainDiagnosis,
                                                    String concomitantDiagnosis, String complicationsDiagnosis,
                                                    String resultSeeking, String informationDO) {
+        this.codeMO = codeMO;
+        this.codeMOAttach = codeMOAttach;
+        this.contactDetails = contactDetails;
         this.invoiceNumber = invoiceNumber;
         this.invoiceDate = invoiceDate;
         this.insuranceCaseName = insuranceCaseName;
@@ -31,6 +38,7 @@ public class IndividualHistoryOnkoCaseResponseRecord {
         this.complicationsDiagnosis = complicationsDiagnosis;
         this.resultSeeking = resultSeeking;
         this.informationDO = informationDO;
+
     }
 
 }

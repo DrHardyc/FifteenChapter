@@ -12,6 +12,7 @@ public class IndividualHistoryOnkoCaseRequestService {
     private IndividualHistoryOnkoCaseRequestRepo individualHistoryOnkoCaseRequestRepo;
 
     public void add(IndividualHistoryOnkoCaseRequest individualHistoryOnkoCaseRequest){
+
         individualHistoryOnkoCaseRequestRepo.save(individualHistoryOnkoCaseRequest);
     }
 }

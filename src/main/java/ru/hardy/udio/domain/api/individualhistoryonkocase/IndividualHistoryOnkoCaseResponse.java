@@ -10,12 +10,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class IndividualHistoryOnkoCaseResponse extends InsuredPerson {
 
-    private int setResultRequestCode;
+    private int resultRequestCode;
 
-    private int codeMOAttach;
-    private int codeMO;
-    private String contactDetails;
-
-    private List<IndividualHistoryOnkoCaseResponseRecord> individualHistoryOnkoCaseResponseRecords;
-
+    private List<IndividualHistoryOnkoCaseResponseRecord> insuranceCase;
 }
