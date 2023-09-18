@@ -1,10 +1,10 @@
-package ru.hardy.udio.domain.api.numberavailableseats;
-
+package ru.hardy.udio.domain.api.dodatapatients;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import ru.hardy.udio.domain.api.choosingmo.ChoosingMORequestRecord;
 
 import java.util.Date;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(schema = "udio_datacontrol")
-public class NumberAvailableSeatsRequest {
+public class DODataPatientsRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,7 +23,7 @@ public class NumberAvailableSeatsRequest {
     private int codeMO;
 
     @OneToMany(mappedBy = "request", fetch = FetchType.LAZY)
-    private List<NumberAvailableSeatsRequestRecord> departments;
+    private List<DODataPatientsRequestRecord> patients;
 
     @JsonIgnore
     private Date date_beg;

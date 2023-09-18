@@ -62,10 +62,6 @@ public class DNGet {
 
     }
 
-    public String getPeopleSex() {
-        return String.valueOf(this.getPeople().getSex());
-    }
-
     public int getAge() {
         return Period.between(this.getPeople().getDateBirth().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
                 LocalDate.now()).getYears();
@@ -110,6 +106,10 @@ public class DNGet {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         if (this.getDate_call() != null) return dateFormat.format(this.getDate_call());
         return null;
+    }
+
+    public int getSex() {
+        return this.getPeople().getSex();
     }
 
 //    @Override

@@ -109,7 +109,7 @@ public class ExcelService {
             createValueCell(row, dnGet.getFIO(), 0, workbook);
             createValueCell(row, String.valueOf(dnGet.getMOAttach()), 1, workbook);
             createValueCell(row, String.valueOf(dnGet.getMo()), 2, workbook);
-            createValueCell(row, String.valueOf(dnGet.getPeopleSex()), 3, workbook);
+            createValueCell(row, String.valueOf(dnGet.getSex()), 3, workbook);
             createValueCell(row, dnGet.getDiag(), 4, workbook);
             createValueCell(row, String.valueOf(dnGet.getSpecialization()), 5, workbook);
             createValueCell(row, String.valueOf(dnGet.getAge()), 6, workbook);

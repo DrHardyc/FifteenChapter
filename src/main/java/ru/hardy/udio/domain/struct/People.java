@@ -3,9 +3,9 @@ package ru.hardy.udio.domain.struct;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import ru.hardy.udio.domain.api.choosingmo.ChoosingMORequestRecord;
 import ru.hardy.udio.domain.abstractclasses.InsuredPerson;
-import ru.hardy.udio.domain.api.patientonkocase.PatientOnkoCaseRequestRecord;
+import ru.hardy.udio.domain.api.choosingmo.ChoosingMORequestRecord;
+import ru.hardy.udio.domain.api.dodatapatients.DODataPatientsRequestRecord;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -25,6 +25,9 @@ public class People extends InsuredPerson {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "people_seq")
     @SequenceGenerator(name = "people_seq", allocationSize = 1)
     private Long id;
+
+    private Integer sex;
+
     private Long idsrz; //идентификатор в БД ЕРЗЛ
 
     private Integer inv; //инвалидность
@@ -41,13 +44,12 @@ public class People extends InsuredPerson {
     private Date date_beg;
     private Date date_edit;
 
-    public People(PatientOnkoCaseRequestRecord patientOnkoCaseRequestRecord){
-        this.setSurname(patientOnkoCaseRequestRecord.getSurname());
-        this.setPatronymic(patientOnkoCaseRequestRecord.getPatronymic());
-        this.setName(patientOnkoCaseRequestRecord.getName());
-        this.setDateBirth(patientOnkoCaseRequestRecord.getDateBirth());
-        this.setEnp(patientOnkoCaseRequestRecord.getEnp());
-        this.setSex(patientOnkoCaseRequestRecord.getSex());
+    public People(DODataPatientsRequestRecord doDataPatientsRequestRecord){
+        this.setSurname(doDataPatientsRequestRecord.getSurname());
+        this.setPatronymic(doDataPatientsRequestRecord.getPatronymic());
+        this.setName(doDataPatientsRequestRecord.getName());
+        this.setDateBirth(doDataPatientsRequestRecord.getDateBirth());
+        this.setEnp(doDataPatientsRequestRecord.getEnp());
         this.date_beg = Date.from(Instant.now());
         this.date_edit = Date.from(Instant.now());
     }
@@ -58,7 +60,6 @@ public class People extends InsuredPerson {
         this.setName(choosingMORequestRecord.getName());
         this.setDateBirth(choosingMORequestRecord.getDateBirth());
         this.setEnp(choosingMORequestRecord.getEnp());
-        this.setSex(choosingMORequestRecord.getSex());
         this.date_beg = Date.from(Instant.now());
         this.date_edit = Date.from(Instant.now());
     }

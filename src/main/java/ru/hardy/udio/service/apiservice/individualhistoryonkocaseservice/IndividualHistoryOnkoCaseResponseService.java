@@ -25,7 +25,6 @@ public class IndividualHistoryOnkoCaseResponseService {
         individualHistoryOnkoCaseResponse.setPatronymic(individualHistoryOnkoCaseRequest.getPatronymic());
         individualHistoryOnkoCaseResponse.setDateBirth(individualHistoryOnkoCaseRequest.getDateBirth());
         individualHistoryOnkoCaseResponse.setEnp(individualHistoryOnkoCaseRequest.getEnp());
-        individualHistoryOnkoCaseResponse.setSex(individualHistoryOnkoCaseRequest.getSex());
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
@@ -56,7 +55,7 @@ public class IndividualHistoryOnkoCaseResponseService {
                     "and upper(cbp.pac_im) = upper('" + individualHistoryOnkoCaseRequest.getName() + "') " +
                     "and upper(cbp.pac_ot) = upper('" + individualHistoryOnkoCaseRequest.getPatronymic() + "') " +
                     "and cbp.pac_dr = to_date('" + dateFormat.format(individualHistoryOnkoCaseRequest.getDateBirth()) + "', 'yyyy-mm-dd') " +
-                    "and cb.enp = '" + individualHistoryOnkoCaseRequest.getEnp() + "' and ms.code = '"+ individualHistoryOnkoCaseRequest.getSex() +"'" +
+                    "and cb.enp = '" + individualHistoryOnkoCaseRequest.getEnp() + "'" +
                     "group by mor.reg_code, mor_attach.reg_code, cbp.pac_fam, cbp.pac_im, cbp.pac_ot, cbp.pac_dr, cb.enp, ms.caption, " +
                     "cbb.nschet, cbb.dschet, cb.usl_ok, sl.p_cel, cbp.tel, cb.date_1, cb.date_2, mkb1.mkb_code, mkb2.mkb_code, mkb3.mkb_code, mhr.caption, cb.pr_d_n, sl.pr_d_n, sl.dn");
             while (resultSet.next()){

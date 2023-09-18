@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import ru.hardy.udio.domain.abstractclasses.InsuredPerson;
 
+import java.io.Serial;
 import java.util.Date;
 
 @Getter

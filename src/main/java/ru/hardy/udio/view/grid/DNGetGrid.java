@@ -24,7 +24,7 @@ public class DNGetGrid {
         Grid.Column<DNGet> fioCol = grid.addColumn(DNGet::getFIO).setResizable(true).setSortable(true).setWidth("300px");
         Grid.Column<DNGet> moAttachCol = grid.addColumn(DNGet::getMOAttach).setResizable(true).setSortable(true);
         Grid.Column<DNGet> moCol = grid.addColumn(DNGet::getMo).setResizable(true).setSortable(true);
-        Grid.Column<DNGet> sexCol = grid.addColumn(DNGet::getPeopleSex).setResizable(true).setSortable(true);
+        Grid.Column<DNGet> sexCol = grid.addColumn(DNGet::getSex).setResizable(true).setSortable(true);
         Grid.Column<DNGet> diagCol = grid.addColumn(DNGet::getDiag).setResizable(true).setSortable(true);
         Grid.Column<DNGet> profileCol = grid.addColumn(DNGet::getSpecialization).setResizable(true).setSortable(true);
         Grid.Column<DNGet> ageCol = grid.addColumn(DNGet::getAge).setResizable(true).setSortable(true);
@@ -137,7 +137,7 @@ public class DNGetGrid {
             boolean matchesFio = matches(dnGet.getFIO(), fio);
             boolean matchesMo_attach = matches(String.valueOf(dnGet.getMOAttach()), mo_attach);
             boolean matchesMo = matches(String.valueOf(dnGet.getMo()), mo);
-            boolean matchesSex = matches(String.valueOf(dnGet.getPeopleSex()), sex);
+            boolean matchesSex = matches(String.valueOf(dnGet.getSex()), sex);
             boolean matchesDiag = matches(dnGet.getDiag(), diag);
             boolean matchesProfile = matches(String.valueOf(dnGet.getSpecialization()), profile);
             boolean matchesAge = matches(String.valueOf(dnGet.getAge()), age);

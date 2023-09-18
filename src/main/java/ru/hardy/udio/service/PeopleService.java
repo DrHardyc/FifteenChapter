@@ -6,9 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.hardy.udio.config.DBJDBCConfig;
 import ru.hardy.udio.domain.api.choosingmo.ChoosingMORequestRecord;
-import ru.hardy.udio.domain.api.patientonkocase.PatientOnkoCaseRequestRecord;
+import ru.hardy.udio.domain.api.dodatapatients.DODataPatientsRequestRecord;
 import ru.hardy.udio.domain.report.DateInterval;
-import ru.hardy.udio.domain.struct.*;
+import ru.hardy.udio.domain.struct.DataFilePatient;
+import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.repo.PeopleRepo;
 
 import java.sql.ResultSet;
@@ -72,17 +73,18 @@ public class PeopleService {
 //
 //    }
 
-    public People search(PatientOnkoCaseRequestRecord patientOnkoCaseRequestRecord){
+    public People search(DODataPatientsRequestRecord doDataPatientsRequestRecord){
         People people;
         people = peopleRepo.findPeopleBySurnameIgnoreCaseAndNameIgnoreCaseAndPatronymicIgnoreCaseAndDateBirthAndEnp(
-                patientOnkoCaseRequestRecord.getSurname().toUpperCase(),
-                patientOnkoCaseRequestRecord.getName().toUpperCase(), patientOnkoCaseRequestRecord.getPatronymic().toUpperCase(),
-                patientOnkoCaseRequestRecord.getDateBirth(), patientOnkoCaseRequestRecord.getEnp());
+                doDataPatientsRequestRecord.getSurname().toUpperCase(),
+                doDataPatientsRequestRecord.getName().toUpperCase(), doDataPatientsRequestRecord.getPatronymic().toUpperCase(),
+                doDataPatientsRequestRecord.getDateBirth(), doDataPatientsRequestRecord.getEnp());
         if (people == null){
-            people = peopleRepo.findPeopleByEnp(patientOnkoCaseRequestRecord.getEnp());
+            people = peopleRepo.findPeopleByEnp(doDataPatientsRequestRecord.getEnp());
             if (people == null){
-                if (searchFromSRZ(patientOnkoCaseRequestRecord)){
-                    people = new People(patientOnkoCaseRequestRecord);
+
+                if (searchFromSRZ(doDataPatientsRequestRecord)){
+                    people = new People(doDataPatientsRequestRecord);
                     peopleRepo.save(people);
                     return people;
                 } else return null;
@@ -136,7 +138,7 @@ public class PeopleService {
 //        return dataFile;
 //    }
 
-    private boolean searchFromSRZ(PatientOnkoCaseRequestRecord patientOnkoCaseRequestRecord) {
+    private boolean searchFromSRZ(DODataPatientsRequestRecord doDataPatientsRequestRecord) {
         //System.out.println("Поиск в срз");
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
@@ -144,10 +146,10 @@ public class PeopleService {
 
                 try {
                     ResultSet resultSet = statement.executeQuery("" +
-                            "select count(*) from people p where p.fam = '" + patientOnkoCaseRequestRecord.getSurname() +
-                            "' and p.im = '" + patientOnkoCaseRequestRecord.getName() + "' and p.ot = '" +  patientOnkoCaseRequestRecord.getPatronymic() +
-                            "' and p.dr = PARSE('" + dateFormat.format(patientOnkoCaseRequestRecord.getDateBirth()) + "' as date) and p.enp = '"
-                            + patientOnkoCaseRequestRecord.getEnp() + "'");
+                            "select count(*) from people p where p.fam = '" + doDataPatientsRequestRecord.getSurname() +
+                            "' and p.im = '" + doDataPatientsRequestRecord.getName() + "' and p.ot = '" +  doDataPatientsRequestRecord.getPatronymic() +
+                            "' and p.dr = PARSE('" + dateFormat.format(doDataPatientsRequestRecord.getDateBirth()) + "' as date) and p.enp = '"
+                            + doDataPatientsRequestRecord.getEnp() + "'");
                     while (resultSet.next()){
                         if (resultSet.getInt(1) >= 1) {
                             return true;
