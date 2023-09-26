@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Slf4j
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+//@Slf4j
+//@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class SearchDead extends Thread {
 
     @Autowired
