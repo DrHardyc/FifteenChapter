@@ -17,7 +17,7 @@ public class SchedulePIAndDispPlotService {
 
     public void add(SchedulePIAndDispPlotRequestRecord schedulePIAndDispPlotRequestRecord, int codeMO){
         SchedulePIAndDispPlot schedulePIAndDispPlotFromDB = schedulePIAndDispPlotRepo.findByCodeMOAndAndDepartmentRequest_DepartmentCode(codeMO,
-         schedulePIAndDispPlotRequestRecord.getDepartmentCode());
+         schedulePIAndDispPlotRequestRecord.getCodeDep());
         if (schedulePIAndDispPlotFromDB != null){
             schedulePIAndDispPlotFromDB.setDate_edit(Date.from(Instant.now()));
             schedulePIAndDispPlotFromDB.setDepartmentRequest(schedulePIAndDispPlotRequestRecord);

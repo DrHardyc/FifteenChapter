@@ -38,8 +38,8 @@ public class SchedulePIAndDispPlotResponseRecord {
     public SchedulePIAndDispPlotResponseRecord(SchedulePIAndDispPlotRequestRecord departmentRequest,
                                                SchedulePIAndDispPlotResponse schedulePIAndDispPlotResponse,
                                                int errCode, String errMess) {
-        this.setDepartmentCode(departmentRequest.getDepartmentCode());
-        this.setDepartmentName(departmentRequest.getDepartmentName());
+        this.setDepartmentCode(departmentRequest.getCodeDep());
+        this.setDepartmentName(departmentRequest.getNameDep());
         this.setResponse(schedulePIAndDispPlotResponse);
         this.setRespCode(errCode);
         this.setRespMessage(errMess);
