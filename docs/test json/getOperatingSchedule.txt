@@ -1,0 +1,37 @@
+
+token: e/SGvhPZm?usABQ9RT-gf9lyeVvYpztQG779xYQZhPyaDZolE=QNldo3ka/chYxrV4Z4mhBMCwtOLouOXihizs0XLEA0RVcLaUmI79L6ZetOl7x8=dDi4ntQ?WRMbI/?
+
+{
+  "reqID":"asdf-adfg-asdqer-adfqeh-erg14",
+  "departments":
+  [
+    {
+      "codeDep":55,
+      "nameDep":"Тест",
+      "scheduleDep":"пн 12:00-16:00; пн 17:00-19:00; вт 13:00-17:00; чт 08:30-13:00",
+      "holidaysDep":"",
+      "address":"",
+      "cabinets":
+      [
+        {
+          "cabinetNum": 305,
+	      "scheduleCabinet":"пн 12:00-16:00; пн 17:00-19:00; вт 13:00-17:00; чт 08:30-13:00"
+        }
+      ]
+    },
+   {
+      "codeDep":85,
+      "nameDep":"Тест123",
+      "scheduleDep":"пн 12:00-16:00; пн 17:00-19:00; ср 13:00-17:00; сб 08:30-13:00",
+      "holidaysDep":"",
+      "address":"",
+      "cabinets":
+      [
+        {
+          "cabinetNum": 408,
+	      "scheduleCabinet":"пн 12:00-16:00; пн 17:00-19:00; вт 13:00-17:00; сб 08:30-13:00"
+        }
+      ]
+    }
+  ]
+}

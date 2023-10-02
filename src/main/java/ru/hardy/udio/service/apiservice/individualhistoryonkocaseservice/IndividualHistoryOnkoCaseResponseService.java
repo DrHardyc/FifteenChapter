@@ -1,9 +1,11 @@
 package ru.hardy.udio.service.apiservice.individualhistoryonkocaseservice;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.config.DBJDBCConfig;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.IndividualHistoryOnkoCaseRequest;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.IndividualHistoryOnkoCaseResponse;
+import ru.hardy.udio.domain.api.individualhistoryonkocase.IndividualHistoryOnkoCaseResponseEntity;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.IndividualHistoryOnkoCaseResponseRecord;
 
 import java.sql.ResultSet;
@@ -16,7 +18,11 @@ import java.util.List;
 @Service
 public class IndividualHistoryOnkoCaseResponseService {
 
-    public IndividualHistoryOnkoCaseResponse processind(IndividualHistoryOnkoCaseRequest individualHistoryOnkoCaseRequest){
+    @Autowired
+    private IndividualHistoryOnkoCaseResponseEntityService individualHistoryOnkoCaseResponseEntityService;
+
+    public IndividualHistoryOnkoCaseResponse processind(IndividualHistoryOnkoCaseRequest individualHistoryOnkoCaseRequest,
+                                                        IndividualHistoryOnkoCaseResponseEntity individualHistoryOnkoCaseResponseEntity){
         IndividualHistoryOnkoCaseResponse individualHistoryOnkoCaseResponse = new IndividualHistoryOnkoCaseResponse();
         List<IndividualHistoryOnkoCaseResponseRecord> individualHistoryOnkoCaseResponseRecords = new ArrayList<>();
 
@@ -58,22 +64,27 @@ public class IndividualHistoryOnkoCaseResponseService {
                     "and cb.enp = '" + individualHistoryOnkoCaseRequest.getEnp() + "'" +
                     "group by mor.reg_code, mor_attach.reg_code, cbp.pac_fam, cbp.pac_im, cbp.pac_ot, cbp.pac_dr, cb.enp, ms.caption, " +
                     "cbb.nschet, cbb.dschet, cb.usl_ok, sl.p_cel, cbp.tel, cb.date_1, cb.date_2, mkb1.mkb_code, mkb2.mkb_code, mkb3.mkb_code, mhr.caption, cb.pr_d_n, sl.pr_d_n, sl.dn");
-            while (resultSet.next()){
 
-                individualHistoryOnkoCaseResponseRecords.add(new IndividualHistoryOnkoCaseResponseRecord(
-                        resultSet.getInt(1), resultSet.getInt(2), resultSet.getString(3),
-                        resultSet.getString(4), resultSet.getDate(5), resultSet.getString(6),
-                        resultSet.getDate(7), resultSet.getDate(8), resultSet.getString(9),
-                        resultSet.getString(10), resultSet.getString(11),
-                        resultSet.getString(12), resultSet.getString(13)
-                ));
+            if (resultSet.next()){
+                while (resultSet.next()){
+                    individualHistoryOnkoCaseResponseRecords.add(new IndividualHistoryOnkoCaseResponseRecord(
+                            resultSet.getInt(1), resultSet.getInt(2), resultSet.getString(3),
+                            resultSet.getString(4), resultSet.getDate(5), resultSet.getString(6),
+                            resultSet.getDate(7), resultSet.getDate(8), resultSet.getString(9),
+                            resultSet.getString(10), resultSet.getString(11),
+                            resultSet.getString(12), resultSet.getString(13)));
+                }
+                individualHistoryOnkoCaseResponse.setInsuranceCase(individualHistoryOnkoCaseResponseRecords);
+                individualHistoryOnkoCaseResponse.setResultRequestCode(200);
+                individualHistoryOnkoCaseResponseEntity.setResultRequestCode(200);
+            } else {
+                individualHistoryOnkoCaseResponse.setResultRequestCode(202);
+                individualHistoryOnkoCaseResponseEntity.setResultRequestCode(202);
             }
-            individualHistoryOnkoCaseResponse.setInsuranceCase(individualHistoryOnkoCaseResponseRecords);
-            individualHistoryOnkoCaseResponse.setResultRequestCode(200);
+            individualHistoryOnkoCaseResponseEntityService.add(individualHistoryOnkoCaseResponseEntity);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
         return individualHistoryOnkoCaseResponse;
     }
 }

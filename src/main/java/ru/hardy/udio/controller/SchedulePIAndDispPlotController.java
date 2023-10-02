@@ -28,7 +28,7 @@ public class SchedulePIAndDispPlotController {
     private SchedulePIAndDispPlotRequestService schedulePIAndDispPlotRequestService;
 
     @PostMapping("/api/1.1/getSchedulePIAndDispPlot")
-    public ResponseEntity<SchedulePIAndDispPlotResponse> registerNumberAvailableSeats(
+    public ResponseEntity<SchedulePIAndDispPlotResponse> registerSchedulePIAndDispPlot(
             @RequestHeader(name = "token") String token,
             @RequestBody SchedulePIAndDispPlotRequest schedulePIAndDispPlotRequest) {
 

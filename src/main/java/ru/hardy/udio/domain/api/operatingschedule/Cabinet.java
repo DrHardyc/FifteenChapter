@@ -1,4 +1,4 @@
-package ru.hardy.udio.domain.api.schedulepianddispplot;
+package ru.hardy.udio.domain.api.operatingschedule;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -11,7 +11,7 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(schema = "udio_datacontrol")
-public class MonthEvent {
+public class Cabinet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,15 +20,11 @@ public class MonthEvent {
     @ManyToOne
     @JoinColumn(name = "requestRecord_id", nullable = false)
     @JsonIgnore
-    private SchedulePIAndDispPlotRequestRecord requestRecord;
+    private OperatingScheduleRequestRecord requestRecord;
 
-    public int month;
-    public int quantityPlan;
-    public int quantityInDepth;
-    public int quantityPrevDept;
-    public int quantityCE;
+    private int cabinetNum;
+    private String scheduleCabinet;
 
-    public Date dateBeg;
-    public Date dateEdit;
-
+    private Date dateBeg;
+    private Date dateEdit;
 }

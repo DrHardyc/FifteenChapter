@@ -25,17 +25,17 @@ public class ChoosingMOService {
     @Autowired
     private PeopleService peopleService;
 
-    public void add(People people, ChoosingMORequest choosingMORequest, String token){
+    public void add(People people, ChoosingMORequest choosingMORequest, int codeMO){
         ChoosingMO choosingMO = new ChoosingMO();
         choosingMO.setPeople(people);
         choosingMO.setDate_beg(Date.from(Instant.now()));
         choosingMO.setDate_edit(Date.from(Instant.now()));
-        choosingMO.setCodeMO(tokenService.getCodeMOWithToken(token));
+        choosingMO.setCodeMO(codeMO);
         choosingMO.setRequest(choosingMORequest);
         choosingMORepo.save(choosingMO);
     }
 
-    public boolean checkPatient(People people, String token) {
-        return choosingMORepo.findChoosingMOByPeopleAndCodeMO(people, tokenService.getCodeMOWithToken(token)) != null;
+    public boolean checkPatient(People people, int codeMO) {
+        return choosingMORepo.findChoosingMOByPeopleAndCodeMO(people, codeMO) != null;
     }
 }

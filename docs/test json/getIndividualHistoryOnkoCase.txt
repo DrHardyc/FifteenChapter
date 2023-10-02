@@ -1,6 +1,23 @@
 
-http://localhost:8080/api/1.1/getIndividualHistoryOnkoCase/АМБАЛОВ/Виталий/юрьевич/1963-01-29/1558630820000121/1
+http://localhost:8080/api/1.1/getIndividualHistoryOnkoCase
 
 token: e/SGvhPZm?usABQ9RT-gf9lyeVvYpztQG779xYQZhPyaDZolE=QNldo3ka/chYxrV4Z4mhBMCwtOLouOXihizs0XLEA0RVcLaUmI79L6ZetOl7x8=dDi4ntQ?WRMbI/?
 
+{
+  	"surname": "Премудрая",
+	"name": "Василиса",
+	"patronymic": "Ивановна",
+	"dateBirth": "1152-05-22",
+	"enp": "1234567891011123"
+}
+
+
+=====Рабочий=========
+{
+  	"surname": "Амбалов",
+	"name": "Виталий",
+	"patronymic": "юрьевич",
+	"dateBirth": "1963-01-29",
+	"enp": "1558630820000121"
+}
 

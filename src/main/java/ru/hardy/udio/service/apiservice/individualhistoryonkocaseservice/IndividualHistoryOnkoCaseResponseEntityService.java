@@ -11,7 +11,7 @@ public class IndividualHistoryOnkoCaseResponseEntityService {
     @Autowired
     private IndividualHistoryOnkoCaseResponseEntityRepo individualHistoryOnkoCaseResponseEntityRepo;
 
-    public void add(IndividualHistoryOnkoCaseResponseEntity individualHistoryOnkoCaseResponseEntityRepo){
-
+    public void add(IndividualHistoryOnkoCaseResponseEntity individualHistoryOnkoCaseResponseEntity){
+        individualHistoryOnkoCaseResponseEntityRepo.save(individualHistoryOnkoCaseResponseEntity);
     }
 }

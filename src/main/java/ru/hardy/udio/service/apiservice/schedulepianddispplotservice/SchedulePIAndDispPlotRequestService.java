@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.api.schedulepianddispplot.SchedulePIAndDispPlotRequest;
 import ru.hardy.udio.repo.apirepo.schedulepianddispplotrepo.SchedulePIAndDispPlotRequestRepo;
 
+import java.sql.Date;
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -22,9 +24,12 @@ public class SchedulePIAndDispPlotRequestService {
 
         schedulePIAndDispPlotRequest.getDepartments().forEach(department -> {
             department.setRequest(schedulePIAndDispPlotRequest);
-            department.getMonths().forEach(month -> month.setRequestRecord(department));
+            department.getMonths().forEach(month -> {
+                month.setRequestRecord(department);
+                month.setDateBeg(Date.from(Instant.now()));
+                month.setDateEdit(Date.from(Instant.now()));
+            });
         });
-//        schedulePIAndDispPlotRequestRecordService.addAll(schedulePIAndDispPlotRequest.getDepartments());
 
         schedulePIAndDispPlotRequestRepo.save(schedulePIAndDispPlotRequest);
     }

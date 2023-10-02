@@ -20,9 +20,6 @@ public class SchedulePIAndDispPlotResponseService {
     private SchedulePIAndDispPlotResponseRepo schedulePIAndDispPlotResponseRepo;
 
     @Autowired
-    private SchedulePIAndDispPlotRequestRecordService schedulePIAndDispPlotRequestRecordService;
-
-    @Autowired
     private SchedulePIAndDispPlotService schedulePIAndDispPlotService;
 
     @Autowired
