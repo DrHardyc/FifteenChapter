@@ -17,6 +17,7 @@ public class SchedulePIAndDispPlotResponse {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     private Long id;
 
     private String reqID;
@@ -25,7 +26,7 @@ public class SchedulePIAndDispPlotResponse {
     private int numberRecordsProcessed;
 
     @OneToMany(mappedBy = "response", fetch = FetchType.LAZY)
-    private List<SchedulePIAndDispPlotResponseRecord> departmentsResponse;
+    private List<SchedulePIAndDispPlotResponseRecord> departments;
 
     @JsonIgnore
     private Date date_beg;

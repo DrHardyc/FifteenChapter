@@ -7,4 +7,5 @@ import ru.hardy.udio.domain.api.schedulepianddispplot.SchedulePIAndDispPlotRespo
 @Repository
 public interface SchedulePIAndDispPlotResponseRepo extends JpaRepository<SchedulePIAndDispPlotResponse, Long> {
 
+    SchedulePIAndDispPlotResponse findSchedulePIAndDispPlotResponseByReqIDAndCodeMO(String reqID, int codeMO);
 }

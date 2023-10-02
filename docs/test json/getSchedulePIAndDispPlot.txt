@@ -1,0 +1,51 @@
+
+token: e/SGvhPZm?usABQ9RT-gf9lyeVvYpztQG779xYQZhPyaDZolE=QNldo3ka/chYxrV4Z4mhBMCwtOLouOXihizs0XLEA0RVcLaUmI79L6ZetOl7x8=dDi4ntQ?WRMbI/?
+
+{
+  "reqID":"asdf-adfg-asdqer-adfqeh-erg13",
+  "departments":
+  [
+    {
+      "codeDep":55,
+      "nameDep":"Тест",
+      "months":
+      [
+        {
+          "month": 1,
+	      "quantityPlan":150,
+      	  "quantityInDepth":80,
+          "quantityPrevDept":38,
+          "quantityCE":35
+        },
+        {
+          "month": 2,
+	      "quantityPlan":180,
+      	  "quantityInDepth":35,
+          "quantityPrevDept":55,
+          "quantityCE":66
+        }
+      ]
+    },
+    {
+       "codeDep":78,
+       "nameDep":"Тест2",
+      "months":
+      [
+        {
+          "month": 1,
+	      "quantityPlan":35,
+      	  "quantityInDepth":5,
+          "quantityPrevDept":11,
+          "quantityCE":12
+        },
+        {
+          "month": 2,
+	      "quantityPlan":11,
+      	  "quantityInDepth":88,
+          "quantityPrevDept":66,
+          "quantityCE":11
+        }
+      ]
+    }
+  ]
+}

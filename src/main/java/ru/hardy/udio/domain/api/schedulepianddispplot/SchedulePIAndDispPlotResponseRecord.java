@@ -16,6 +16,7 @@ public class SchedulePIAndDispPlotResponseRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     private Long id;
 
     @ManyToOne

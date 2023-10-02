@@ -53,11 +53,15 @@ public class SchedulePIAndDispPlotResponseService {
         }
 
         schedulePIAndDispPlotResponseRecordService.addAll(schedulePIAndDispPlotResponseRecords);
-        schedulePIAndDispPlotResponse.setDepartmentsResponse(schedulePIAndDispPlotResponseRecords);
+        schedulePIAndDispPlotResponse.setDepartments(schedulePIAndDispPlotResponseRecords);
         schedulePIAndDispPlotResponse.setNumberRecordsProcessed(count);
         schedulePIAndDispPlotResponse.setReqID(schedulePIAndDispPlotRequest.getReqID());
         add(schedulePIAndDispPlotResponse);
 
         return schedulePIAndDispPlotResponse;
+    }
+
+    public SchedulePIAndDispPlotResponse getWithReqId(String reqID, int codeMO) {
+        return schedulePIAndDispPlotResponseRepo.findSchedulePIAndDispPlotResponseByReqIDAndCodeMO(reqID, codeMO);
     }
 }
