@@ -20,25 +20,19 @@ import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
-import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import ru.hardy.udio.domain.api.padatapatients.PADataPatientsRequestRecord;
 import ru.hardy.udio.domain.button.BtnVariant;
 import ru.hardy.udio.domain.button.UdioButton;
 import ru.hardy.udio.domain.combobox.UdioCombobox;
-import ru.hardy.udio.domain.struct.DNGet;
-import ru.hardy.udio.domain.struct.DataFile;
-import ru.hardy.udio.domain.struct.DataFilePatient;
+import ru.hardy.udio.domain.struct.*;
 import ru.hardy.udio.service.*;
 import ru.hardy.udio.service.SRZ.DBFSearchService;
+import ru.hardy.udio.service.apiservice.padatapatientsservice.PADataPatientsRequestRecordService;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.text.ParseException;
-import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 
 @Route(layout = MainView.class)
@@ -56,6 +50,9 @@ public class TestView extends VerticalLayout {
 
     @Autowired
     private ExcelService excelService;
+
+    @Autowired
+    private PADataPatientsRequestRecordService paDataPatientsRequestRecordService;
 
 
 
@@ -219,9 +216,22 @@ public class TestView extends VerticalLayout {
 
         });
 
-        add(buttonGen, btnSearchInSRZ, btnTestDNGetAll, btnEfficiency, monthBeg, monthEnd, yearBeg, yearEnd);
+        Button btnTestF003 = new Button("F003");
+        btnTestF003.addClickListener(e -> {
+            F003Service f003Service = new F003Service();
+            F003 f003 = f003Service.getWithCode(150001);
+            System.out.println(f003.getNam_mok());
+        });
 
+        Button btnTestOneToOne = new Button("TestOneToOne ");
+        btnTestOneToOne.addClickListener(e -> {
+            People people = peopleService.geByID(1L);
+            List<PADataPatientsRequestRecord> patients = paDataPatientsRequestRecordService.getAllByPeople(people);
+            patients.forEach(requestRecord -> System.out.println(requestRecord.getPatient().getPeople().getFIO() + "|"
+                    + requestRecord.getMainDiagnosis()));
+        });
 
+        add(btnTestOneToOne, btnTestF003, buttonGen, btnSearchInSRZ, btnTestDNGetAll, btnEfficiency, monthBeg, monthEnd, yearBeg, yearEnd);
 
     }
 }

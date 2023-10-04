@@ -1,4 +1,4 @@
-package ru.hardy.udio.domain.api.dodatapatients;
+package ru.hardy.udio.domain.api.padatapatients;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -13,7 +13,7 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(schema = "udio_datacontrol")
-public class DODataPatientsResponseRecord extends InsuredPerson {
+public class PADataPatientsResponseRecord extends InsuredPerson {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -26,21 +26,21 @@ public class DODataPatientsResponseRecord extends InsuredPerson {
     @ManyToOne
     @JoinColumn(name = "response_id", nullable = false)
     @JsonIgnore
-    private DODataPatientsResponse response;
+    private PADataPatientsResponse response;
 
     @JsonIgnore
     private Date dateBeg;
     @JsonIgnore
     private Date dateEdit;
 
-    public DODataPatientsResponseRecord(DODataPatientsRequestRecord doDataPatientsRequestRecord,
-                                        DODataPatientsResponse doDataPatientsResponse, int errCode, String errMess) {
-        this.setSurname(doDataPatientsRequestRecord.getSurname());
-        this.setName(doDataPatientsRequestRecord.getName());
-        this.setPatronymic(doDataPatientsRequestRecord.getPatronymic());
-        this.setDateBirth(doDataPatientsRequestRecord.getDateBirth());
-        this.setEnp(doDataPatientsRequestRecord.getEnp());
-        this.setResponse(doDataPatientsResponse);
+    public PADataPatientsResponseRecord(PADataPatientsRequestRecord PADataPatientsRequestRecord,
+                                        PADataPatientsResponse PADataPatientsResponse, int errCode, String errMess) {
+        this.setSurname(PADataPatientsRequestRecord.getSurname());
+        this.setName(PADataPatientsRequestRecord.getName());
+        this.setPatronymic(PADataPatientsRequestRecord.getPatronymic());
+        this.setDateBirth(PADataPatientsRequestRecord.getDateBirth());
+        this.setEnp(PADataPatientsRequestRecord.getEnp());
+        this.setResponse(PADataPatientsResponse);
         this.setDateBeg(Date.from(Instant.now()));
         this.setDateEdit(Date.from(Instant.now()));
         this.setRespCode(errCode);
@@ -48,7 +48,7 @@ public class DODataPatientsResponseRecord extends InsuredPerson {
 
     }
 
-    public DODataPatientsResponseRecord(){
+    public PADataPatientsResponseRecord(){
 
     }
 }

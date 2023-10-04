@@ -1,4 +1,5 @@
-package ru.hardy.udio.domain.api.dodatapatients;
+package ru.hardy.udio.domain.api.individualinforming;
+
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -12,24 +13,21 @@ import java.util.List;
 @Setter
 @Entity
 @Table(schema = "udio_datacontrol")
-public class DODataPatientsResponse {
-
+public class IndividualInformingRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     private Long id;
 
-    private int resultRequestCode;
     private String reqID;
     private int codeMO;
-    private int numberRecordsProcessed;
 
-    @OneToMany(mappedBy = "response", fetch = FetchType.LAZY)
-    private List<DODataPatientsResponseRecord> patients;
+    @OneToMany(mappedBy = "request", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<IndividualInformingRequestRecord> patients;
 
     @JsonIgnore
-    private Date dateBeg;
+    private Date date_beg;
     @JsonIgnore
-    private Date dateEdit;
-
+    private Date date_edit;
 
 }

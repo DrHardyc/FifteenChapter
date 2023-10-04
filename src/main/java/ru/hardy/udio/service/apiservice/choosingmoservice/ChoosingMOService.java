@@ -25,13 +25,13 @@ public class ChoosingMOService {
     @Autowired
     private PeopleService peopleService;
 
-    public void add(People people, ChoosingMORequest choosingMORequest, int codeMO){
+    public void add(People people, ChoosingMORequestRecord choosingMORequestRecord, int codeMO){
         ChoosingMO choosingMO = new ChoosingMO();
         choosingMO.setPeople(people);
         choosingMO.setDate_beg(Date.from(Instant.now()));
         choosingMO.setDate_edit(Date.from(Instant.now()));
         choosingMO.setCodeMO(codeMO);
-        choosingMO.setRequest(choosingMORequest);
+        choosingMO.setRequestRecord(choosingMORequestRecord);
         choosingMORepo.save(choosingMO);
     }
 

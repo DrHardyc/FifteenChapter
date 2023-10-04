@@ -16,18 +16,18 @@ public class SchedulePIAndDispPlotService {
     private SchedulePIAndDispPlotRepo schedulePIAndDispPlotRepo;
 
     public void add(SchedulePIAndDispPlotRequestRecord schedulePIAndDispPlotRequestRecord, int codeMO){
-        SchedulePIAndDispPlot schedulePIAndDispPlotFromDB = schedulePIAndDispPlotRepo.findByCodeMOAndAndDepartmentRequest_CodeDep(codeMO,
+        SchedulePIAndDispPlot schedulePIAndDispPlotFromDB = schedulePIAndDispPlotRepo.findByCodeMOAndRequestRecord_CodeDep(codeMO,
          schedulePIAndDispPlotRequestRecord.getCodeDep());
         if (schedulePIAndDispPlotFromDB != null){
             schedulePIAndDispPlotFromDB.setDate_edit(Date.from(Instant.now()));
-            schedulePIAndDispPlotFromDB.setDepartmentRequest(schedulePIAndDispPlotRequestRecord);
+            schedulePIAndDispPlotFromDB.setRequestRecord(schedulePIAndDispPlotRequestRecord);
             schedulePIAndDispPlotRepo.save(schedulePIAndDispPlotFromDB);
         } else {
             SchedulePIAndDispPlot schedulePIAndDispPlot = new SchedulePIAndDispPlot();
             schedulePIAndDispPlot.setCodeMO(codeMO);
             schedulePIAndDispPlot.setDate_beg(Date.from(Instant.now()));
             schedulePIAndDispPlot.setDate_edit(Date.from(Instant.now()));
-            schedulePIAndDispPlot.setDepartmentRequest(schedulePIAndDispPlotRequestRecord);
+            schedulePIAndDispPlot.setRequestRecord(schedulePIAndDispPlotRequestRecord);
             schedulePIAndDispPlotRepo.save(schedulePIAndDispPlot);
         }
     }

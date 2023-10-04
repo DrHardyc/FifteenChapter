@@ -1,0 +1,35 @@
+
+token: e/SGvhPZm?usABQ9RT-gf9lyeVvYpztQG779xYQZhPyaDZolE=QNldo3ka/chYxrV4Z4mhBMCwtOLouOXihizs0XLEA0RVcLaUmI79L6ZetOl7x8=dDi4ntQ?WRMbI/?
+
+{
+  "reqID":"wert4-wertw-hddf-dndgn4",
+  "patients":
+  [
+    {
+      "surname":"Премудрая",
+      "name":"Василиса",
+      "patronymic":"Ивановна",
+      "dateBirth":"1111-02-13",
+      "enp":"1235486925412365",
+      "dateNotification":"1135-02-05",
+      "sequenceInformation":"2",
+      "wayInforming":"эл. почта",
+      "mainDiagnosis":"Z01.1",
+      "concomitantDiagnosis":"",
+      "plannedNotificationDate": 1135-03-06
+    },
+    {
+      "surname":"Durak",
+      "name":"Иван",
+      "patronymic":"Ильич",
+      "dateBirth":"1131-07-24",
+      "enp":"1235486925412367",
+      "dateNotification":"1144-11-12",
+      "sequenceInformation":"1",
+      "wayInforming":"тел.",
+      "mainDiagnosis":"Z01.1"
+      "concomitantDiagnosis":"",
+      "plannedNotificationDate": 1146-03-06
+    }
+  ]
+}

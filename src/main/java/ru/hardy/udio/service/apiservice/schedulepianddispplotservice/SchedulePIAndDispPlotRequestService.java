@@ -7,18 +7,12 @@ import ru.hardy.udio.repo.apirepo.schedulepianddispplotrepo.SchedulePIAndDispPlo
 
 import java.sql.Date;
 import java.time.Instant;
-import java.util.List;
 
 @Service
 public class SchedulePIAndDispPlotRequestService {
 
     @Autowired
     private SchedulePIAndDispPlotRequestRepo schedulePIAndDispPlotRequestRepo;
-
-    public List<SchedulePIAndDispPlotRequest> getWithReqId(String reqID, int codeMO) {
-        return schedulePIAndDispPlotRequestRepo.findAllByReqIDAndCodeMO(reqID, codeMO);
-    }
-
 
     public void add(SchedulePIAndDispPlotRequest schedulePIAndDispPlotRequest){
 

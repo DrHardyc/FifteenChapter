@@ -21,7 +21,7 @@ public class NumberAvailableSeats {
     private String nameDep;
 
     @OneToOne(fetch = FetchType.LAZY)
-    private NumberAvailableSeatsRequestRecord departmentRequest;
+    private NumberAvailableSeatsRequestRecord requestRecord;
 
     @JsonIgnore
     private Date dateBeg;

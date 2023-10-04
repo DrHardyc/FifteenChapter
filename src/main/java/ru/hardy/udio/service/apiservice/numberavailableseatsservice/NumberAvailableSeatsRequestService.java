@@ -23,8 +23,4 @@ public class NumberAvailableSeatsRequestService {
         numberAvailableSeatsRequestRepo.save(numberAvailableSeatsRequest);
     }
 
-    public List<NumberAvailableSeatsRequest> getWithReqId(String reqID, String token) {
-        return numberAvailableSeatsRequestRepo.findAllByReqIDAndCodeMO(reqID, tokenService.getCodeMOWithToken(token));
-    }
-
 }

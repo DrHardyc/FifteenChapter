@@ -1,4 +1,4 @@
-package ru.hardy.udio.domain.api.dodatapatients;
+package ru.hardy.udio.domain.api.padatapatients;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -6,37 +6,42 @@ import lombok.Getter;
 import lombok.Setter;
 import ru.hardy.udio.domain.abstractclasses.InsuredPerson;
 
-
 import java.util.Date;
 
 @Getter
 @Setter
 @Entity
 @Table(schema = "udio_datacontrol")
-public class DODataPatientsRequestRecord extends InsuredPerson {
+public class PADataPatientsRequestRecord extends InsuredPerson {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "request_id", nullable = false)
     @JsonIgnore
-    private DODataPatientsRequest request;
+    private PADataPatientsRequest request;
+
+    @OneToOne(mappedBy = "requestRecord")
+    private PADataPatient patient;
 
     private String mainDiagnosis;
+    private String concomitantDiagnosis;
+    private int codeTypePreventiveActions;
+    private String nameTypePreventiveActions;
     private Date dateInclude;
-    private String periodDO;
+    private String periodPA;
     private int specialtyDoctorCode;
-    private Date previousDate;
     private int scheduledMonthAdmission;
     private int locationInspection;
     private Date dateInsuranceCase;
-    private String resultDispensaryAppointmentDoctor;
-    private String resultDispensaryAppointment;
+    private int resultDispensaryAppointmentDoctor;
+    private int resultDispensaryAppointment;
 
     @JsonIgnore
-    private Date date_beg;
+    private Date dateBeg;
     @JsonIgnore
-    private Date date_edit;
+    private Date dateEdit;
 }

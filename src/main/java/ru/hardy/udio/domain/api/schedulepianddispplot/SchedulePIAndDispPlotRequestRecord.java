@@ -25,6 +25,9 @@ public class SchedulePIAndDispPlotRequestRecord {
     @OneToMany(mappedBy = "requestRecord", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MonthEvent> months;
 
+    @OneToOne(mappedBy = "requestRecord")
+    private SchedulePIAndDispPlot department;
+
     public int codeDep;
     public String nameDep;
 

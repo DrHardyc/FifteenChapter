@@ -24,6 +24,9 @@ public class OperatingScheduleRequestRecord {
     @OneToMany(mappedBy = "requestRecord", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Cabinet> cabinets;
 
+    @OneToOne(mappedBy = "requestRecord")
+    private OperatingSchedule department;
+
     public int codeDep;
     public String nameDep;
     public String scheduleDep;

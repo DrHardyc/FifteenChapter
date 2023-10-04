@@ -29,6 +29,9 @@ public class NumberAvailableSeatsRequestRecord extends Department {
     @JsonIgnore
     private NumberAvailableSeatsRequest request;
 
+    @OneToOne(mappedBy = "requestRecord")
+    private NumberAvailableSeats department;
+
     @JsonIgnore
     private Date date_beg;
     @JsonIgnore

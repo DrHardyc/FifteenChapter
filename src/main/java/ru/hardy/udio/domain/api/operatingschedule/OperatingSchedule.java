@@ -20,7 +20,7 @@ public class OperatingSchedule {
     private int codeMO;
 
     @OneToOne(fetch = FetchType.LAZY)
-    private OperatingScheduleRequestRecord departmentRequest;
+    private OperatingScheduleRequestRecord requestRecord;
 
     @JsonIgnore
     private Date date_beg;

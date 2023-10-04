@@ -85,7 +85,7 @@ public interface PeopleRepo extends JpaRepository<People, Long> {
     @Query("select distinct p from People p inner join p.dnouts d")
     List<People> findDistinctDie();
 
-    People findPeopleBy();
+    People findPeopleById(Long id);
 }
 
 

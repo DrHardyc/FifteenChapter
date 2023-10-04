@@ -10,7 +10,6 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
-import java.util.List;
 
 @Service
 public class NumberAvailableSeatsService {
@@ -35,7 +34,7 @@ public class NumberAvailableSeatsService {
     }
 
     private void update(NumberAvailableSeats department, NumberAvailableSeatsRequestRecord departmentRequest){
-        department.setDepartmentRequest(departmentRequest);
+        department.setRequestRecord(departmentRequest);
         department.setCodeDep(departmentRequest.getCodeDep());
         department.setNameDep(departmentRequest.getNameDep());
         department.setDateEdit(Date.from(Instant.now()));
@@ -45,7 +44,7 @@ public class NumberAvailableSeatsService {
     private void addNew(NumberAvailableSeatsRequestRecord departmentRequest, int codeMO){
         NumberAvailableSeats department = new NumberAvailableSeats();
         department.setCodeMO(codeMO);
-        department.setDepartmentRequest(departmentRequest);
+        department.setRequestRecord(departmentRequest);
         department.setCodeDep(departmentRequest.getCodeDep());
         department.setNameDep(departmentRequest.getNameDep());
         department.setDateBeg(Date.from(Instant.now()));

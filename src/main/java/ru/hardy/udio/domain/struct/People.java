@@ -5,7 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import ru.hardy.udio.domain.abstractclasses.InsuredPerson;
 import ru.hardy.udio.domain.api.choosingmo.ChoosingMORequestRecord;
-import ru.hardy.udio.domain.api.dodatapatients.DODataPatientsRequestRecord;
+import ru.hardy.udio.domain.api.padatapatients.PADataPatientsRequestRecord;
+import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -44,22 +45,12 @@ public class People extends InsuredPerson {
     private Date date_beg;
     private Date date_edit;
 
-    public People(DODataPatientsRequestRecord doDataPatientsRequestRecord){
-        this.setSurname(doDataPatientsRequestRecord.getSurname());
-        this.setPatronymic(doDataPatientsRequestRecord.getPatronymic());
-        this.setName(doDataPatientsRequestRecord.getName());
-        this.setDateBirth(doDataPatientsRequestRecord.getDateBirth());
-        this.setEnp(doDataPatientsRequestRecord.getEnp());
-        this.date_beg = Date.from(Instant.now());
-        this.date_edit = Date.from(Instant.now());
-    }
-
-    public People(ChoosingMORequestRecord choosingMORequestRecord){
-        this.setSurname(choosingMORequestRecord.getSurname());
-        this.setPatronymic(choosingMORequestRecord.getPatronymic());
-        this.setName(choosingMORequestRecord.getName());
-        this.setDateBirth(choosingMORequestRecord.getDateBirth());
-        this.setEnp(choosingMORequestRecord.getEnp());
+    public People(InsuredPerson insuredPerson){
+        this.setSurname(insuredPerson.getSurname());
+        this.setPatronymic(insuredPerson.getPatronymic());
+        this.setName(insuredPerson.getName());
+        this.setDateBirth(insuredPerson.getDateBirth());
+        this.setEnp(insuredPerson.getEnp());
         this.date_beg = Date.from(Instant.now());
         this.date_edit = Date.from(Instant.now());
     }

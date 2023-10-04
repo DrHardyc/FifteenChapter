@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface NumberAvailableSeatsRequestRepo extends JpaRepository<NumberAvailableSeatsRequest, Long> {
-    List<NumberAvailableSeatsRequest> findAllByReqIDAndCodeMO(String reqID, int codeMO);
+
 }

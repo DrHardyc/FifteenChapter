@@ -15,6 +15,7 @@ import java.util.Date;
 public class OperatingScheduleResponseRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     private Long id;
 
     @ManyToOne
@@ -44,6 +45,10 @@ public class OperatingScheduleResponseRecord {
         this.setRespMessage(errMess);
         this.setDateBeg(Date.from(Instant.now()));
         this.setDateEdit(Date.from(Instant.now()));
+    }
+
+    public OperatingScheduleResponseRecord() {
+
     }
 }
 

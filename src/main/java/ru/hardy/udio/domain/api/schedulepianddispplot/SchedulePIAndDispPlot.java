@@ -19,7 +19,7 @@ public class SchedulePIAndDispPlot {
     private int codeMO;
 
     @OneToOne(fetch = FetchType.LAZY)
-    private SchedulePIAndDispPlotRequestRecord departmentRequest;
+    private SchedulePIAndDispPlotRequestRecord requestRecord;
 
     @JsonIgnore
     private Date date_beg;

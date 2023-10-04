@@ -2,7 +2,6 @@ package ru.hardy.udio.service.apiservice.numberavailableseatsservice;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.hardy.udio.domain.Token;
 import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsRequest;
 import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsRequestRecord;
 import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsResponse;
@@ -38,7 +37,7 @@ public class NumberAvailableSeatsResponseService {
     }
 
     public NumberAvailableSeatsResponse processing(NumberAvailableSeatsRequest numberAvailableSeatsRequest,
-                             NumberAvailableSeatsResponse numberAvailableSeatsResponse, String token) {
+                             NumberAvailableSeatsResponse numberAvailableSeatsResponse, int codeMO) {
         String errMess = "Запись успешно обработана";
         int errCode = 500;
         int count = 0;
@@ -52,7 +51,7 @@ public class NumberAvailableSeatsResponseService {
             departmentRequest.setDate_beg(Date.from(Instant.now()));
             departmentRequest.setDate_edit(Date.from(Instant.now()));
 
-            numberAvailableSeatsService.add(departmentRequest, tokenService.getCodeMOWithToken(token));
+            numberAvailableSeatsService.add(departmentRequest, codeMO);
             numberAvailableSeatsResponse.setNumberRecordsProcessed(count);
             add(numberAvailableSeatsResponse);
 
@@ -70,5 +69,9 @@ public class NumberAvailableSeatsResponseService {
         add(numberAvailableSeatsResponse);
 
         return numberAvailableSeatsResponse;
+    }
+
+    public NumberAvailableSeatsResponse getWithReqId(String reqID, int codeMO) {
+        return numberAvailableSeatsResponseRepo.findByReqIDAndCodeMO(reqID, codeMO);
     }
 }

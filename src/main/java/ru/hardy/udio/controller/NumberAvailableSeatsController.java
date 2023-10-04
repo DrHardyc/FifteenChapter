@@ -3,16 +3,12 @@ package ru.hardy.udio.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsRequest;
 import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsRequestRecord;
 import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsResponse;
 import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsResponseRecord;
 import ru.hardy.udio.service.TokenService;
-import ru.hardy.udio.service.apiservice.numberavailableseatsservice.NumberAvailableSeatsRequestRecordService;
 import ru.hardy.udio.service.apiservice.numberavailableseatsservice.NumberAvailableSeatsRequestService;
 import ru.hardy.udio.service.apiservice.numberavailableseatsservice.NumberAvailableSeatsResponseService;
 
@@ -38,9 +34,16 @@ public class NumberAvailableSeatsController {
             @RequestHeader(name = "token") String token,
             @RequestBody NumberAvailableSeatsRequest numberAvailableSeatsRequest) {
 
+        int codeMO = tokenService.getCodeMOWithToken(token);
         NumberAvailableSeatsResponse numberAvailableSeatsResponse = new NumberAvailableSeatsResponse();
 
         if (tokenService.checkToken(token)) {
+            if (numberAvailableSeatsResponseService.getWithReqId(numberAvailableSeatsRequest.getReqID(), codeMO) != null){
+                numberAvailableSeatsResponse.setResultRequestCode(402);
+                numberAvailableSeatsResponseService.add(numberAvailableSeatsResponse);
+                return ResponseEntity.ok(numberAvailableSeatsResponse);
+            }
+
             numberAvailableSeatsResponse.setResultRequestCode(201);
             numberAvailableSeatsResponse.setDate_beg(Date.from(Instant.now()));
             numberAvailableSeatsResponse.setDate_edit(Date.from(Instant.now()));
@@ -48,11 +51,6 @@ public class NumberAvailableSeatsController {
             numberAvailableSeatsResponse.setCodeMO(tokenService.getCodeMOWithToken(token));
             numberAvailableSeatsResponseService.add(numberAvailableSeatsResponse);
 
-            if (numberAvailableSeatsRequestService.getWithReqId(numberAvailableSeatsRequest.getReqID(), token).size() > 0){
-                numberAvailableSeatsResponse.setResultRequestCode(402);
-                numberAvailableSeatsResponseService.add(numberAvailableSeatsResponse);
-                return ResponseEntity.ok(numberAvailableSeatsResponse);
-            }
             if (numberAvailableSeatsRequest.getDepartments() == null){
                 numberAvailableSeatsResponse.setResultRequestCode(400);
                 numberAvailableSeatsResponseService.add(numberAvailableSeatsResponse);
@@ -60,7 +58,7 @@ public class NumberAvailableSeatsController {
             }
 
             try {
-                numberAvailableSeatsRequest.setCodeMO(tokenService.getCodeMOWithToken(token));
+                numberAvailableSeatsRequest.setCodeMO(codeMO);
                 numberAvailableSeatsRequest.setDate_beg(Date.from(Instant.now()));
                 numberAvailableSeatsRequest.setDate_edit(Date.from(Instant.now()));
                 numberAvailableSeatsRequestService.add(numberAvailableSeatsRequest);
@@ -69,7 +67,7 @@ public class NumberAvailableSeatsController {
                 numberAvailableSeatsResponseService.add(numberAvailableSeatsResponse);
 
                 return ResponseEntity.ok(numberAvailableSeatsResponseService
-                        .processing(numberAvailableSeatsRequest, numberAvailableSeatsResponse, token));
+                        .processing(numberAvailableSeatsRequest, numberAvailableSeatsResponse, codeMO));
 
             } catch (Exception e){
                 numberAvailableSeatsResponse.setResultRequestCode(400);
@@ -119,5 +117,29 @@ public class NumberAvailableSeatsController {
         return ResponseEntity.ok(numberAvailableSeatsResponse);
     }
 
+    @GetMapping("/api/1.1/getNumberAvailableSeats/{reqID}")
+    public ResponseEntity<NumberAvailableSeatsResponse> getNumberAvailableSeats(
+            @RequestHeader(name = "token") String token,
+            @PathVariable(name = "reqID") String reqID ){
+
+        int codeMO = tokenService.getCodeMOWithToken(token);
+
+        NumberAvailableSeatsResponse numberAvailableSeatsResponse = new NumberAvailableSeatsResponse();
+        if (tokenService.checkToken(token)) {
+            try {
+                NumberAvailableSeatsResponse numberAvailableSeatsResponseFromDB = numberAvailableSeatsResponseService.getWithReqId(reqID, codeMO);
+                if (numberAvailableSeatsResponseFromDB != null){
+                    return ResponseEntity.ok(numberAvailableSeatsResponseFromDB);
+                } else {
+                    numberAvailableSeatsResponse.setResultRequestCode(401);
+                }
+            } catch (Exception e){
+                numberAvailableSeatsResponse.setResultRequestCode(400);
+            }
+        } else {
+            numberAvailableSeatsResponse.setResultRequestCode(403);
+        }
+        return ResponseEntity.ok(numberAvailableSeatsResponse);
+    }
 
 }

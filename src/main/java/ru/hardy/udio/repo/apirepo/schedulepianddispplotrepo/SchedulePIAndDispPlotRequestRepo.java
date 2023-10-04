@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface SchedulePIAndDispPlotRequestRepo extends JpaRepository<SchedulePIAndDispPlotRequest, Long> {
-    List<SchedulePIAndDispPlotRequest> findAllByReqIDAndCodeMO(String reqID, int codeMO);
+
 }

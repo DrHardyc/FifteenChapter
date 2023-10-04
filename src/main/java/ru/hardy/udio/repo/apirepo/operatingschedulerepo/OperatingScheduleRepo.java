@@ -7,6 +7,6 @@ import ru.hardy.udio.domain.api.operatingschedule.OperatingSchedule;
 @Repository
 public interface OperatingScheduleRepo extends JpaRepository<OperatingSchedule, Long> {
 
-    OperatingSchedule findByCodeMOAndAndDepartmentRequest_CodeDepAndDepartmentRequest_HolidaysDep(int codeMO, int codeDep,
+    OperatingSchedule findByCodeMOAndRequestRecord_CodeDepAndRequestRecord_HolidaysDep(int codeMO, int codeDep,
                                                                                                   String holidaysDep);
 }

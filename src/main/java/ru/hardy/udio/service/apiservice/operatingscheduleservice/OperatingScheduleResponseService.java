@@ -7,6 +7,7 @@ import ru.hardy.udio.repo.apirepo.operatingschedulerepo.OperatingScheduleRespons
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -56,5 +57,9 @@ public class OperatingScheduleResponseService {
         add(operatingScheduleResponse);
 
         return operatingScheduleResponse;
+    }
+
+    public OperatingScheduleResponse getWithReqId(String reqID, int codeMO) {
+        return operatingScheduleResponseRepo.findAllByReqIDAndCodeMO(reqID, codeMO);
     }
 }

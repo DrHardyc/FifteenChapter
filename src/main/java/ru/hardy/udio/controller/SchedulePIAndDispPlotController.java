@@ -37,6 +37,13 @@ public class SchedulePIAndDispPlotController {
         SchedulePIAndDispPlotResponse schedulePIAndDispPlotResponse = new SchedulePIAndDispPlotResponse();
 
         if (tokenService.checkToken(token)) {
+
+            if (schedulePIAndDispPlotResponseService.getWithReqId(schedulePIAndDispPlotRequest.getReqID(), codeMO) != null){
+                schedulePIAndDispPlotResponse.setResultRequestCode(402);
+                schedulePIAndDispPlotResponseService.add(schedulePIAndDispPlotResponse);
+                return ResponseEntity.ok(schedulePIAndDispPlotResponse);
+            }
+
             schedulePIAndDispPlotResponse.setResultRequestCode(201);
             schedulePIAndDispPlotResponse.setDate_beg(Date.from(Instant.now()));
             schedulePIAndDispPlotResponse.setDate_edit(Date.from(Instant.now()));
@@ -44,11 +51,6 @@ public class SchedulePIAndDispPlotController {
             schedulePIAndDispPlotResponse.setCodeMO(tokenService.getCodeMOWithToken(token));
             schedulePIAndDispPlotResponseService.add(schedulePIAndDispPlotResponse);
 
-            if (schedulePIAndDispPlotRequestService.getWithReqId(schedulePIAndDispPlotRequest.getReqID(), codeMO).size() > 0){
-                schedulePIAndDispPlotResponse.setResultRequestCode(402);
-                schedulePIAndDispPlotResponseService.add(schedulePIAndDispPlotResponse);
-                return ResponseEntity.ok(schedulePIAndDispPlotResponse);
-            }
             if (schedulePIAndDispPlotRequest.getDepartments() == null){
                 schedulePIAndDispPlotResponse.setResultRequestCode(400);
                 schedulePIAndDispPlotResponseService.add(schedulePIAndDispPlotResponse);

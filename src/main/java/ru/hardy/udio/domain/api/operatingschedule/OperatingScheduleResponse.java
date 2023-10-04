@@ -23,7 +23,7 @@ public class OperatingScheduleResponse {
     private int resultRequestCode;
     private int numberRecordsProcessed;
 
-    @OneToMany(mappedBy = "response", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "response", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<OperatingScheduleResponseRecord> departments;
 
     @JsonIgnore
