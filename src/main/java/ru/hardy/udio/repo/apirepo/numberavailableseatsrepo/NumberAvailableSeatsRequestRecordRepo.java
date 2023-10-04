@@ -1,12 +1,9 @@
 package ru.hardy.udio.repo.apirepo.numberavailableseatsrepo;
 
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsRequestRecord;
-
-import java.util.Optional;
 
 @Repository
 public interface NumberAvailableSeatsRequestRecordRepo extends JpaRepository<NumberAvailableSeatsRequestRecord, Long> {

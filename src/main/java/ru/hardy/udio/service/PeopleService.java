@@ -5,10 +5,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.hardy.udio.config.DBJDBCConfig;
-import ru.hardy.udio.domain.abstractclasses.InsuredPerson;
+import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
 import ru.hardy.udio.domain.api.choosingmo.ChoosingMORequestRecord;
-import ru.hardy.udio.domain.api.padatapatients.PADataPatientsRequestRecord;
-import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
 import ru.hardy.udio.domain.report.DateInterval;
 import ru.hardy.udio.domain.struct.DataFilePatient;
 import ru.hardy.udio.domain.struct.People;
@@ -35,47 +33,7 @@ public class PeopleService {
         return peopleRepo.findAll();
     }
 
-
-//    public List<People> search(DataFile dataFile){
-//        System.out.println("Сохранение результатов");
-//        List<People> peoples = new ArrayList<>();
-//        People people = null;
-//        for (DataFilePatient dataFilePatient : dataFile.getDataFilePatient()) {
-//            System.out.println(dataFilePatient.getFIO() + " " + dataFilePatient.getEnp());
-//            if (dataFilePatient.getSrz_status_code() == 1){
-//                if (dataFilePatient.getEnp() != null && !dataFilePatient.getEnp().isEmpty()){
-//                    people = peopleRepo.findPeopleByFamIgnoreCaseAndImIgnoreCaseAndOtIgnoreCaseAndDrAndEnp(
-//                            dataFilePatient.getFam().toUpperCase(),
-//                            dataFilePatient.getIm().toUpperCase(), dataFilePatient.getOt().toUpperCase(),
-//                            dataFilePatient.getDr(), dataFilePatient.getEnp());
-//                }
-//                if (people != null){
-//                    dnGetService.saveOrUpdate(dataFilePatient, people, dataFilePatientService);
-//                } else {
-//                    if (dataFilePatient.getEnp() != null && !dataFilePatient.getEnp().isEmpty()) {
-//                        people = peopleRepo.findPeopleByEnp(dataFilePatient.getEnp());
-//                    }
-//                    if (people != null) {
-//                        peoples.add(updateWithDFP(people, dataFilePatient));
-//                        dnGetService.saveOrUpdate(dataFilePatient, people, dataFilePatientService);
-//                    } else {
-//                        if (dataFilePatient.getIdsrz() != null && dataFilePatient.getIdsrz() != 0L) {
-//                            People newPeople = new People(dataFilePatient);
-//                            peoples.add(newPeople);
-//                            peopleRepo.save(newPeople);
-//                            dnGetService.saveOrUpdate(dataFilePatient, newPeople, dataFilePatientService);
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        System.out.println("Обработка завершена");
-////        peopleRepo.saveAll(peoples);
-//        return peoples;
-//
-//    }
-
-    public People search(InsuredPerson insuredPerson){
+   public People search(InsuredPerson insuredPerson){
         People people;
         people = peopleRepo.findPeopleBySurnameIgnoreCaseAndNameIgnoreCaseAndPatronymicIgnoreCaseAndDateBirthAndEnp(
                 insuredPerson.getSurname().toUpperCase(),
@@ -84,9 +42,7 @@ public class PeopleService {
         if (people == null){
             people = peopleRepo.findPeopleByEnp(insuredPerson.getEnp());
             if (people == null){
-
-                //int sex = searchFromSRZ(insuredPerson);
-                int sex = 1;
+                int sex = searchFromSRZ(insuredPerson);
                 if (sex > 0){
                     people = new People(insuredPerson);
                     people.setSex(sex);
@@ -97,118 +53,7 @@ public class PeopleService {
         } else return people;
     }
 
-//    public People search(IndividualInformingRequestRecord individualInformingRequestRecord){
-//        People people;
-//        people = peopleRepo.findPeopleBySurnameIgnoreCaseAndNameIgnoreCaseAndPatronymicIgnoreCaseAndDateBirthAndEnp(
-//                individualInformingRequestRecord.getSurname().toUpperCase(),
-//                individualInformingRequestRecord.getName().toUpperCase(), individualInformingRequestRecord.getPatronymic().toUpperCase(),
-//                individualInformingRequestRecord.getDateBirth(), individualInformingRequestRecord.getEnp());
-//        if (people == null){
-//            people = peopleRepo.findPeopleByEnp(individualInformingRequestRecord.getEnp());
-//            if (people == null){
-//
-//                if (searchFromSRZ(individualInformingRequestRecord)){
-//                    people = new People(individualInformingRequestRecord);
-//                    peopleRepo.save(people);
-//                    return people;
-//                } else return null;
-//            } else return people;
-//        } else return people;
-//    }
-//    public People search(ChoosingMORequestRecord choosingMORequestRecord){
-//        People people;
-//        people = peopleRepo.findPeopleBySurnameIgnoreCaseAndNameIgnoreCaseAndPatronymicIgnoreCaseAndDateBirthAndEnp(
-//                choosingMORequestRecord.getSurname().toUpperCase(),
-//                choosingMORequestRecord.getName().toUpperCase(), choosingMORequestRecord.getPatronymic().toUpperCase(),
-//                choosingMORequestRecord.getDateBirth(), choosingMORequestRecord.getEnp());
-//        if (people == null){
-//            people = peopleRepo.findPeopleByEnp(choosingMORequestRecord.getEnp());
-//            if (people == null){
-//                if (searchFromSRZ(choosingMORequestRecord)){
-//                    people = new People(choosingMORequestRecord);
-//                    peopleRepo.save(people);
-//                    return people;
-//                } else return null;
-//            } else return people;
-//        } else return people;
-//    }
-
-//    private DataFile searchFromSRZ(DataFile dataFile) {
-//        //System.out.println("Поиск в срз");
-//        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-//        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
-//        Statement statement = dbjdbcConfig.getSRZ();
-//        for (DataFilePatient dataFilePatient : dataFile.getDataFilePatient()){
-//            System.out.println(dataFilePatient.getFIO() + " " + dataFilePatient.getEnp());
-//            if (dataFilePatientService.searchFromPeople(dataFilePatient)) {
-//                try {
-//                    ResultSet resultSet = statement.executeQuery("" +
-//                            "select p.id, p.LPU from people p where p.fam = '" + dataFilePatient.getFam() +
-//                            "' and p.im = '" + dataFilePatient.getIm() + "' and p.ot = '" +  dataFilePatient.getOt() +
-//                            "' and p.dr = PARSE('" + dateFormat.format(dataFilePatient.getDr()) + "' as date) and p.enp = '"
-//                            + dataFilePatient.getEnp() + "'");
-//                    while (resultSet.next()){
-//                        dataFilePatient.setIdsrz(resultSet.getLong(1));
-//                        if (resultSet.getString(2) != null && !resultSet.getString(2).isEmpty()){
-//                            dataFilePatient.setMo_attach(resultSet.getInt(2));
-//                        }
-//                    }
-//                } catch(SQLException e){
-//                    throw new RuntimeException(e);
-//                }
-//            }
-//        }
-//        return dataFile;
-//    }
-
-//    private boolean searchFromSRZ(PADataPatientsRequestRecord PADataPatientsRequestRecord) {
-//        //System.out.println("Поиск в срз");
-//        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-//        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
-//        Statement statement = dbjdbcConfig.getSRZ();
-//
-//                try {
-//                    ResultSet resultSet = statement.executeQuery("" +
-//                            "select count(*) from people p where p.fam = '" + PADataPatientsRequestRecord.getSurname() +
-//                            "' and p.im = '" + PADataPatientsRequestRecord.getName() + "' and p.ot = '" +  PADataPatientsRequestRecord.getPatronymic() +
-//                            "' and p.dr = PARSE('" + dateFormat.format(PADataPatientsRequestRecord.getDateBirth()) + "' as date) and p.enp = '"
-//                            + PADataPatientsRequestRecord.getEnp() + "'");
-//                    while (resultSet.next()){
-//                        if (resultSet.getInt(1) >= 1) {
-//                            return true;
-//                        }
-//                    }
-//                } catch(SQLException e){
-//                    throw new RuntimeException(e);
-//                }
-//        return false;
-//    }
-
-//    private boolean searchFromSRZ(IndividualInformingRequestRecord individualInformingRequestRecord) {
-//        //System.out.println("Поиск в срз");
-//        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-//        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
-//        Statement statement = dbjdbcConfig.getSRZ();
-//
-//        try {
-//            ResultSet resultSet = statement.executeQuery("" +
-//                    "select count(*) from people p where p.fam = '" + individualInformingRequestRecord.getSurname() +
-//                    "' and p.im = '" + individualInformingRequestRecord.getName() + "' and p.ot = '" +  individualInformingRequestRecord.getPatronymic() +
-//                    "' and p.dr = PARSE('" + dateFormat.format(individualInformingRequestRecord.getDateBirth()) + "' as date) and p.enp = '"
-//                    + individualInformingRequestRecord.getEnp() + "'");
-//            while (resultSet.next()){
-//                if (resultSet.getInt(1) >= 1) {
-//                    return true;
-//                }
-//            }
-//        } catch(SQLException e){
-//            throw new RuntimeException(e);
-//        }
-//        return false;
-//    }
-
     private int searchFromSRZ(InsuredPerson insuredPerson) {
-        //System.out.println("Поиск в срз");
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
         Statement statement = dbjdbcConfig.getSRZ();

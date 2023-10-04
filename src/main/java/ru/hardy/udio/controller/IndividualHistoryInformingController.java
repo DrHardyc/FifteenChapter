@@ -6,13 +6,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
-import ru.hardy.udio.domain.api.choosingmo.ChoosingMOResponse;
 import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInformingRequest;
 import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInformingResponse;
 import ru.hardy.udio.service.TokenService;
-
-import java.time.Instant;
-import java.util.Date;
 
 @Controller
 public class IndividualHistoryInformingController {

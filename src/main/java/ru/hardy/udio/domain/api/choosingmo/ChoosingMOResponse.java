@@ -1,16 +1,20 @@
-package ru.hardy.udio.domain.api.individualhistoryinforming;
+package ru.hardy.udio.domain.api.choosingmo;
+
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
-public class IndividualHistoryInformingResponse extends InsuredPerson{
+@Entity
+@Table(schema = "udio_datacontrol")
+public class ChoosingMOResponse  {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
@@ -21,7 +25,8 @@ public class IndividualHistoryInformingResponse extends InsuredPerson{
     private int codeMO;
     private int numberRecordsProcessed;
 
-
+    @OneToMany(mappedBy = "response", fetch = FetchType.LAZY)
+    private List<ChoosingMOResponseRecord> patients;
 
     @JsonIgnore
     private Date date_beg;

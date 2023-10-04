@@ -1,10 +1,7 @@
-package ru.hardy.udio.domain.abstractclasses;
+package ru.hardy.udio.domain.api.abstractclasses;
 
 import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
-import ru.hardy.udio.domain.api.numberavailableseats.DateNumberVacantPlaces;
-
-import java.util.List;
 
 @Data
 @MappedSuperclass

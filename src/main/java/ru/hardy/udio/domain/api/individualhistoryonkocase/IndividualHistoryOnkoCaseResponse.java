@@ -2,7 +2,7 @@ package ru.hardy.udio.domain.api.individualhistoryonkocase;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import ru.hardy.udio.domain.abstractclasses.InsuredPerson;
+import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
 
 import java.util.List;
 

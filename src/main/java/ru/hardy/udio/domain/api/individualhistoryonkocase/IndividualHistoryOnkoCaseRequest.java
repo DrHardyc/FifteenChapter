@@ -3,7 +3,7 @@ package ru.hardy.udio.domain.api.individualhistoryonkocase;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import ru.hardy.udio.domain.abstractclasses.InsuredPerson;
+import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
 
 import java.util.Date;
 

@@ -1,14 +1,11 @@
 package ru.hardy.udio.repo.apirepo.numberavailableseatsrepo;
 
-import org.apache.commons.math3.geometry.euclidean.oned.Interval;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeats;
 
 import java.time.Instant;
-import java.util.Date;
-import java.util.List;
 
 @Repository
 public interface NumberAvailableSeatsRepo extends JpaRepository<NumberAvailableSeats, Long> {

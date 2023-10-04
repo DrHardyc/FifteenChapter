@@ -1,4 +1,4 @@
-package ru.hardy.udio.domain.api.individualinforming;
+package ru.hardy.udio.domain.api.choosingmo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -12,29 +12,22 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(schema = "udio_datacontrol")
-public class IndividualInformingRequestRecord extends InsuredPerson {
+public class ChoosingMORequestRecord extends InsuredPerson {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @JsonIgnore
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "request_id", nullable = false)
     @JsonIgnore
-    private IndividualInformingRequest request;
+    private ChoosingMORequest request;
 
     @OneToOne(mappedBy = "requestRecord")
-    private IndividualInforming patient;
-
-    private Date dateNotification;
-    private int sequenceInformation;
-    private String wayInforming;
-    private String mainDiagnosis;
-    private String concomitantDiagnosis;
-    private Date plannedNotificationDate;
+    private ChoosingMO patient;
 
     @JsonIgnore
-    private Date dateBeg;
+    private Date date_beg;
     @JsonIgnore
-    private Date dateEdit;
+    private Date date_edit;
+
 }
