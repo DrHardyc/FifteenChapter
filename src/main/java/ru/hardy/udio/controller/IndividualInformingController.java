@@ -4,11 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInforming;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequest;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingResponse;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingResponseRecord;
+import ru.hardy.udio.domain.struct.People;
+import ru.hardy.udio.service.PeopleService;
 import ru.hardy.udio.service.TokenService;
+import ru.hardy.udio.service.apiservice.individualhistoryinformingresponseservice.IndividualHistoryInformingService;
+import ru.hardy.udio.service.apiservice.individualinformingservice.IndividualInformingRequestRecordService;
 import ru.hardy.udio.service.apiservice.individualinformingservice.IndividualInformingRequestService;
 import ru.hardy.udio.service.apiservice.individualinformingservice.IndividualInformingResponseService;
 
@@ -28,6 +33,12 @@ public class IndividualInformingController {
 
     @Autowired
     private IndividualInformingRequestService individualInformingRequestService;
+
+    @Autowired
+    private IndividualHistoryInformingService individualHistoryInformingService;
+
+    @Autowired
+    private PeopleService peopleService;
 
     @PostMapping("/api/1.1/getIndividualInforming")
     public ResponseEntity<IndividualInformingResponse> registerIndividualInforming(
@@ -61,11 +72,30 @@ public class IndividualInformingController {
                 individualInformingRequest.setCodeMO(codeMO);
                 individualInformingRequest.setDate_beg(Date.from(Instant.now()));
                 individualInformingRequest.setDate_edit(Date.from(Instant.now()));
-                individualInformingRequestService.add(individualInformingRequest);
+
+                individualInformingRequest.getPatients().forEach(patient -> {
+                    People people = peopleService.search(patient);
+                    if (people != null) {
+                        IndividualHistoryInforming individualHistoryInforming =
+                                individualHistoryInformingService.getByPeople(people);
+                        if (individualHistoryInforming != null){
+                            patient.setIhiResponseRecord(individualHistoryInforming);
+                            //individualHistoryInforming.getIndividualInformings().add(patient);
+                            individualHistoryInformingService.update(individualHistoryInforming);
+                        } else {
+                            IndividualHistoryInforming individualHistoryInformingNew = new IndividualHistoryInforming();
+                            individualHistoryInformingNew.setDateBeg(Date.from(Instant.now()));
+                            individualHistoryInformingNew.setDateEdit(Date.from(Instant.now()));
+                            individualHistoryInformingNew.setPeople(people);
+                            individualHistoryInformingService.add(individualHistoryInformingNew);
+                            patient.setIhiResponseRecord(individualHistoryInformingNew);
+                        }
+                    }
+                });
+                individualInformingRequestService.add(individualInformingRequest, tokenService.getCodeMOWithToken(token));
 
                 individualInformingResponse.setResultRequestCode(200);
                 individualInformingResponseService.add(individualInformingResponse);
-
                 return ResponseEntity.ok(individualInformingResponseService
                         .processing(individualInformingRequest, individualInformingResponse, codeMO));
 

@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(schema = "udio_datacontrol")
-public class PADataPatientsResponse {
+public class PADataPatientResponse {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -25,7 +25,7 @@ public class PADataPatientsResponse {
     private int numberRecordsProcessed;
 
     @OneToMany(mappedBy = "response", fetch = FetchType.LAZY)
-    private List<PADataPatientsResponseRecord> patients;
+    private List<PADataPatientResponseRecord> patients;
 
     @JsonIgnore
     private Date dateBeg;

@@ -13,7 +13,7 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(schema = "udio_datacontrol")
-public class PADataPatientsResponseRecord extends InsuredPerson {
+public class PADataPatientResponseRecord extends InsuredPerson {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -26,21 +26,21 @@ public class PADataPatientsResponseRecord extends InsuredPerson {
     @ManyToOne
     @JoinColumn(name = "response_id", nullable = false)
     @JsonIgnore
-    private PADataPatientsResponse response;
+    private PADataPatientResponse response;
 
     @JsonIgnore
     private Date dateBeg;
     @JsonIgnore
     private Date dateEdit;
 
-    public PADataPatientsResponseRecord(PADataPatientsRequestRecord PADataPatientsRequestRecord,
-                                        PADataPatientsResponse PADataPatientsResponse, int errCode, String errMess) {
-        this.setSurname(PADataPatientsRequestRecord.getSurname());
-        this.setName(PADataPatientsRequestRecord.getName());
-        this.setPatronymic(PADataPatientsRequestRecord.getPatronymic());
-        this.setDateBirth(PADataPatientsRequestRecord.getDateBirth());
-        this.setEnp(PADataPatientsRequestRecord.getEnp());
-        this.setResponse(PADataPatientsResponse);
+    public PADataPatientResponseRecord(PADataPatientRequestRecord PADataPatientRequestRecord,
+                                       PADataPatientResponse PADataPatientResponse, int errCode, String errMess) {
+        this.setSurname(PADataPatientRequestRecord.getSurname());
+        this.setName(PADataPatientRequestRecord.getName());
+        this.setPatronymic(PADataPatientRequestRecord.getPatronymic());
+        this.setDateBirth(PADataPatientRequestRecord.getDateBirth());
+        this.setEnp(PADataPatientRequestRecord.getEnp());
+        this.setResponse(PADataPatientResponse);
         this.setDateBeg(Date.from(Instant.now()));
         this.setDateEdit(Date.from(Instant.now()));
         this.setRespCode(errCode);
@@ -48,7 +48,7 @@ public class PADataPatientsResponseRecord extends InsuredPerson {
 
     }
 
-    public PADataPatientsResponseRecord(){
+    public PADataPatientResponseRecord(){
 
     }
 }

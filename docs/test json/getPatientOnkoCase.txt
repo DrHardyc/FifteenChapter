@@ -1,0 +1,31 @@
+
+token: e/SGvhPZm?usABQ9RT-gf9lyeVvYpztQG779xYQZhPyaDZolE=QNldo3ka/chYxrV4Z4mhBMCwtOLouOXihizs0XLEA0RVcLaUmI79L6ZetOl7x8=dDi4ntQ?WRMbI/?
+
+{
+  "reqID":"asdf-adfg-asdqer-adfqeh-erg",
+  "patients":
+  [
+    {
+      "surname":"Премудрая",
+      "name":"Василиса",
+      "patronymic":"Ивановна",
+      "dateBirth":"1111-02-12",
+      "enp":"1235486925412365",
+      "sex":"2",
+      "mainDiagnosis":"Z01.1",
+      "firstIdentified":"1",
+      "dateVisit":""
+    },
+    {
+      "surname":"Durak",
+      "name":"Иван",
+      "patronymic":"Васильевич",
+      "dateBirth":"1131-07-23",
+      "enp":"1235486925412367",
+      "sex":"1",
+      "mainDiagnosis":"Z01.1",
+      "firstIdentified":"0",
+      "dateVisit":"1144-01-05"
+    }
+  ]
+}

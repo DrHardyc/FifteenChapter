@@ -5,28 +5,32 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
+import ru.hardy.udio.domain.struct.People;
 
 import java.util.Date;
-import java.util.List;
 
-@Getter
 @Setter
+@Getter
 @Entity
-@Table(schema ="udio_datacontrol")
-public class IndividualHistoryInformingRequest extends InsuredPerson {
+@Table(schema = "udio_datacontrol")
+public class IndividualHistoryInformingRequestRecord extends InsuredPerson {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     private Long id;
 
-    private String reqID;
-    private int codeMO;
+    @ManyToOne
+    @JoinColumn(name = "request_id", nullable = false)
+    @JsonIgnore
+    private IndividualHistoryInformingRequest request;
 
-    @OneToMany(mappedBy = "request", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<IndividualHistoryInformingRequestRecord> patients;
+    @OneToOne(fetch = FetchType.LAZY)
+    private People people;
+
 
     @JsonIgnore
     private Date dateBeg;
     @JsonIgnore
     private Date dateEdit;
-
 }

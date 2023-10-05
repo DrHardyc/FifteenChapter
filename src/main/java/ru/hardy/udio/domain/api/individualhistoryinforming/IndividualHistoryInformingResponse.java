@@ -4,27 +4,36 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
+import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
-public class IndividualHistoryInformingResponse extends InsuredPerson{
+@Entity
+@Table(schema = "udio_datacontrol")
+public class IndividualHistoryInformingResponse{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
     private Long id;
 
-    private int resultRequestCode;
     private String reqID;
     private int codeMO;
+    private int resultRequestCode;
     private int numberRecordsProcessed;
 
 
+    @OneToMany(mappedBy = "response", fetch = FetchType.LAZY)
+    private List<IndividualHistoryInformingResponseRecord> patients;
 
     @JsonIgnore
-    private Date date_beg;
+    private Date dateBeg;
     @JsonIgnore
-    private Date date_edit;
+    private Date dateEdit;
+
+    public IndividualHistoryInformingResponse() {
+
+    }
 }

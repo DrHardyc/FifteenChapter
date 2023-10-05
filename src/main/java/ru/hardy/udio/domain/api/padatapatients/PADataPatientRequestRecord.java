@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
+import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInforming;
 
 import java.util.Date;
 
@@ -12,7 +13,7 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(schema = "udio_datacontrol")
-public class PADataPatientsRequestRecord extends InsuredPerson {
+public class PADataPatientRequestRecord extends InsuredPerson {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -22,10 +23,15 @@ public class PADataPatientsRequestRecord extends InsuredPerson {
     @ManyToOne
     @JoinColumn(name = "request_id", nullable = false)
     @JsonIgnore
-    private PADataPatientsRequest request;
+    private PADataPatientRequest request;
 
     @OneToOne(mappedBy = "requestRecord")
     private PADataPatient patient;
+
+    @ManyToOne
+    @JoinColumn(name = "ihiResponseRecord_id", nullable = false)
+    @JsonIgnore
+    private IndividualHistoryInforming ihiResponseRecord;
 
     private String mainDiagnosis;
     private String concomitantDiagnosis;

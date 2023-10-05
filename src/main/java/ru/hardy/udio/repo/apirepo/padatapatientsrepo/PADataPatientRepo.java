@@ -8,7 +8,7 @@ import ru.hardy.udio.domain.struct.People;
 import java.util.Date;
 
 @Repository
-public interface PADataPatientsRepo extends JpaRepository<PADataPatient, Long> {
+public interface PADataPatientRepo extends JpaRepository<PADataPatient, Long> {
     PADataPatient findDODataPatientsByPeopleAndCodeMOAndRequestRecord_MainDiagnosisAndRequestRecord_CodeTypePreventiveActionsAndRequestRecord_DateInsuranceCase(
             People people, int codeMO, String mainDiag, int codeTypePreventiveActions, Date insuranceDate);
 

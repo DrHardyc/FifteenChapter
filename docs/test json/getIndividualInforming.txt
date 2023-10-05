@@ -16,7 +16,7 @@ token: e/SGvhPZm?usABQ9RT-gf9lyeVvYpztQG779xYQZhPyaDZolE=QNldo3ka/chYxrV4Z4mhBMC
       "wayInforming":"эл. почта",
       "mainDiagnosis":"Z01.1",
       "concomitantDiagnosis":"",
-      "plannedNotificationDate": 1135-03-06
+      "plannedNotificationDate": "1135-03-06"
     },
     {
       "surname":"Durak",
@@ -27,9 +27,9 @@ token: e/SGvhPZm?usABQ9RT-gf9lyeVvYpztQG779xYQZhPyaDZolE=QNldo3ka/chYxrV4Z4mhBMC
       "dateNotification":"1144-11-12",
       "sequenceInformation":"1",
       "wayInforming":"тел.",
-      "mainDiagnosis":"Z01.1"
+      "mainDiagnosis":"Z01.1",
       "concomitantDiagnosis":"",
-      "plannedNotificationDate": 1146-03-06
+      "plannedNotificationDate": "1146-03-06"
     }
   ]
 }

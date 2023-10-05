@@ -6,4 +6,6 @@ import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequest;
 
 @Repository
 public interface IndividualInformingRequestRepo extends JpaRepository<IndividualInformingRequest, Long> {
+
+
 }

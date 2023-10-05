@@ -22,14 +22,14 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
-import ru.hardy.udio.domain.api.padatapatients.PADataPatientsRequestRecord;
+import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
 import ru.hardy.udio.domain.button.BtnVariant;
 import ru.hardy.udio.domain.button.UdioButton;
 import ru.hardy.udio.domain.combobox.UdioCombobox;
 import ru.hardy.udio.domain.struct.*;
 import ru.hardy.udio.service.*;
 import ru.hardy.udio.service.SRZ.DBFSearchService;
-import ru.hardy.udio.service.apiservice.padatapatientsservice.PADataPatientsRequestRecordService;
+import ru.hardy.udio.service.apiservice.padatapatientsservice.PADataPatientRequestRecordService;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -52,7 +52,7 @@ public class TestView extends VerticalLayout {
     private ExcelService excelService;
 
     @Autowired
-    private PADataPatientsRequestRecordService paDataPatientsRequestRecordService;
+    private PADataPatientRequestRecordService paDataPatientRequestRecordService;
 
 
 
@@ -226,7 +226,7 @@ public class TestView extends VerticalLayout {
         Button btnTestOneToOne = new Button("TestOneToOne ");
         btnTestOneToOne.addClickListener(e -> {
             People people = peopleService.geByID(1L);
-            List<PADataPatientsRequestRecord> patients = paDataPatientsRequestRecordService.getAllByPeople(people);
+            List<PADataPatientRequestRecord> patients = paDataPatientRequestRecordService.getAllByPeople(people);
             patients.forEach(requestRecord -> System.out.println(requestRecord.getPatient().getPeople().getFIO() + "|"
                     + requestRecord.getMainDiagnosis()));
         });

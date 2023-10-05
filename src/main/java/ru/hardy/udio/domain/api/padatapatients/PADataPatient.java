@@ -27,7 +27,7 @@ public class PADataPatient {
     private People people;
 
     @OneToOne(fetch = FetchType.LAZY)
-    private PADataPatientsRequestRecord requestRecord;
+    private PADataPatientRequestRecord requestRecord;
 
     @JsonIgnore
     private Date dateBeg;
