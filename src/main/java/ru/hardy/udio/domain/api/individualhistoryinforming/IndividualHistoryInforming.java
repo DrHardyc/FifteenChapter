@@ -16,19 +16,13 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(schema = "udio_datacontrol")
+@Table(schema = "udio_tfoms")
 public class IndividualHistoryInforming {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
     private Long id;
-
-    @OneToMany(mappedBy = "ihiResponseRecord", fetch = FetchType.LAZY)
-    private List<IndividualInformingRequestRecord> individualInformings;
-
-    @OneToMany(mappedBy = "ihiResponseRecord", fetch = FetchType.LAZY)
-    private List<PADataPatientRequestRecord> paDataPatients;
 
     @OneToOne(fetch = FetchType.LAZY)
     private People people;
@@ -38,21 +32,6 @@ public class IndividualHistoryInforming {
     @JsonIgnore
     private Date dateEdit;
 
-
-    public IndividualHistoryInforming(People people,
-                                      List<IndividualInformingRequestRecord> individualInformings,
-                                      List<PADataPatientRequestRecord> paDataPatients) {
-
-        if (individualInformings != null){
-            this.setIndividualInformings(individualInformings);
-        }
-        if (paDataPatients != null){
-            this.setPaDataPatients(paDataPatients);
-        }
-        this.setPeople(people);
-        this.setDateBeg(Date.from(Instant.now()));
-        this.setDateEdit(Date.from(Instant.now()));
-    }
 
     public IndividualHistoryInforming() {
 

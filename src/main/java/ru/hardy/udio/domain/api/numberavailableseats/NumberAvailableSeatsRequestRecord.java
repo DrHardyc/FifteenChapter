@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import ru.hardy.udio.domain.abstractclasses.Department;
+import ru.hardy.udio.domain.api.abstractclasses.Department;
 
 
 import java.util.Date;

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
 import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInforming;
+import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInformingResponse;
 
 import java.util.Date;
 
@@ -27,8 +28,9 @@ public class IndividualInformingRequestRecord extends InsuredPerson {
     @OneToOne(mappedBy = "requestRecord")
     private IndividualInforming patient;
 
+
     @ManyToOne
-    @JoinColumn(name = "ihiResponseRecord_id")
+    @JoinColumn(name = "ihi_id")
     @JsonIgnore
     private IndividualHistoryInforming ihiResponseRecord;
 

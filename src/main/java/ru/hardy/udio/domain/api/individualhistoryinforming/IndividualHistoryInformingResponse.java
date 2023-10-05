@@ -25,7 +25,7 @@ public class IndividualHistoryInformingResponse{
     private int numberRecordsProcessed;
 
 
-    @OneToMany(mappedBy = "response", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "response", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<IndividualHistoryInformingResponseRecord> patients;
 
     @JsonIgnore

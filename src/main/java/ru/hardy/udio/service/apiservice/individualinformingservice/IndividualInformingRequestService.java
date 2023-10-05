@@ -30,13 +30,12 @@ public class IndividualInformingRequestService {
         individualInformingRequestRepo.save(individualInformingRequest);
     }
 
-    public void update(IndividualInformingRequest individualInformingRequest, IndividualHistoryInforming individualHistoryInforming){
+    public void update(IndividualInformingRequest individualInformingRequest){
         individualInformingRequest.getPatients().forEach(patient -> {
             patient.setDateBeg(Date.from(Instant.now()));
             patient.setDateEdit(Date.from(Instant.now()));
             patient.setRequest(individualInformingRequest);
         });
-        individualHistoryInforming.setIndividualInformings(individualInformingRequest.getPatients());
         individualInformingRequestRepo.save(individualInformingRequest);
     }
 

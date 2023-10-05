@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(schema ="udio_datacontrol")
-public class IndividualHistoryInformingRequest extends InsuredPerson {
+public class IndividualHistoryInformingRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

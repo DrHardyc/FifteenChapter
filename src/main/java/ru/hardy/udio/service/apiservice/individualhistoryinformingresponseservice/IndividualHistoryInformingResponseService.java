@@ -2,10 +2,7 @@ package ru.hardy.udio.service.apiservice.individualhistoryinformingresponseservi
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInformingRequest;
-import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInformingRequestRecord;
-import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInformingResponse;
-import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInforming;
+import ru.hardy.udio.domain.api.individualhistoryinforming.*;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
 import ru.hardy.udio.domain.struct.People;
@@ -37,7 +34,7 @@ public class IndividualHistoryInformingResponseService {
     private PADataPatientRequestRecordService paDataPatientRequestRecordService;
 
     @Autowired
-    private IndividualHistoryInformingService individualHistoryInformingService;
+    private IndividualHistoryInformingResponseRecordService individualHistoryInformingResponseRecordService;
 
 
     public void add(IndividualHistoryInformingResponse individualHistoryInformingResponse) {
@@ -53,14 +50,14 @@ public class IndividualHistoryInformingResponseService {
         String errMess;
         int errCode;
         int count = 0;
-        List<IndividualHistoryInforming> individualHistoryInformings = new ArrayList<>();
-
+        List<IndividualHistoryInformingResponseRecord> individualHistoryInformingResponseRecords = new ArrayList<>();
+        List<IndividualInformingRequestRecord> individualInformingRequestRecords = null;
+        List<PADataPatientRequestRecord> paDataPatientRequestRecords = null;
         for (IndividualHistoryInformingRequestRecord individualHistoryInformingRequestRecord :
                 individualHistoryInformingRequest.getPatients()){
 
             People people = peopleService.search(individualHistoryInformingRequestRecord);
-            List<IndividualInformingRequestRecord> individualInformingRequestRecords = null;
-            List<PADataPatientRequestRecord> paDataPatientRequestRecords = null;
+
             if (people != null) {
                 individualInformingRequestRecords = individualInformingRequestRecordService.getAllByPeople(people);
                 paDataPatientRequestRecords = paDataPatientRequestRecordService.getAllByPeople(people);
@@ -86,23 +83,25 @@ public class IndividualHistoryInformingResponseService {
                     errCode = 504;
                     errMess = errMess + "|Ошибка распознавания поля 'enp' : " + individualHistoryInformingRequestRecord.getEnp() + "|";
                 }
-
             } else {
                 errCode = 503;
                 errMess = "Ошибка поиска в СРЗ";
             }
 
-//            individualHistoryInformingsRe.add(new IndividualHistoryInforming(people,
-//                    individualInformingRequestRecords,
-//                    paDataPatientRequestRecords));
+           // paDataPatientRequestRecords.forEach(patient -> patient.setIndividualHistoryInforming()));
+            individualHistoryInformingResponseRecords.add(new IndividualHistoryInformingResponseRecord(
+                    individualHistoryInformingRequestRecord, individualHistoryInformingResponse,
+                    individualInformingRequestRecords, paDataPatientRequestRecords,
+                    errCode, errMess));
+
             count++;
             individualHistoryInformingResponse.setNumberRecordsProcessed(count);
             add(individualHistoryInformingResponse);
         }
-        individualHistoryInformingService.addAll(individualHistoryInformings);
+        //individualHistoryInformingResponseRecordService.addAll(individualHistoryInformingResponseRecords);
         individualHistoryInformingResponse.setResultRequestCode(200);
-        //individualHistoryInformingResponse.setPatients(individualHistoryInformings);
         individualHistoryInformingResponse.setReqID(individualHistoryInformingRequest.getReqID());
+        individualHistoryInformingResponse.setPatients(individualHistoryInformingResponseRecords);
         add(individualHistoryInformingResponse);
 
         return individualHistoryInformingResponse;

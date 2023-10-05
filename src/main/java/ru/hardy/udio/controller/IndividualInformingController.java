@@ -80,7 +80,6 @@ public class IndividualInformingController {
                                 individualHistoryInformingService.getByPeople(people);
                         if (individualHistoryInforming != null){
                             patient.setIhiResponseRecord(individualHistoryInforming);
-                            //individualHistoryInforming.getIndividualInformings().add(patient);
                             individualHistoryInformingService.update(individualHistoryInforming);
                         } else {
                             IndividualHistoryInforming individualHistoryInformingNew = new IndividualHistoryInforming();

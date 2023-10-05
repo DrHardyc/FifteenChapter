@@ -29,9 +29,9 @@ public class PADataPatientRequestRecord extends InsuredPerson {
     private PADataPatient patient;
 
     @ManyToOne
-    @JoinColumn(name = "ihiResponseRecord_id", nullable = false)
+    @JoinColumn(name = "ihi_id", nullable = false)
     @JsonIgnore
-    private IndividualHistoryInforming ihiResponseRecord;
+    private IndividualHistoryInforming individualHistoryInforming;
 
     private String mainDiagnosis;
     private String concomitantDiagnosis;
