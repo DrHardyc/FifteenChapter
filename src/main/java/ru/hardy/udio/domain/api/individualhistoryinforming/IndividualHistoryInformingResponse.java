@@ -1,10 +1,10 @@
 package ru.hardy.udio.domain.api.individualhistoryinforming;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
 
 import java.util.Date;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(schema = "udio_datacontrol")
-public class IndividualHistoryInformingResponse{
+public class IndividualHistoryInformingResponse {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
@@ -23,7 +23,6 @@ public class IndividualHistoryInformingResponse{
     private int codeMO;
     private int resultRequestCode;
     private int numberRecordsProcessed;
-
 
     @OneToMany(mappedBy = "response", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<IndividualHistoryInformingResponseRecord> patients;

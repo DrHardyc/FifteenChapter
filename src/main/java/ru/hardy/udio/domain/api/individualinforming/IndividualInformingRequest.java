@@ -1,6 +1,7 @@
 package ru.hardy.udio.domain.api.individualinforming;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class IndividualInformingRequest {
     private int codeMO;
 
     @OneToMany(mappedBy = "request", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonBackReference
     private List<IndividualInformingRequestRecord> patients;
 
     @JsonIgnore

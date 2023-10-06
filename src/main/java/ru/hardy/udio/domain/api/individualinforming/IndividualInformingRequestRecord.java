@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
 import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInforming;
-import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInformingResponse;
+import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInformingResponseRecord;
 
 import java.util.Date;
 
@@ -15,24 +15,29 @@ import java.util.Date;
 @Entity
 @Table(schema = "udio_datacontrol")
 public class IndividualInformingRequestRecord extends InsuredPerson {
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @JsonIgnore
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "request_id", nullable = false)
-    @JsonIgnore
     private IndividualInformingRequest request;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "requestRecord")
     private IndividualInforming patient;
 
-
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "ihi_id")
+    private IndividualHistoryInforming individualHistoryInforming;
+
     @JsonIgnore
-    private IndividualHistoryInforming ihiResponseRecord;
+    @ManyToOne
+    @JoinColumn(name = "ihiResponseRecord_id")
+    private IndividualHistoryInformingResponseRecord ihiResponseRecord;
 
     private Date dateNotification;
     private int sequenceInformation;
@@ -45,4 +50,10 @@ public class IndividualInformingRequestRecord extends InsuredPerson {
     private Date dateBeg;
     @JsonIgnore
     private Date dateEdit;
+
+
+
+    public IndividualInformingRequestRecord() {
+
+    }
 }

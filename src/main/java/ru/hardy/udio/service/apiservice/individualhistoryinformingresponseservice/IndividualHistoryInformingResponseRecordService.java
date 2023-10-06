@@ -13,8 +13,8 @@ public class IndividualHistoryInformingResponseRecordService{
     @Autowired
     private IndividualHistoryInformingResponseRecordRepo individualHistoryInformingResponseRecordRepo;
 
-    public void addAll(List<IndividualHistoryInformingResponseRecord> individualHistoryInformingResponseRecords){
-        individualHistoryInformingResponseRecordRepo.saveAll(individualHistoryInformingResponseRecords);
+    public void addAll(List<IndividualHistoryInformingResponseRecord> individualHistoryInformingResponseRecordEntities){
+        individualHistoryInformingResponseRecordRepo.saveAll(individualHistoryInformingResponseRecordEntities);
     }
 
 }

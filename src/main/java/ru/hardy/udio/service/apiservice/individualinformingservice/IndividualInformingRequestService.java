@@ -2,12 +2,8 @@ package ru.hardy.udio.service.apiservice.individualinformingservice;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInformingResponse;
-import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInforming;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequest;
-import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.repo.apirepo.individualinforming.IndividualInformingRequestRepo;
-import ru.hardy.udio.service.apiservice.individualhistoryinformingresponseservice.IndividualHistoryInformingService;
 
 import java.sql.Date;
 import java.time.Instant;

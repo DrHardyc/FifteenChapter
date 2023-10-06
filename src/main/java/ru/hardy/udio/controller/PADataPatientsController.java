@@ -39,31 +39,31 @@ public class PADataPatientsController {
             @RequestHeader(name = "token") String token,
             @RequestBody PADataPatientRequest paDataPatientRequest) {
 
-        PADataPatientResponse PADataPatientResponse = new PADataPatientResponse();
-        PADataPatientResponse.setResultRequestCode(201);
-        paDataPatientResponseService.add(PADataPatientResponse);
+        PADataPatientResponse paDataPatientResponse = new PADataPatientResponse();
+        paDataPatientResponse.setResultRequestCode(201);
+        paDataPatientResponseService.add(paDataPatientResponse);
 
         if (tokenService.checkToken(token)) {
             PADataPatientResponse PADataPatientResponseFromDB =
                     paDataPatientResponseService.getWithReqId(paDataPatientRequest.getReqID(),
                             tokenService.getCodeMOWithToken(token));
             if (PADataPatientResponseFromDB != null){
-                PADataPatientResponse.setResultRequestCode(402);
-                paDataPatientResponseService.add(PADataPatientResponse);
-                return ResponseEntity.ok(PADataPatientResponse);
+                paDataPatientResponse.setResultRequestCode(402);
+                paDataPatientResponseService.add(paDataPatientResponse);
+                return ResponseEntity.ok(paDataPatientResponse);
             }
 
             if (paDataPatientRequest.getPatients() == null){
-                PADataPatientResponse.setResultRequestCode(400);
-                paDataPatientResponseService.add(PADataPatientResponse);
-                return ResponseEntity.ok(PADataPatientResponse);
+                paDataPatientResponse.setResultRequestCode(400);
+                paDataPatientResponseService.add(paDataPatientResponse);
+                return ResponseEntity.ok(paDataPatientResponse);
             }
             try {
-                PADataPatientResponse.setCodeMO(tokenService.getCodeMOWithToken(token));
-                PADataPatientResponse.setDateBeg(Date.from(Instant.now()));
-                PADataPatientResponse.setDateEdit(Date.from(Instant.now()));
-                PADataPatientResponse.setReqID(paDataPatientRequest.getReqID());
-                paDataPatientResponseService.add(PADataPatientResponse);
+                paDataPatientResponse.setCodeMO(tokenService.getCodeMOWithToken(token));
+                paDataPatientResponse.setDateBeg(Date.from(Instant.now()));
+                paDataPatientResponse.setDateEdit(Date.from(Instant.now()));
+                paDataPatientResponse.setReqID(paDataPatientRequest.getReqID());
+                paDataPatientResponseService.add(paDataPatientResponse);
 
                 paDataPatientRequest.setCodeMO(tokenService.getCodeMOWithToken(token));
                 paDataPatientRequest.setDateBeg(Date.from(Instant.now()));
@@ -90,18 +90,18 @@ public class PADataPatientsController {
                 paDataPatientRequestService.add(paDataPatientRequest);
 
                 return ResponseEntity.ok(paDataPatientResponseService
-                        .processing(paDataPatientRequest, PADataPatientResponse, tokenService.getCodeMOWithToken(token)));
+                        .processing(paDataPatientRequest, paDataPatientResponse, tokenService.getCodeMOWithToken(token)));
 
             } catch (Exception e){
-                PADataPatientResponse.setResultRequestCode(400);
-                paDataPatientResponseService.add(PADataPatientResponse);
+                paDataPatientResponse.setResultRequestCode(400);
+                paDataPatientResponseService.add(paDataPatientResponse);
             }
 
         } else {
-            PADataPatientResponse.setResultRequestCode(403);
-            paDataPatientResponseService.add(PADataPatientResponse);
+            paDataPatientResponse.setResultRequestCode(403);
+            paDataPatientResponseService.add(paDataPatientResponse);
         }
-        return ResponseEntity.ok(PADataPatientResponse);
+        return ResponseEntity.ok(paDataPatientResponse);
     }
 
     @PostMapping("/api/test/getDODataPatients")

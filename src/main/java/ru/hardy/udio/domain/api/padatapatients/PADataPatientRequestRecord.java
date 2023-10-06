@@ -1,11 +1,13 @@
 package ru.hardy.udio.domain.api.padatapatients;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
 import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInforming;
+import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInformingResponseRecord;
 
 import java.util.Date;
 
@@ -15,23 +17,29 @@ import java.util.Date;
 @Table(schema = "udio_datacontrol")
 public class PADataPatientRequestRecord extends InsuredPerson {
 
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @JsonIgnore
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "request_id", nullable = false)
-    @JsonIgnore
     private PADataPatientRequest request;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "requestRecord")
     private PADataPatient patient;
 
-    @ManyToOne
-    @JoinColumn(name = "ihi_id", nullable = false)
     @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "ihi_id")
     private IndividualHistoryInforming individualHistoryInforming;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "ihiResponseRecord_id")
+    private IndividualHistoryInformingResponseRecord ihiResponseRecord;
 
     private String mainDiagnosis;
     private String concomitantDiagnosis;
@@ -50,4 +58,8 @@ public class PADataPatientRequestRecord extends InsuredPerson {
     private Date dateBeg;
     @JsonIgnore
     private Date dateEdit;
+
+    public PADataPatientRequestRecord() {
+
+    }
 }

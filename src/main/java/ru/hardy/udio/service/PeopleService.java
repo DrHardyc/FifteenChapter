@@ -59,11 +59,11 @@ public class PeopleService {
         Statement statement = dbjdbcConfig.getSRZ();
 
         try {
-            ResultSet resultSet = statement.executeQuery("" +
+            ResultSet resultSet = statement.executeQuery(
                     "select p.w from people p where p.fam = '" + insuredPerson.getSurname() +
                     "' and p.im = '" + insuredPerson.getName() + "' and p.ot = '" +  insuredPerson.getPatronymic() +
                     "' and p.dr = PARSE('" + dateFormat.format(insuredPerson.getDateBirth()) + "' as date) and p.enp = '"
-                    + insuredPerson.getEnp() + "'");
+                    + insuredPerson.getEnp() + "' and p.DS is null");
             if (resultSet.next()){
                 return resultSet.getInt(1);
             }

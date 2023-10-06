@@ -79,7 +79,7 @@ public class IndividualInformingController {
                         IndividualHistoryInforming individualHistoryInforming =
                                 individualHistoryInformingService.getByPeople(people);
                         if (individualHistoryInforming != null){
-                            patient.setIhiResponseRecord(individualHistoryInforming);
+                            patient.setIndividualHistoryInforming(individualHistoryInforming);
                             individualHistoryInformingService.update(individualHistoryInforming);
                         } else {
                             IndividualHistoryInforming individualHistoryInformingNew = new IndividualHistoryInforming();
@@ -87,7 +87,7 @@ public class IndividualInformingController {
                             individualHistoryInformingNew.setDateEdit(Date.from(Instant.now()));
                             individualHistoryInformingNew.setPeople(people);
                             individualHistoryInformingService.add(individualHistoryInformingNew);
-                            patient.setIhiResponseRecord(individualHistoryInformingNew);
+                            patient.setIndividualHistoryInforming(individualHistoryInformingNew);
                         }
                     }
                 });

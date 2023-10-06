@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
-import ru.hardy.udio.domain.api.individualinforming.IndividualInformingResponse;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
 
 import java.time.Instant;
@@ -18,9 +17,9 @@ import java.util.List;
 @Entity
 @Table(schema = "udio_datacontrol")
 public class IndividualHistoryInformingResponseRecord extends InsuredPerson {
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @JsonIgnore
     private Long id;
 
     private int respCode;
@@ -31,13 +30,11 @@ public class IndividualHistoryInformingResponseRecord extends InsuredPerson {
     @JsonIgnore
     private IndividualHistoryInformingResponse response;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "iiRequestRecord_id")
-    private List<IndividualInformingRequestRecord> individualInformingRequestRecords;
+    @OneToMany(mappedBy = "ihiResponseRecord", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<IndividualInformingRequestRecord> IndividualInforming;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "paRequestRecord_id")
-    private List<PADataPatientRequestRecord> paDataPatientRequestRecords;
+    @OneToMany(mappedBy = "ihiResponseRecord", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<PADataPatientRequestRecord> insuranceCase;
 
     @JsonIgnore
     private Date dateBeg;
@@ -46,8 +43,8 @@ public class IndividualHistoryInformingResponseRecord extends InsuredPerson {
 
     public IndividualHistoryInformingResponseRecord(IndividualHistoryInformingRequestRecord individualHistoryInformingRequestRecord,
                                                     IndividualHistoryInformingResponse individualHistoryInformingResponse,
-                                                    List<IndividualInformingRequestRecord> individualInformingRequestRecords,
-                                                    List<PADataPatientRequestRecord> paDataPatientRequestRecords,
+                                                    List<IndividualInformingRequestRecord> IndividualInforming,
+                                                    List<PADataPatientRequestRecord> insuranceCase,
                                                     int respCode, String respMessage){
         this.setSurname(individualHistoryInformingRequestRecord.getSurname());
         this.setName(individualHistoryInformingRequestRecord.getName());
@@ -57,8 +54,8 @@ public class IndividualHistoryInformingResponseRecord extends InsuredPerson {
         this.setResponse(individualHistoryInformingResponse);
         this.setDateBeg(Date.from(Instant.now()));
         this.setDateEdit(Date.from(Instant.now()));
-        this.setIndividualInformingRequestRecords(individualInformingRequestRecords);
-        this.setPaDataPatientRequestRecords(paDataPatientRequestRecords);
+        this.setIndividualInforming(IndividualInforming);
+        this.setInsuranceCase(insuranceCase);
         this.setRespCode(respCode);
         this.setRespMessage(respMessage);
     }

@@ -36,6 +36,9 @@ public class IndividualHistoryInformingResponseService {
     @Autowired
     private IndividualHistoryInformingResponseRecordService individualHistoryInformingResponseRecordService;
 
+    @Autowired
+    private IndividualHistoryInformingRequestRecordService individualHistoryInformingRequestRecordService;
+
 
     public void add(IndividualHistoryInformingResponse individualHistoryInformingResponse) {
         individualHistoryInformingResponseRepo.save(individualHistoryInformingResponse);
@@ -46,11 +49,11 @@ public class IndividualHistoryInformingResponseService {
     }
 
     public IndividualHistoryInformingResponse processing(IndividualHistoryInformingRequest individualHistoryInformingRequest,
-                             IndividualHistoryInformingResponse individualHistoryInformingResponse, int codeMO) {
+                                                         IndividualHistoryInformingResponse individualHistoryInformingResponse) {
         String errMess;
         int errCode;
         int count = 0;
-        List<IndividualHistoryInformingResponseRecord> individualHistoryInformingResponseRecords = new ArrayList<>();
+        List<IndividualHistoryInformingResponseRecord> individualHistoryInformingResponseRecordEntities = new ArrayList<>();
         List<IndividualInformingRequestRecord> individualInformingRequestRecords = null;
         List<PADataPatientRequestRecord> paDataPatientRequestRecords = null;
         for (IndividualHistoryInformingRequestRecord individualHistoryInformingRequestRecord :
@@ -61,6 +64,8 @@ public class IndividualHistoryInformingResponseService {
             if (people != null) {
                 individualInformingRequestRecords = individualInformingRequestRecordService.getAllByPeople(people);
                 paDataPatientRequestRecords = paDataPatientRequestRecordService.getAllByPeople(people);
+                individualHistoryInformingRequestRecord.setPeople(people);
+                individualHistoryInformingRequestRecordService.add(individualHistoryInformingRequestRecord);
                 errCode = 500;
                 errMess = "Успешное выполнение обработки записи";
                 if (examService.checkEmptyString(individualHistoryInformingRequestRecord.getSurname())) {
@@ -85,23 +90,28 @@ public class IndividualHistoryInformingResponseService {
                 }
             } else {
                 errCode = 503;
-                errMess = "Ошибка поиска в СРЗ";
+                errMess = "Пациент не найден";
             }
-
-           // paDataPatientRequestRecords.forEach(patient -> patient.setIndividualHistoryInforming()));
-            individualHistoryInformingResponseRecords.add(new IndividualHistoryInformingResponseRecord(
-                    individualHistoryInformingRequestRecord, individualHistoryInformingResponse,
-                    individualInformingRequestRecords, paDataPatientRequestRecords,
-                    errCode, errMess));
+            if (errCode == 500) {
+                individualHistoryInformingResponseRecordEntities.add(new IndividualHistoryInformingResponseRecord(
+                        individualHistoryInformingRequestRecord, individualHistoryInformingResponse,
+                        individualInformingRequestRecords, paDataPatientRequestRecords,
+                        errCode, errMess));
+            } else {
+                individualHistoryInformingResponseRecordEntities.add(new IndividualHistoryInformingResponseRecord(
+                        individualHistoryInformingRequestRecord, individualHistoryInformingResponse,
+                        null, null,
+                        errCode, errMess));
+            }
 
             count++;
             individualHistoryInformingResponse.setNumberRecordsProcessed(count);
             add(individualHistoryInformingResponse);
         }
-        //individualHistoryInformingResponseRecordService.addAll(individualHistoryInformingResponseRecords);
+        individualHistoryInformingResponseRecordService.addAll(individualHistoryInformingResponseRecordEntities);
         individualHistoryInformingResponse.setResultRequestCode(200);
         individualHistoryInformingResponse.setReqID(individualHistoryInformingRequest.getReqID());
-        individualHistoryInformingResponse.setPatients(individualHistoryInformingResponseRecords);
+        individualHistoryInformingResponse.setPatients(individualHistoryInformingResponseRecordEntities);
         add(individualHistoryInformingResponse);
 
         return individualHistoryInformingResponse;

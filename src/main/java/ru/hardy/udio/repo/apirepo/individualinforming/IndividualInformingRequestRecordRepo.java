@@ -1,4 +1,4 @@
-package ru.hardy.udio.repo.apirepo.individualhistoryinformingresponserepo;
+package ru.hardy.udio.repo.apirepo.individualinforming;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
