@@ -31,6 +31,6 @@ public class SchedulePIAndDispPlotRequestRecord {
     public int codeDep;
     public String nameDep;
 
-    private Date date_beg;
-    private Date date_edit;
+    private Date dateBeg;
+    private Date dateEdit;
 }

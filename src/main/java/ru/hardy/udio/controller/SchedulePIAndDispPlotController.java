@@ -53,6 +53,9 @@ public class SchedulePIAndDispPlotController {
 
             if (schedulePIAndDispPlotRequest.getDepartments() == null){
                 schedulePIAndDispPlotResponse.setResultRequestCode(400);
+                schedulePIAndDispPlotResponse.setDate_beg(Date.from(Instant.now()));
+                schedulePIAndDispPlotResponse.setDate_edit(Date.from(Instant.now()));
+                schedulePIAndDispPlotResponse.setReqID(schedulePIAndDispPlotRequest.getReqID());
                 schedulePIAndDispPlotResponseService.add(schedulePIAndDispPlotResponse);
                 return ResponseEntity.ok(schedulePIAndDispPlotResponse);
             }

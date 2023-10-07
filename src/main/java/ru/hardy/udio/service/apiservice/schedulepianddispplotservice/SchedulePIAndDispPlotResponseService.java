@@ -38,9 +38,6 @@ public class SchedulePIAndDispPlotResponseService {
         List<SchedulePIAndDispPlotResponseRecord> schedulePIAndDispPlotResponseRecords = new ArrayList<>();
 
         for (SchedulePIAndDispPlotRequestRecord departmentRequest : schedulePIAndDispPlotRequest.getDepartments()){
-            departmentRequest.setDate_beg(Date.from(Instant.now()));
-            departmentRequest.setDate_edit(Date.from(Instant.now()));
-
             schedulePIAndDispPlotService.add(departmentRequest, codeMO);
             schedulePIAndDispPlotResponse.setNumberRecordsProcessed(count);
             add(schedulePIAndDispPlotResponse);

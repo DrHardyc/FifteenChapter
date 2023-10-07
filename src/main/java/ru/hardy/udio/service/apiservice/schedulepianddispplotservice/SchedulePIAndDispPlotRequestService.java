@@ -18,6 +18,8 @@ public class SchedulePIAndDispPlotRequestService {
 
         schedulePIAndDispPlotRequest.getDepartments().forEach(department -> {
             department.setRequest(schedulePIAndDispPlotRequest);
+            department.setDateBeg(Date.from(Instant.now()));
+            department.setDateEdit(Date.from(Instant.now()));
             department.getMonths().forEach(month -> {
                 month.setRequestRecord(department);
                 month.setDateBeg(Date.from(Instant.now()));
