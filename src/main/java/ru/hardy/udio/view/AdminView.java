@@ -15,15 +15,15 @@ import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
-import ru.hardy.udio.domain.Role;
 import ru.hardy.udio.domain.deamon.Deamon;
 import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.security.SecurityUtils;
-import ru.hardy.udio.service.*;
+import ru.hardy.udio.service.DataFileService;
+import ru.hardy.udio.service.PeopleService;
+import ru.hardy.udio.service.TokenService;
+import ru.hardy.udio.service.UIUtilService;
 import ru.hardy.udio.service.deamonservice.DeamonService;
 import ru.hardy.udio.service.deamonservice.SearchDead;
-
-import java.util.Collections;
 
 @Route(layout = MainView.class)
 @RolesAllowed("ROLE_ADMIN")
