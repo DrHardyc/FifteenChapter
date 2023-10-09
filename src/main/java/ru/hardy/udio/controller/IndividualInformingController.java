@@ -96,7 +96,7 @@ public class IndividualInformingController {
                 individualInformingResponse.setResultRequestCode(200);
                 individualInformingResponseService.add(individualInformingResponse);
                 return ResponseEntity.ok(individualInformingResponseService
-                        .processing(individualInformingRequest, individualInformingResponse, codeMO));
+                        .processing(individualInformingRequest, individualInformingResponse));
 
             } catch (Exception e){
                 individualInformingResponse.setResultRequestCode(400);

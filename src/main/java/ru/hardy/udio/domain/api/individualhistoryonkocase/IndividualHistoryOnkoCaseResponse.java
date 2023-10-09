@@ -1,16 +1,38 @@
 package ru.hardy.udio.domain.api.individualhistoryonkocase;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInformingResponseRecord;
 
+import java.util.Date;
 import java.util.List;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
-public class IndividualHistoryOnkoCaseResponse extends InsuredPerson {
+@Getter
+@Setter
+@Entity
+@Table(schema = "udio_datacontrol")
+public class IndividualHistoryOnkoCaseResponse {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
+    private Long id;
 
+    private String reqID;
+    private int codeMO;
     private int resultRequestCode;
+    private int numberRecordsProcessed;
 
-    private List<IndividualHistoryOnkoCaseResponseRecord> insuranceCase;
+    @OneToMany(mappedBy = "response", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<IndividualHistoryOnkoCaseResponseRecord> patients;
+
+    @JsonIgnore
+    private Date dateBeg;
+    @JsonIgnore
+    private Date dateEdit;
+
+    public IndividualHistoryOnkoCaseResponse(){
+
+    }
 }

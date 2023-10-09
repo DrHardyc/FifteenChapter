@@ -3,21 +3,33 @@ http://localhost:8080/api/1.1/getIndividualHistoryOnkoCase
 
 token: e/SGvhPZm?usABQ9RT-gf9lyeVvYpztQG779xYQZhPyaDZolE=QNldo3ka/chYxrV4Z4mhBMCwtOLouOXihizs0XLEA0RVcLaUmI79L6ZetOl7x8=dDi4ntQ?WRMbI/?
 
-{
-  	"surname": "Премудрая",
-	"name": "Василиса",
-	"patronymic": "Ивановна",
-	"dateBirth": "1152-05-22",
-	"enp": "1234567891011123"
-}
 
 
-=====Рабочий=========
 {
-  	"surname": "Амбалов",
-	"name": "Виталий",
-	"patronymic": "юрьевич",
-	"dateBirth": "1963-01-29",
-	"enp": "1558630820000121"
+  "reqID":"asdf-adfg-asdqer-adfqeh-erg",
+  "patients":
+  [
+    {
+      "surname":"Премудрая",
+      "name":"Василиса",
+      "patronymic":"Ивановна",
+      "dateBirth":"1111-02-12",
+      "enp":"1235486925412365"
+    },
+    {
+      "surname":"Durak",
+      "name":"Иван",
+      "patronymic":"Васильевич",
+      "dateBirth":"1131-07-23",
+      "enp":"1235486925412367"
+    },
+    {
+      "surname": "Амбалов",
+      "name": "Виталий",
+      "patronymic": "юрьевич",
+      "dateBirth": "1963-01-29",
+      "enp": "1558630820000121"
+    }
+  ]
 }
 

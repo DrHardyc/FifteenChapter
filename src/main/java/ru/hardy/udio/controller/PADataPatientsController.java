@@ -34,8 +34,8 @@ public class PADataPatientsController {
     @Autowired
     private IndividualHistoryInformingService individualHistoryInformingService;
 
-    @PostMapping("/api/1.1/getPADataPatients")
-    public ResponseEntity<PADataPatientResponse> registerChoosingMO(
+    @PostMapping("/api/1.1/getPADataPatient")
+    public ResponseEntity<PADataPatientResponse> registerPADataPatient(
             @RequestHeader(name = "token") String token,
             @RequestBody PADataPatientRequest paDataPatientRequest) {
 
@@ -90,7 +90,7 @@ public class PADataPatientsController {
                 paDataPatientRequestService.add(paDataPatientRequest);
 
                 return ResponseEntity.ok(paDataPatientResponseService
-                        .processing(paDataPatientRequest, paDataPatientResponse, tokenService.getCodeMOWithToken(token)));
+                        .processing(paDataPatientRequest, paDataPatientResponse));
 
             } catch (Exception e){
                 paDataPatientResponse.setResultRequestCode(400);
@@ -104,8 +104,8 @@ public class PADataPatientsController {
         return ResponseEntity.ok(paDataPatientResponse);
     }
 
-    @PostMapping("/api/test/getDODataPatients")
-    public ResponseEntity<PADataPatientResponse> registerChoosingMOTest(
+    @PostMapping("/api/test/getPADataPatient")
+    public ResponseEntity<PADataPatientResponse> registerPADataPatientTest(
             @RequestHeader(name = "token") String token,
             @RequestBody PADataPatientRequest doDataPatientsRequest) {
 
@@ -141,7 +141,7 @@ public class PADataPatientsController {
                 paDataPatientRequestService.add(doDataPatientsRequest);
 
                 return ResponseEntity.ok(paDataPatientResponseService
-                        .processing(doDataPatientsRequest, PADataPatientResponse, tokenService.getCodeMOWithToken(token)));
+                        .processing(doDataPatientsRequest, PADataPatientResponse));
 
             } catch (Exception e){
                 PADataPatientResponse.setResultRequestCode(400);
@@ -155,8 +155,8 @@ public class PADataPatientsController {
         return ResponseEntity.ok(PADataPatientResponse);
     }
 
-    @GetMapping("/api/1.1/getDODataPatients/{reqID}")
-    public ResponseEntity<PADataPatientResponse> getDODataPatients(
+    @GetMapping("/api/1.1/getPADataPatients/{reqID}")
+    public ResponseEntity<PADataPatientResponse> getPADataPatients(
             @RequestHeader(name = "token") String token,
             @PathVariable(name = "reqID") String reqID ){
 

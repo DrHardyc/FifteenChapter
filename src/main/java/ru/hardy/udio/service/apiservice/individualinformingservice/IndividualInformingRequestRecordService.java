@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
 import ru.hardy.udio.domain.struct.People;
-import ru.hardy.udio.repo.apirepo.individualinforming.IndividualInformingRequestRecordRepo;
+import ru.hardy.udio.repo.apirepo.individualinformingrepo.IndividualInformingRequestRecordRepo;
 
 import java.util.List;
 

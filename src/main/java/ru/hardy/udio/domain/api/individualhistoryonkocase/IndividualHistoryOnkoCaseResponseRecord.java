@@ -1,44 +1,67 @@
 package ru.hardy.udio.domain.api.individualhistoryonkocase;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
+import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInformingResponse;
 
+import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
-@Data
-public class IndividualHistoryOnkoCaseResponseRecord {
-    private int codeMOAttach;
-    private int codeMO;
-    private String contactDetails;
-    private String invoiceNumber;
-    private Date invoiceDate;
-    private String insuranceCaseName;
-    private Date treatmentStartDate;
-    private Date treatmentEndDate;
-    private String mainDiagnosis;
-    private String concomitantDiagnosis;
-    private String complicationsDiagnosis;
-    private String resultSeeking;
-    private String informationDO;
+@Getter
+@Setter
+@Entity
+@Table(schema = "udio_datacontrol")
+public class IndividualHistoryOnkoCaseResponseRecord extends InsuredPerson {
 
-    public IndividualHistoryOnkoCaseResponseRecord(int codeMOAttach, int codeMO, String contactDetails,
-                                                   String invoiceNumber, Date invoiceDate, String insuranceCaseName,
-                                                   Date treatmentStartDate, Date treatmentEndDate, String mainDiagnosis,
-                                                   String concomitantDiagnosis, String complicationsDiagnosis,
-                                                   String resultSeeking, String informationDO) {
-        this.codeMO = codeMO;
-        this.codeMOAttach = codeMOAttach;
-        this.contactDetails = contactDetails;
-        this.invoiceNumber = invoiceNumber;
-        this.invoiceDate = invoiceDate;
-        this.insuranceCaseName = insuranceCaseName;
-        this.treatmentStartDate = treatmentStartDate;
-        this.treatmentEndDate = treatmentEndDate;
-        this.mainDiagnosis = mainDiagnosis;
-        this.concomitantDiagnosis = concomitantDiagnosis;
-        this.complicationsDiagnosis = complicationsDiagnosis;
-        this.resultSeeking = resultSeeking;
-        this.informationDO = informationDO;
+    @JsonIgnore
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    private int respCode;
+    private String respMessage;
+
+    @ManyToOne
+    @JoinColumn(name = "response_id", nullable = false)
+    @JsonIgnore
+    private IndividualHistoryOnkoCaseResponse response;
+
+    @OneToMany(mappedBy = "responseRecord", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<InsuranceCase> insuranceCases;
+
+    @JsonIgnore
+    private Date dateBeg;
+    @JsonIgnore
+    private Date dateEdit;
+
+    public IndividualHistoryOnkoCaseResponseRecord(IndividualHistoryOnkoCaseRequestRecord individualHistoryOnkoCaseRequestRecord,
+                                                   IndividualHistoryOnkoCaseResponse individualHistoryOnkoCaseResponse,
+                                                   List<InsuranceCase> insuranceCases, int errCode, String errMess) {
+        insuranceCases.forEach(insuranceCase -> {
+            insuranceCase.setResponseRecord(this);
+            insuranceCase.setDateBeg(Date.from(Instant.now()));
+            insuranceCase.setDateEdit(Date.from(Instant.now()));
+        });
+        this.setSurname(individualHistoryOnkoCaseRequestRecord.getSurname());
+        this.setName(individualHistoryOnkoCaseRequestRecord.getName());
+        this.setPatronymic(individualHistoryOnkoCaseRequestRecord.getPatronymic());
+        this.setDateBirth(individualHistoryOnkoCaseRequestRecord.getDateBirth());
+        this.setEnp(individualHistoryOnkoCaseRequestRecord.getEnp());
+        this.setResponse(individualHistoryOnkoCaseResponse);
+        this.setInsuranceCases(insuranceCases);
+        this.setRespCode(errCode);
+        this.setRespMessage(errMess);
+        this.setDateBeg(Date.from(Instant.now()));
+        this.setDateEdit(Date.from(Instant.now()));
 
     }
 
+    public IndividualHistoryOnkoCaseResponseRecord() {
+
+    }
 }

@@ -29,6 +29,9 @@ public class UdioButton extends Button {
                 //this.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
             }
         }
+    }
+
+    public UdioButton(){
 
     }
 

@@ -17,13 +17,13 @@ public class PADataPatientService {
     private PADataPatientRepo paDataPatientRepo;
 
 
-    public void add(People people, PADataPatientRequestRecord PADataPatientRequestRecord, int codeMO){
+    public void add(People people, PADataPatientRequestRecord paDataPatientRequestRecord){
         PADataPatient PADataPatient = new PADataPatient();
         PADataPatient.setPeople(people);
         PADataPatient.setDateBeg(Date.from(Instant.now()));
         PADataPatient.setDateEdit(Date.from(Instant.now()));
-        PADataPatient.setCodeMO(codeMO);
-        PADataPatient.setRequestRecord(PADataPatientRequestRecord);
+        PADataPatient.setCodeMO(paDataPatientRequestRecord.getRequest().getCodeMO());
+        PADataPatient.setRequestRecord(paDataPatientRequestRecord);
         paDataPatientRepo.save(PADataPatient);
     }
 

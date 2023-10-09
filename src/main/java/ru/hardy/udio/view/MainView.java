@@ -9,6 +9,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
+import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
@@ -32,8 +33,7 @@ public class MainView extends AppLayout {
         DrawerToggle toggle = new DrawerToggle();
         H5 titleVersion = new H5("Д - наблюдение v1.4.1");
         UtilService su = new UtilService();
-        Tabs tabs = su.getTabs();
-        tabs.setAutoselect(true);
+        SideNav tabs = su.getTabs();
 
         addToDrawer(tabs);
         HorizontalLayout horizontalLayout = new HorizontalLayout();

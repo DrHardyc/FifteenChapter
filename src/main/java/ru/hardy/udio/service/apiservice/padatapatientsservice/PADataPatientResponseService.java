@@ -2,6 +2,7 @@ package ru.hardy.udio.service.apiservice.padatapatientsservice;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.hardy.udio.domain.api.ResultRequest;
 import ru.hardy.udio.domain.api.padatapatients.*;
 import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.repo.apirepo.padatapatientsrepo.PADataPatientResponseRepo;
@@ -29,7 +30,7 @@ public class PADataPatientResponseService {
     private PADataPatientResponseRecordService paDataPatientResponseRecordService;
 
     @Autowired
-    private PADataPatientService doDataPatientsService;
+    private PADataPatientService paDataPatientsService;
 
     public void add(PADataPatientResponse paDataPatientResponse){
         paDataPatientResponseRepo.save(paDataPatientResponse);
@@ -40,77 +41,14 @@ public class PADataPatientResponseService {
     }
 
     public PADataPatientResponse processing(PADataPatientRequest paDataPatientRequest,
-                                            PADataPatientResponse paDataPatientResponse, int codeMO) {
-        String errMess;
-        int errCode;
+                                            PADataPatientResponse paDataPatientResponse) {
         int count = 0;
         List<PADataPatientResponseRecord> paDataPatientResponseRecords = new ArrayList<>();
         for (PADataPatientRequestRecord paDataPatientRequestRecord : paDataPatientRequest.getPatients()){
-
-            People people = peopleService.search(paDataPatientRequestRecord);
-            if (people != null) {
-                errCode = 500;
-                errMess = "Успешное выполнение обработки записи";
-                if (examService.checkEmptyString(paDataPatientRequestRecord.getSurname())) {
-                    errCode = 504;
-                    errMess = "|Ошибка распознавания поля 'surname'|";
-                }
-                if (examService.checkEmptyString(paDataPatientRequestRecord.getName())) {
-                    errCode = 504;
-                    errMess = errMess + "|Ошибка распознавания поля 'name'|";
-                }
-                if (examService.checkEmptyString(paDataPatientRequestRecord.getPatronymic())) {
-                    errCode = 504;
-                    errMess = errMess + "|Ошибка распознавания поля 'Patronymic'|";
-                }
-                if (examService.checkEmptyDate(paDataPatientRequestRecord.getDateBirth())) {
-                    errCode = 504;
-                    errMess = errMess + "|Ошибка распознавания поля 'dateBirth' : " + paDataPatientRequestRecord.getDateBirth() + "|";
-                }
-                if (examService.checkEnp(paDataPatientRequestRecord.getEnp())) {
-                    errCode = 504;
-                    errMess = errMess + "|Ошибка распознавания поля 'enp' : " + paDataPatientRequestRecord.getEnp() + "|";
-                }
-//                if (!examService.checkSpecialtyDoctorCode(paDataPatientsRequestRecord.getSpecialtyDoctorCode())) {
-//                    errCode = 504;
-//                    errMess = errMess + "|Ошибка распознавания поля 'specialtyDoctorCode' : " + paDataPatientsRequestRecord.getSpecialtyDoctorCode() + "|";
-//                }
-//                if (!examService.checkResultDispensaryAppointment(paDataPatientsRequestRecord.getResultDispensaryAppointment())) {
-//                    errCode = 504;
-//                    errMess = errMess + "|Ошибка распознавания поля 'resultDispensaryAppointment' : " + paDataPatientsRequestRecord.getResultDispensaryAppointment() + "|";
-//                }
-//                if (!examService.checkResultDispensaryAppointment(paDataPatientsRequestRecord.getResultDispensaryAppointmentDoctor())) {
-//                    errCode = 504;
-//                    errMess = errMess + "|Ошибка распознавания поля 'resultDispensaryAppointmentDoc' : " + paDataPatientsRequestRecord.getResultDispensaryAppointmentDoctor() + "|";
-//                }
-                if (doDataPatientsService.checkPatient(people, codeMO, paDataPatientRequestRecord.getMainDiagnosis(),
-                        paDataPatientRequestRecord.getCodeTypePreventiveActions(),
-                        paDataPatientRequestRecord.getDateInsuranceCase())){
-                    errCode = 502;
-                    errMess = "Пациент c таким диагнозом ранее был добавлен для данной МО";
-                } else if (errCode == 500) {
-                    PADataPatient paDataPatient = doDataPatientsService.searchPatient(
-                            people, codeMO, paDataPatientRequestRecord.getMainDiagnosis(),
-                            paDataPatientRequestRecord.getCodeTypePreventiveActions());
-                    if (paDataPatient != null)
-                    {
-                        errMess = "Запись успешно обновлена";
-                        paDataPatient.setRequestRecord(paDataPatientRequestRecord);
-                        paDataPatient.setDateEdit(Date.from(Instant.now()));
-                        doDataPatientsService.update(paDataPatient);
-                    } else {
-                        errMess = "Запись успешно добавлена";
-                        doDataPatientsService.add(people, paDataPatientRequestRecord, codeMO);
-                    }
-                }
-
-            } else {
-                errCode = 503;
-                errMess = "Ошибка поиска в СРЗ";
-            }
+            ResultRequest resultRequest = examService.checkInsuredPatient(paDataPatientRequestRecord);
 
             paDataPatientResponseRecords.add(new PADataPatientResponseRecord(paDataPatientRequestRecord, paDataPatientResponse,
-                    errCode, errMess));
+                    resultRequest.getResCode(), resultRequest.getResMess()));
             count++;
             paDataPatientResponse.setNumberRecordsProcessed(count);
             add(paDataPatientResponse);

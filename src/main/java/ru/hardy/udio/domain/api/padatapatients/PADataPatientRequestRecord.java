@@ -43,6 +43,7 @@ public class PADataPatientRequestRecord extends InsuredPerson {
 
     private String mainDiagnosis;
     private String concomitantDiagnosis;
+    private String diagnosisComplications;
     private int codeTypePreventiveActions;
     private String nameTypePreventiveActions;
     private Date dateInclude;

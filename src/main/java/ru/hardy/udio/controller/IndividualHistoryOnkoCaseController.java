@@ -3,13 +3,12 @@ package ru.hardy.udio.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInformingResponse;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.IndividualHistoryOnkoCaseRequest;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.IndividualHistoryOnkoCaseResponse;
-import ru.hardy.udio.domain.api.individualhistoryonkocase.IndividualHistoryOnkoCaseResponseEntity;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.IndividualHistoryOnkoCaseResponseRecord;
 import ru.hardy.udio.service.TokenService;
 import ru.hardy.udio.service.apiservice.individualhistoryonkocaseservice.IndividualHistoryOnkoCaseRequestService;
-import ru.hardy.udio.service.apiservice.individualhistoryonkocaseservice.IndividualHistoryOnkoCaseResponseEntityService;
 import ru.hardy.udio.service.apiservice.individualhistoryonkocaseservice.IndividualHistoryOnkoCaseResponseService;
 
 import java.time.Instant;
@@ -27,9 +26,6 @@ public class IndividualHistoryOnkoCaseController {
     private IndividualHistoryOnkoCaseRequestService individualHistoryOnkoCaseRequestService;
 
     @Autowired
-    private IndividualHistoryOnkoCaseResponseEntityService individualHistoryOnkoCaseResponseEntityService;
-
-    @Autowired
     private IndividualHistoryOnkoCaseResponseService individualHistoryOnkoCaseResponseService;
 
     @PostMapping("/api/1.1/getIndividualHistoryOnkoCase")
@@ -37,28 +33,50 @@ public class IndividualHistoryOnkoCaseController {
             @RequestHeader(name = "token") String token,
             @RequestBody IndividualHistoryOnkoCaseRequest individualHistoryOnkoCaseRequest) {
 
-        IndividualHistoryOnkoCaseResponseEntity individualHistoryOnkoCaseResponseEntity = new IndividualHistoryOnkoCaseResponseEntity();
         IndividualHistoryOnkoCaseResponse individualHistoryOnkoCaseResponse = new IndividualHistoryOnkoCaseResponse();
+        individualHistoryOnkoCaseResponse.setResultRequestCode(201);
+        individualHistoryOnkoCaseResponse.setDateBeg(Date.from(Instant.now()));
+        individualHistoryOnkoCaseResponse.setDateEdit(Date.from(Instant.now()));
+        individualHistoryOnkoCaseResponse.setReqID(individualHistoryOnkoCaseRequest.getReqID());
+        individualHistoryOnkoCaseResponseService.add(individualHistoryOnkoCaseResponse);
 
         if (tokenService.checkToken(token)) {
-            try{
+            IndividualHistoryOnkoCaseResponse individualHistoryOnkoCaseResponseFromDB =
+                    individualHistoryOnkoCaseResponseService.getWithReqId(individualHistoryOnkoCaseRequest.getReqID(),
+                            tokenService.getCodeMOWithToken(token));
+            if (individualHistoryOnkoCaseResponseFromDB != null){
+                individualHistoryOnkoCaseResponse.setResultRequestCode(402);
+                individualHistoryOnkoCaseResponse.setDateBeg(Date.from(Instant.now()));
+                individualHistoryOnkoCaseResponse.setDateEdit(Date.from(Instant.now()));
+                individualHistoryOnkoCaseResponseService.add(individualHistoryOnkoCaseResponse);
+                return ResponseEntity.ok(individualHistoryOnkoCaseResponse);
+            }
+
+            if (individualHistoryOnkoCaseRequest.getPatients() == null){
+                individualHistoryOnkoCaseResponse.setResultRequestCode(400);
+                individualHistoryOnkoCaseResponseService.add(individualHistoryOnkoCaseResponse);
+                return ResponseEntity.ok(individualHistoryOnkoCaseResponse);
+            }
+            try {
+                individualHistoryOnkoCaseResponse.setCodeMO(tokenService.getCodeMOWithToken(token));
+                individualHistoryOnkoCaseResponseService.add(individualHistoryOnkoCaseResponse);
+
+                individualHistoryOnkoCaseRequest.setCodeMO(tokenService.getCodeMOWithToken(token));
                 individualHistoryOnkoCaseRequest.setDateBeg(Date.from(Instant.now()));
                 individualHistoryOnkoCaseRequest.setDateEdit(Date.from(Instant.now()));
                 individualHistoryOnkoCaseRequestService.add(individualHistoryOnkoCaseRequest);
-                individualHistoryOnkoCaseResponseEntity.setPatientRequest(individualHistoryOnkoCaseRequest);
-                individualHistoryOnkoCaseResponseEntity.setResultRequestCode(200);
-                individualHistoryOnkoCaseResponseEntityService.add(individualHistoryOnkoCaseResponseEntity);
+
                 return ResponseEntity.ok(individualHistoryOnkoCaseResponseService
-                        .processind(individualHistoryOnkoCaseRequest, individualHistoryOnkoCaseResponseEntity));
+                        .processing(individualHistoryOnkoCaseRequest, individualHistoryOnkoCaseResponse));
+
             } catch (Exception e){
-                individualHistoryOnkoCaseResponseEntity.setResultRequestCode(400);
-                individualHistoryOnkoCaseResponseEntityService.add(individualHistoryOnkoCaseResponseEntity);
                 individualHistoryOnkoCaseResponse.setResultRequestCode(400);
+                individualHistoryOnkoCaseResponseService.add(individualHistoryOnkoCaseResponse);
             }
+
         } else {
-            individualHistoryOnkoCaseResponseEntity.setResultRequestCode(403);
-            individualHistoryOnkoCaseResponseEntityService.add(individualHistoryOnkoCaseResponseEntity);
             individualHistoryOnkoCaseResponse.setResultRequestCode(403);
+            individualHistoryOnkoCaseResponseService.add(individualHistoryOnkoCaseResponse);
         }
         return ResponseEntity.ok(individualHistoryOnkoCaseResponse);
     }
@@ -72,33 +90,44 @@ public class IndividualHistoryOnkoCaseController {
         IndividualHistoryOnkoCaseResponse individualHistoryOnkoCaseResponse = new IndividualHistoryOnkoCaseResponse();
 
         if (tokenService.checkToken(token)) {
-            try{
-                if (individualHistoryOnkoCaseRequest.getSurname().equals("Премудрая")){
-                    List<IndividualHistoryOnkoCaseResponseRecord> individualHistoryOnkoCaseResponseRecords = new ArrayList<>();
-                    individualHistoryOnkoCaseResponseRecords.add(new IndividualHistoryOnkoCaseResponseRecord(
-                            -1, -1, "9284886699", "H-999", Date.from(Instant.now()),
-                            "Посещение", Date.from(Instant.now()), Date.from(Instant.now()), "C20",
-                            "I25.2", null, "Выписан", null
-                    ));
-                    individualHistoryOnkoCaseResponseRecords.add(new IndividualHistoryOnkoCaseResponseRecord(
-                            -1, -1, "9284886699", "H-998", Date.from(Instant.now()),
-                            "Посещение", Date.from(Instant.now()), Date.from(Instant.now()), "C20",
-                            null, null, "Лечение продолжено", null
-                    ));
-                    individualHistoryOnkoCaseResponse.setSurname(individualHistoryOnkoCaseRequest.getSurname());
-                    individualHistoryOnkoCaseResponse.setName(individualHistoryOnkoCaseRequest.getName());
-                    individualHistoryOnkoCaseResponse.setPatronymic(individualHistoryOnkoCaseRequest.getPatronymic());
-                    individualHistoryOnkoCaseResponse.setDateBirth(individualHistoryOnkoCaseRequest.getDateBirth());
-                    individualHistoryOnkoCaseResponse.setEnp(individualHistoryOnkoCaseRequest.getEnp());
-                    individualHistoryOnkoCaseResponse.setInsuranceCase(individualHistoryOnkoCaseResponseRecords);
-                    individualHistoryOnkoCaseResponse.setResultRequestCode(200);
+            if (individualHistoryOnkoCaseRequest.getPatients().get(0).getSurname().equals("Премудрая")) {
+                IndividualHistoryOnkoCaseResponse individualHistoryOnkoCaseResponseFromDB =
+                        individualHistoryOnkoCaseResponseService.getWithReqId(individualHistoryOnkoCaseRequest.getReqID(),
+                                tokenService.getCodeMOWithToken(token));
+                if (individualHistoryOnkoCaseResponseFromDB != null) {
+                    individualHistoryOnkoCaseResponse.setResultRequestCode(402);
+                    individualHistoryOnkoCaseResponse.setDateBeg(Date.from(Instant.now()));
+                    individualHistoryOnkoCaseResponse.setDateEdit(Date.from(Instant.now()));
+                    individualHistoryOnkoCaseResponseService.add(individualHistoryOnkoCaseResponse);
                     return ResponseEntity.ok(individualHistoryOnkoCaseResponse);
                 }
-            } catch (Exception e){
-                individualHistoryOnkoCaseResponse.setResultRequestCode(400);
+
+                if (individualHistoryOnkoCaseRequest.getPatients() == null) {
+                    individualHistoryOnkoCaseResponse.setResultRequestCode(400);
+                    individualHistoryOnkoCaseResponseService.add(individualHistoryOnkoCaseResponse);
+                    return ResponseEntity.ok(individualHistoryOnkoCaseResponse);
+                }
+                try {
+                    individualHistoryOnkoCaseResponse.setCodeMO(tokenService.getCodeMOWithToken(token));
+                    individualHistoryOnkoCaseResponseService.add(individualHistoryOnkoCaseResponse);
+
+                    individualHistoryOnkoCaseRequest.setCodeMO(tokenService.getCodeMOWithToken(token));
+                    individualHistoryOnkoCaseRequest.setDateBeg(Date.from(Instant.now()));
+                    individualHistoryOnkoCaseRequest.setDateEdit(Date.from(Instant.now()));
+                    individualHistoryOnkoCaseRequestService.add(individualHistoryOnkoCaseRequest);
+
+                    return ResponseEntity.ok(individualHistoryOnkoCaseResponseService
+                            .processing(individualHistoryOnkoCaseRequest, individualHistoryOnkoCaseResponse));
+
+                } catch (Exception e) {
+                    individualHistoryOnkoCaseResponse.setResultRequestCode(400);
+                    individualHistoryOnkoCaseResponseService.add(individualHistoryOnkoCaseResponse);
+                }
+
+            } else {
+                individualHistoryOnkoCaseResponse.setResultRequestCode(403);
+                individualHistoryOnkoCaseResponseService.add(individualHistoryOnkoCaseResponse);
             }
-        } else {
-            individualHistoryOnkoCaseResponse.setResultRequestCode(403);
         }
         return ResponseEntity.ok(individualHistoryOnkoCaseResponse);
     }

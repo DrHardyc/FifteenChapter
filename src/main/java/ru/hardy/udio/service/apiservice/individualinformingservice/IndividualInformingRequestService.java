@@ -3,7 +3,7 @@ package ru.hardy.udio.service.apiservice.individualinformingservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequest;
-import ru.hardy.udio.repo.apirepo.individualinforming.IndividualInformingRequestRepo;
+import ru.hardy.udio.repo.apirepo.individualinformingrepo.IndividualInformingRequestRepo;
 
 import java.sql.Date;
 import java.time.Instant;
