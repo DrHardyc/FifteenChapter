@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
-import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
 
 import java.time.Instant;
@@ -31,7 +30,7 @@ public class IndividualHistoryInformingResponseRecord extends InsuredPerson {
     private IndividualHistoryInformingResponse response;
 
     @OneToMany(mappedBy = "ihiResponseRecord", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<IndividualInformingRequestRecord> IndividualInforming;
+    private List<ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord> IndividualInforming;
 
     @OneToMany(mappedBy = "ihiResponseRecord", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PADataPatientRequestRecord> insuranceCase;
@@ -43,7 +42,7 @@ public class IndividualHistoryInformingResponseRecord extends InsuredPerson {
 
     public IndividualHistoryInformingResponseRecord(IndividualHistoryInformingRequestRecord individualHistoryInformingRequestRecord,
                                                     IndividualHistoryInformingResponse individualHistoryInformingResponse,
-                                                    List<IndividualInformingRequestRecord> IndividualInforming,
+                                                    List<ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord> IndividualInforming,
                                                     List<PADataPatientRequestRecord> insuranceCase,
                                                     int respCode, String respMessage){
         this.setSurname(individualHistoryInformingRequestRecord.getSurname());

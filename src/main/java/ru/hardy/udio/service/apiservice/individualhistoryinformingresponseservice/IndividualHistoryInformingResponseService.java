@@ -3,7 +3,6 @@ package ru.hardy.udio.service.apiservice.individualhistoryinformingresponseservi
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.api.individualhistoryinforming.*;
-import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
 import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.repo.apirepo.individualhistoryinformingresponserepo.IndividualHistoryInformingResponseRepo;
@@ -53,8 +52,8 @@ public class IndividualHistoryInformingResponseService {
         String errMess;
         int errCode;
         int count = 0;
-        List<IndividualHistoryInformingResponseRecord> individualHistoryInformingResponseRecordEntities = new ArrayList<>();
-        List<IndividualInformingRequestRecord> individualInformingRequestRecords = null;
+        List<IndividualHistoryInformingResponseRecord> individualHistoryInformingResponseRecords = new ArrayList<>();
+        List<ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord> individualInformingRequestRecords = null;
         List<PADataPatientRequestRecord> paDataPatientRequestRecords = null;
         for (IndividualHistoryInformingRequestRecord individualHistoryInformingRequestRecord :
                 individualHistoryInformingRequest.getPatients()){
@@ -93,12 +92,12 @@ public class IndividualHistoryInformingResponseService {
                 errMess = "Пациент не найден";
             }
             if (errCode == 500) {
-                individualHistoryInformingResponseRecordEntities.add(new IndividualHistoryInformingResponseRecord(
+                individualHistoryInformingResponseRecords.add(new IndividualHistoryInformingResponseRecord(
                         individualHistoryInformingRequestRecord, individualHistoryInformingResponse,
                         individualInformingRequestRecords, paDataPatientRequestRecords,
                         errCode, errMess));
             } else {
-                individualHistoryInformingResponseRecordEntities.add(new IndividualHistoryInformingResponseRecord(
+                individualHistoryInformingResponseRecords.add(new IndividualHistoryInformingResponseRecord(
                         individualHistoryInformingRequestRecord, individualHistoryInformingResponse,
                         null, null,
                         errCode, errMess));
@@ -108,12 +107,14 @@ public class IndividualHistoryInformingResponseService {
             individualHistoryInformingResponse.setNumberRecordsProcessed(count);
             add(individualHistoryInformingResponse);
         }
-        individualHistoryInformingResponseRecordService.addAll(individualHistoryInformingResponseRecordEntities);
+        individualHistoryInformingResponseRecordService.addAll(individualHistoryInformingResponseRecords);
         individualHistoryInformingResponse.setResultRequestCode(200);
         individualHistoryInformingResponse.setReqID(individualHistoryInformingRequest.getReqID());
-        individualHistoryInformingResponse.setPatients(individualHistoryInformingResponseRecordEntities);
+        individualHistoryInformingResponse.setPatients(individualHistoryInformingResponseRecords);
         add(individualHistoryInformingResponse);
 
         return individualHistoryInformingResponse;
     }
+
+
 }

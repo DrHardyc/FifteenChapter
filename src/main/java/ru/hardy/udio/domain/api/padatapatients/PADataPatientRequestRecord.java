@@ -3,18 +3,23 @@ package ru.hardy.udio.domain.api.padatapatients;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
 import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInforming;
 import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInformingResponseRecord;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 @Getter
 @Setter
 @Entity
 @Table(schema = "udio_datacontrol")
+@EqualsAndHashCode(callSuper = true)
 public class PADataPatientRequestRecord extends InsuredPerson {
 
     @JsonIgnore
@@ -63,4 +68,23 @@ public class PADataPatientRequestRecord extends InsuredPerson {
     public PADataPatientRequestRecord() {
 
     }
+
+    public LocalDate getDateIncludeLocalDate() {
+        return dateToLocalDate(this.dateInclude);
+    }
+
+    public LocalDate getDateInsuranceCaseLocalDate() {
+        return dateToLocalDate(this.dateInsuranceCase);
+    }
+
+
+    private LocalDate dateToLocalDate(Date date){
+        if (date != null) {
+            return Instant.ofEpochMilli(date.getTime())
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+        }
+        return null;
+    }
+
 }

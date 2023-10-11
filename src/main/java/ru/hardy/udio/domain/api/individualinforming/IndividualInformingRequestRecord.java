@@ -2,18 +2,24 @@ package ru.hardy.udio.domain.api.individualinforming;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
 import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInforming;
 import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInformingResponseRecord;
 
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 @Getter
 @Setter
 @Entity
 @Table(schema = "udio_datacontrol")
+@EqualsAndHashCode(callSuper = true)
 public class IndividualInformingRequestRecord extends InsuredPerson {
     @JsonIgnore
     @Id
@@ -51,9 +57,31 @@ public class IndividualInformingRequestRecord extends InsuredPerson {
     @JsonIgnore
     private Date dateEdit;
 
+    public LocalDate getDateBegLocalDate() {
+        return dateToLocalDate(this.dateBeg);
+    }
+
+    public LocalDate getPlannedNotificationDateLocalDate() {
+        return dateToLocalDate(this.plannedNotificationDate);
+    }
+
+    public LocalDate getDateNotificationLocalDate() {
+        return dateToLocalDate(this.dateNotification);
+    }
+    private LocalDate dateToLocalDate(Date date){
+        if (date != null) {
+            return Instant.ofEpochMilli(date.getTime())
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+        }
+        return null;
+    }
 
 
     public IndividualInformingRequestRecord() {
 
     }
+
+
+
 }

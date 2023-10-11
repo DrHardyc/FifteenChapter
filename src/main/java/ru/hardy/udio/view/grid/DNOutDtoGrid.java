@@ -5,6 +5,7 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.dataview.GridListDataView;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
@@ -20,7 +21,7 @@ import java.util.function.Consumer;
 
 public class DNOutDtoGrid {
 
-    public void getGrid(Grid<DNOutDto> grid, GridListDataView<DNOutDto> DNOutDtoGridListDataView) {
+    public void getGrid(Grid<DNOutDto> grid, GridListDataView<DNOutDto> dnOutDtoGridListDataView) {
         Grid.Column<DNOutDto> fioCol = grid.addColumn(DNOutDto::getFIO).setResizable(true).setSortable(true).setWidth("300px");
         Grid.Column<DNOutDto> ageCol = grid.addColumn(DNOutDto::getAge).setResizable(true).setSortable(true);
         Grid.Column<DNOutDto> sexCol = grid.addColumn(DNOutDto::getNumberSex).setResizable(true).setSortable(true);
@@ -29,7 +30,7 @@ public class DNOutDtoGrid {
                 DNOutDto::getLocalDateDs, "dd.MM.yyyy")).setResizable(true).setComparator(DNOutDto::getLocalDateDs);
         Grid.Column<DNOutDto> date1Col = grid.addColumn(DNOutDto::getDate_1).setResizable(true).setComparator(DNOutDto::getDate_1);
 
-        DNOutDtoFilter DNOutDtoFilter = new DNOutDtoFilter(DNOutDtoGridListDataView);
+        DNOutDtoFilter DNOutDtoFilter = new DNOutDtoFilter(dnOutDtoGridListDataView);
         grid.getHeaderRows().clear();
         grid.setMultiSort(true, Grid.MultiSortPriority.APPEND);
         HeaderRow headerRow = grid.appendHeaderRow();
@@ -122,7 +123,7 @@ public class DNOutDtoGrid {
         }
     }
     private static Component createFilterHeader(String labelText, Consumer<String> filterChangeConsumer) {
-        Label label = new Label(labelText);
+        Span label = new Span(labelText);
         TextField textField = new TextField();
         label.getStyle().set("padding-top", "var(--lumo-space-m)")
                 .set("font-size", "var(--lumo-font-size-xs)");

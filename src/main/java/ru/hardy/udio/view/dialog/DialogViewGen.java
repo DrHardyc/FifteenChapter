@@ -1,36 +1,35 @@
 package ru.hardy.udio.view.dialog;
 
 
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.dataview.GridListDataView;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.stereotype.Service;
 import org.vaadin.olli.FileDownloadWrapper;
+import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
+import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
 import ru.hardy.udio.domain.button.BtnVariant;
 import ru.hardy.udio.domain.button.UdioButton;
 import ru.hardy.udio.domain.struct.DNGet;
 import ru.hardy.udio.domain.struct.dto.DNOutDto;
 import ru.hardy.udio.service.DNGetService;
 import ru.hardy.udio.service.ExcelService;
-import ru.hardy.udio.service.TokenService;
 import ru.hardy.udio.view.grid.DNGetGrid;
 import ru.hardy.udio.view.grid.DNOutDtoGrid;
+import ru.hardy.udio.view.grid.IndividualInformingRequestRecordGrid;
+import ru.hardy.udio.view.grid.PADataPatientRequestRecordGrid;
 
 import java.io.File;
 import java.util.List;
@@ -41,6 +40,7 @@ public class DialogViewGen {
     private final Dialog dialog = new Dialog();
     private final HorizontalLayout horizontalLayout = new HorizontalLayout();//Костыль Excel
 
+
     public DialogViewGen(){
         Button closeButton = new Button(new Icon(VaadinIcon.CLOSE_SMALL),
                 (event) -> dialog.close());
@@ -50,24 +50,114 @@ public class DialogViewGen {
         dialog.setWidth("100vw");
         dialog.getHeader().add(horizontalLayout);//Костыль Excel
         dialog.getHeader().add(closeButton);
+
         dialog.setCloseOnOutsideClick(false);
         dialog.setDraggable(true);
         dialog.setResizable(true);
         dialog.setModal(false);
     }
 
-    public Dialog getDNGetDialog(DNGetService dnGetService, Long peopleId){
-        Grid<DNGet> grid = new Grid<>(DNGet.class, false);
-        grid.addColumn(DNGet::getNhistory);
-        grid.addColumn(DNGet::getSpecialization);
-        grid.setItems(dnGetService.getByPeopleId(peopleId));
+    public Dialog getPADataPatientRequestRecordDialog(List<PADataPatientRequestRecord> paDataPatientRequestRecords) {
+        Span label = new Span();
+        Grid<PADataPatientRequestRecord> grid = new Grid<>(PADataPatientRequestRecord.class, false);
+        Button btnExcel = new UdioButton(".xlsx", BtnVariant.XLS);
+        btnExcel.setEnabled(false);
+        btnExcel.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        PADataPatientRequestRecordGrid paDataPatientRequestRecordGrid = new PADataPatientRequestRecordGrid();
+
+        grid.addItemDoubleClickListener(e -> {
+            Notification.show("Double Click!");
+        });
+
+        grid.setSelectionMode(Grid.SelectionMode.MULTI);
+        grid.addSelectionListener(selectionEvent -> {
+            btnExcel.setEnabled(selectionEvent.getAllSelectedItems().size() > 0);
+        });
+
+        label.getStyle().set("margin-right", "auto");
+        btnExcel.addClickListener(ev -> {
+            horizontalLayout.removeAll();
+            ExcelService excelService = new ExcelService();
+            File file = excelService.getPADataPatientRequestRecord(grid.getSelectedItems());
+
+            // Костыль имитирующий скачивание в эксель----
+            Button downloadButton = new Button();
+            downloadButton.setHeight("0px"); // что бы не было видно кнопки
+            downloadButton.setWidth("0px");
+            FileDownloadWrapper downloadButtonWrapper = new FileDownloadWrapper(file.getName(), file);
+            downloadButtonWrapper.wrapComponent(downloadButton);
+            horizontalLayout.add(downloadButtonWrapper);
+            downloadButton.clickInClient();
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            //---------------------------------------------
+        });
         grid.setSizeFull();
+        GridListDataView<PADataPatientRequestRecord> paDataPatientRequestRecordGridListDataView = grid.setItems(paDataPatientRequestRecords);
+        paDataPatientRequestRecordGrid.getGrid(grid, paDataPatientRequestRecordGridListDataView);
+        paDataPatientRequestRecordGridListDataView.addItemCountChangeListener(ev -> {
+            label.setText(String.valueOf(paDataPatientRequestRecordGridListDataView.getItemCount()));
+        });
+        dialog.getFooter().add(label, btnExcel);
         dialog.add(grid);
+
+        return dialog;
+    }
+    public Dialog getIndividualInformingRequestRecordDialog(List<IndividualInformingRequestRecord> individualInformingRequestRecords){
+        Span label = new Span();
+        Grid<IndividualInformingRequestRecord> grid = new Grid<>(IndividualInformingRequestRecord.class, false);
+        Button btnExcel = new UdioButton(".xlsx", BtnVariant.XLS);
+        btnExcel.setEnabled(false);
+        btnExcel.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        IndividualInformingRequestRecordGrid individualInformingRequestRecordGrid = new IndividualInformingRequestRecordGrid();
+
+        grid.addItemDoubleClickListener(e -> {
+            Notification.show("Double Click!");
+        });
+
+        grid.setSelectionMode(Grid.SelectionMode.MULTI);
+        grid.addSelectionListener(selectionEvent -> {
+            btnExcel.setEnabled(selectionEvent.getAllSelectedItems().size() > 0);
+        });
+
+        label.getStyle().set("margin-right", "auto");
+        btnExcel.addClickListener(ev -> {
+            horizontalLayout.removeAll();
+            ExcelService excelService = new ExcelService();
+            File file = excelService.getIndividualInformingRequestRecord(grid.getSelectedItems());
+
+            // Костыль имитирующий скачивание в эксель----
+            Button downloadButton = new Button();
+            downloadButton.setHeight("0px"); // что бы не было видно кнопки
+            downloadButton.setWidth("0px");
+            FileDownloadWrapper downloadButtonWrapper = new FileDownloadWrapper(file.getName(), file);
+            downloadButtonWrapper.wrapComponent(downloadButton);
+            horizontalLayout.add(downloadButtonWrapper);
+            downloadButton.clickInClient();
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            //---------------------------------------------
+        });
+        grid.setSizeFull();
+        GridListDataView<IndividualInformingRequestRecord> individualInformingRequestRecordGridListDataView = grid.setItems(individualInformingRequestRecords);
+        individualInformingRequestRecordGrid.getGrid(grid, individualInformingRequestRecordGridListDataView);
+        individualInformingRequestRecordGridListDataView.addItemCountChangeListener(ev -> {
+            label.setText(String.valueOf(individualInformingRequestRecordGridListDataView.getItemCount()));
+        });
+        dialog.getFooter().add(label, btnExcel);
+        dialog.add(grid);
+
         return dialog;
     }
 
     public Dialog getDieReportDialog(List<DNOutDto> dnOutDtos){
-        Label label = new Label();
+        Span label = new Span();
         Grid<DNOutDto> grid = new Grid<>(DNOutDto.class, false);
         Button btnExcel = new UdioButton(".xlsx", BtnVariant.XLS);
         btnExcel.setEnabled(false);
@@ -119,7 +209,7 @@ public class DialogViewGen {
     }
 
     public Dialog getMainReportDialog(List<DNGet> dnGets){
-        Label label = new Label();
+        Span label = new Span();
         Grid<DNGet> grid = new Grid<>(DNGet.class, false);
         Button btnExcel = new UdioButton(".xlsx", BtnVariant.XLS);
         btnExcel.setEnabled(false);
@@ -213,10 +303,11 @@ public class DialogViewGen {
     }
 
 
+
+
     @Data
     @EqualsAndHashCode(callSuper = true)
     private static class UdioTextField extends TextField{
-
         public UdioTextField(){
             this.setReadOnly(true);
         }

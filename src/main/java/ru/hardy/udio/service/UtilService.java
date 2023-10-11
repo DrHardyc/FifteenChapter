@@ -1,17 +1,12 @@
 package ru.hardy.udio.service;
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
-import com.vaadin.flow.component.tabs.Tab;
-import com.vaadin.flow.component.tabs.Tabs;
-import com.vaadin.flow.router.RouterLink;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import ru.hardy.udio.domain.api.individualinforming.IndividualInforming;
 import ru.hardy.udio.domain.report.DateInterval;
 import ru.hardy.udio.view.*;
 
@@ -32,14 +27,10 @@ public class UtilService {
 
     public SideNav getTabs(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Tabs tabs = new Tabs();
-
         SideNav nav = new SideNav();
 
         if (authentication.getAuthorities().stream()
                 .anyMatch(r -> r.getAuthority().equals("ROLE_ADMIN"))) {
-//            tabs.add(createTab(VaadinIcon.TERMINAL, "Админка", "Админская страница", AdminView.class));
-//            tabs.add(createTab(VaadinIcon.TAGS, "Testing", "Страница для тестирования", TestView.class));
             SideNavItem sideNavItem = new SideNavItem("Администратор");
             sideNavItem.addItem(new SideNavItem("Админ", AdminView.class, VaadinIcon.TERMINAL.create()));
             sideNavItem.addItem(new SideNavItem("Тестирование", TestView.class, VaadinIcon.TAGS.create()));
@@ -47,34 +38,20 @@ public class UtilService {
         }
         if (authentication.getAuthorities().stream()
                 .anyMatch(r -> r.getAuthority().equals("ROLE_TFOMS"))) {
-//            tabs.add(createTab(VaadinIcon.FILE_TABLE, "Отчеты", "Отчеты", ReportView.class));
-//            tabs.add(createTab(VaadinIcon.TASKS, "Задачи", "Задачи", TaskView.class));
-//            tabs.add(createTab(VaadinIcon.SEARCH, "Поиск", "Поиск", SearchView.class));
-            SideNavItem sideNavItem = new SideNavItem("ХV Глава");
-            sideNavItem.addItem(new SideNavItem("Отчеты", ReportView.class, VaadinIcon.FILE_TABLE.create()));
-            sideNavItem.addItem(new SideNavItem("Задачи", TaskView.class, VaadinIcon.TASKS.create()));
-            sideNavItem.addItem(new SideNavItem("Поиск", SearchView.class, VaadinIcon.SEARCH.create()));
-            nav.addItem(sideNavItem);
-        }
-//        tabs.add(createTab(VaadinIcon.EXIT_O, "Выход", "Выйти из программы", LogoutView.class));
+            SideNavItem sniXVChapter = new SideNavItem("ХV Глава");
+            SideNavItem sniPeople = new SideNavItem("Люди", "", VaadinIcon.USERS.create());
+            sniPeople.addItem(new SideNavItem("Случаи", CasesView.class, VaadinIcon.STETHOSCOPE.create()));
+            sniPeople.addItem(new SideNavItem("Информирование", InformingView.class, VaadinIcon.PHONE.create()));
+            SideNavItem sniMO = new SideNavItem("Мед. организации");
 
-//        tabs.setOrientation(Tabs.Orientation.VERTICAL);
+            sniXVChapter.addItem(sniPeople);
+            sniXVChapter.addItem(sniMO);
+            sniXVChapter.addItem(new SideNavItem("Отчеты", ReportView.class, VaadinIcon.FILE_TABLE.create()));
+            sniXVChapter.addItem(new SideNavItem("Задачи", TaskView.class, VaadinIcon.TASKS.create()));
+            nav.addItem(sniXVChapter);
+        }
         return nav;
     }
-    private Tab createTab(VaadinIcon viewIcon, String viewName, String tooltip, Class<? extends Component> aClass){
-        Icon icon = viewIcon.create();
-        icon.getStyle()
-                .set("box-sizing", "border-box")
-                .set("margin-inline-end", "var(--lumo-space-m)")
-                .set("margin-inline-start", "var(--lumo-space-xs)")
-                .set("padding", "var(--lumo-space-xs)");
-        RouterLink link = new RouterLink(aClass);
-        link.add(icon, new Span(viewName));
-        Tab tab = new Tab(link);
-        tab.setTooltipText(tooltip);
-        return tab;
-    }
-
     public BufferedReader getHBBufferedReader(String strURL) throws IOException {
         URL url;
         url = new URL(strURL);

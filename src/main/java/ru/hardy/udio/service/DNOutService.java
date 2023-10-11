@@ -33,10 +33,10 @@ public class DNOutService {
         DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
         Statement statement = dbjdbcConfig.getUDIO();
         try {
-            ResultSet resultSet = statement.executeQuery("select p.fam, p.im, p.ot, p.dr, p.enp, p.sex_id, p.ds, " +
+            ResultSet resultSet = statement.executeQuery("select p.surname, p.name, p.patronymic, p.date_birth, p.enp, p.sex, p.ds, " +
                     "string_agg(d.diag, ';'), string_agg(to_char(d.date_1, 'dd.mm.yyyy'), ';') " +
                     "from udio_tfoms.people p inner join udio_tfoms.dnout d on p.id = d.people_id " +
-                    "group by p.fam, p.im, p.ot, p.dr, p.enp, p.sex_id, p.ds");
+                    "group by p.surname, p.name, p.patronymic, p.date_birth, p.enp, p.sex, p.ds");
 
             while (resultSet.next()) {
                 dnOutDtoDtos.add(new DNOutDto(resultSet.getString(1),

@@ -5,7 +5,11 @@ import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Footer;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.textfield.PasswordField;
@@ -44,7 +48,12 @@ public class AdminView extends VerticalLayout{
     private final Grid<Deamon> gridDeamon = new Grid<>();
 
     private final Button btnCryptToken = new Button("Получить токен");
+
+    private final TextField tfClearToken = new TextField("Чистый токен");
+    private final TextField tfCryptToken = new TextField("Измененный токен");
+    private final TextField tfCodeMO = new TextField("Код МО");
     public AdminView(){
+
         TabSheet tabSheet = new TabSheet();
         Button btnTest = new UIUtilService().InitButtonOK(new Button("Test"));
 
@@ -71,14 +80,14 @@ public class AdminView extends VerticalLayout{
         //генерация ключей
         Dialog dGenKey = new Dialog();
         Button btnGetKey = new Button("Создать");
-        Label lGenKey = new Label();
+        Span span = new Span("asdfa");
         TextField tfLpuKeyGen = new TextField();
         tfLpuKeyGen.setPlaceholder("Введите код ЛПУ");
 
         TextField tfHashKey = new TextField();
         tfHashKey.setPlaceholder("Введите hash");
 
-        dGenKey.add(tfLpuKeyGen, lGenKey, btnGetKey);
+        dGenKey.add(tfLpuKeyGen, span, btnGetKey);
 
         vlTestGrid.add(grid);
         Button btnTestGrid = new Button("Test grid");
@@ -132,18 +141,18 @@ public class AdminView extends VerticalLayout{
         vlDeamon.add(gridDeamon);
         tabSheet.add("Демоны", vlDeamon);
 
-        add(tabSheet);
+        VerticalLayout vlToken = new VerticalLayout();
+        vlToken.add(tfClearToken, tfCryptToken, tfCodeMO, btnCryptToken);
 
+
+        tabSheet.add("Токен", vlToken);
+
+        add(tabSheet);
     }
 
     @Override
     public void onAttach(AttachEvent attachEvent) {
         gridDeamon.setItems(deamonService.getAll());
-        TextField tfClearToken = new TextField("Чистый токен");
-        TextField tfCryptToken = new TextField("Измененный токен");
-        TextField tfCodeMO = new TextField("Код МО");
-
-
         btnCryptToken.addClickListener(e -> {
             SecurityUtils securityUtils = new SecurityUtils();
             String cryptToken = securityUtils.encodeString(tfClearToken.getValue());
@@ -152,7 +161,6 @@ public class AdminView extends VerticalLayout{
                 tokenService.addNewToken(cryptToken, Integer.parseInt(tfCodeMO.getValue()));
             }
         });
-        add(tfCodeMO, tfClearToken, tfCryptToken, btnCryptToken);
     }
 
 

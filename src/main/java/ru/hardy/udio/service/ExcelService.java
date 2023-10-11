@@ -6,6 +6,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.config.DBJDBCConfig;
+import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
+import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
 import ru.hardy.udio.domain.report.AgeLimit;
 import ru.hardy.udio.domain.report.Efficiency;
 import ru.hardy.udio.domain.report.VisitType;
@@ -868,5 +870,100 @@ public class ExcelService {
         cell.setCellStyle(getCStyle(workbook));
         cell.setCellValue(value);
     }
+
+    public File getPADataPatientRequestRecord(Set<PADataPatientRequestRecord> paDataPatientRequestRecords) {
+        FileOutputStream outputStream;
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Общий отчет");
+        Row header = sheet.createRow(0);
+
+        createHeaderCell(header, "Основной диагноз", 0, workbook);
+        createHeaderCell(header, "Сопутствующий диагноз", 1, workbook);
+        createHeaderCell(header, "Диагноз осложнения", 2, workbook);
+        createHeaderCell(header, "Код профмероприятия", 3, workbook);
+        createHeaderCell(header, "Тип профмероприятия", 4, workbook);
+        createHeaderCell(header, "Дата включения в группу Д-наблюдения", 5, workbook);
+        createHeaderCell(header, "Период прохождения профмероприятий", 6, workbook);
+        createHeaderCell(header, "Код специальности врача", 7, workbook);
+        createHeaderCell(header, "Плановый период (месяц) проведения следующего профмероприятия", 8, workbook);
+        createHeaderCell(header, "Место проведения профмероприятия", 9, workbook);
+        createHeaderCell(header, "Дата посещения/обращения застрахованного лица ", 10, workbook);
+        createHeaderCell(header, "Результат профмероприятия", 11, workbook);
+        createHeaderCell(header, "Описание результата профмероприятия", 12, workbook);
+
+
+        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        int indexCount = 1;
+        for (PADataPatientRequestRecord paDataPatientRequestRecord : paDataPatientRequestRecords){
+            Row row = sheet.createRow(indexCount);
+            createValueCell(row, paDataPatientRequestRecord.getMainDiagnosis(), 0, workbook);
+            createValueCell(row, String.valueOf(paDataPatientRequestRecord.getConcomitantDiagnosis()), 1, workbook);
+            createValueCell(row, paDataPatientRequestRecord.getDiagnosisComplications(), 2, workbook);
+            createValueCell(row, String.valueOf(paDataPatientRequestRecord.getCodeTypePreventiveActions()), 3, workbook);
+            createValueCell(row, paDataPatientRequestRecord.getNameTypePreventiveActions(), 4, workbook);
+            createValueCell(row, dateFormat.format(paDataPatientRequestRecord.getDateInclude()), 5, workbook);
+            createValueCell(row, paDataPatientRequestRecord.getPeriodPA(), 6, workbook);
+            createValueCell(row, String.valueOf(paDataPatientRequestRecord.getSpecialtyDoctorCode()), 7, workbook);
+            createValueCell(row, String.valueOf(paDataPatientRequestRecord.getScheduledMonthAdmission()), 8, workbook);
+            createValueCell(row, String.valueOf(paDataPatientRequestRecord.getLocationInspection()), 9, workbook);
+            createValueCell(row, dateFormat.format(paDataPatientRequestRecord.getDateInsuranceCase()), 10, workbook);
+            createValueCell(row, String.valueOf(paDataPatientRequestRecord.getResultDispensaryAppointmentDoctor()), 11, workbook);
+            createValueCell(row, String.valueOf(paDataPatientRequestRecord.getResultDispensaryAppointment()), 12, workbook);
+
+            indexCount++;
+        }
+
+        File currDir = new File("C:\\udio\\reports\\" + UUID.randomUUID() + "_снятые.xlsx");
+        try {
+            outputStream = new FileOutputStream(currDir);
+            workbook.write(outputStream);
+            workbook.close();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+
+        }
+        return currDir;
+    }
+    public File getIndividualInformingRequestRecord(Set<IndividualInformingRequestRecord> individualInformingRequestRecords) {
+        FileOutputStream outputStream;
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Общий отчет");
+        Row header = sheet.createRow(0);
+
+        createHeaderCell(header, "Основной диагноз", 0, workbook);
+        createHeaderCell(header, "Очередность информирования", 1, workbook);
+        createHeaderCell(header, "Способ информирования", 2, workbook);
+        createHeaderCell(header, "Дата информирования", 3, workbook);
+        createHeaderCell(header, "Планируемая дата следующего информирования", 4, workbook);
+        createHeaderCell(header, "Дата добавления записи", 5, workbook);
+
+        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        int indexCount = 1;
+        for (IndividualInformingRequestRecord individualInformingRequestRecord : individualInformingRequestRecords){
+            Row row = sheet.createRow(indexCount);
+            createValueCell(row, individualInformingRequestRecord.getMainDiagnosis(), 0, workbook);
+            createValueCell(row, String.valueOf(individualInformingRequestRecord.getSequenceInformation()), 1, workbook);
+            createValueCell(row, individualInformingRequestRecord.getWayInforming(), 2, workbook);
+            createValueCell(row, dateFormat.format(individualInformingRequestRecord.getDateNotification()), 3, workbook);
+            createValueCell(row, dateFormat.format(individualInformingRequestRecord.getPlannedNotificationDate()), 4, workbook);
+            createValueCell(row, dateFormat.format(individualInformingRequestRecord.getDateBeg()), 5, workbook);
+
+            indexCount++;
+        }
+
+        File currDir = new File("C:\\udio\\reports\\" + UUID.randomUUID() + "_снятые.xlsx");
+        try {
+            outputStream = new FileOutputStream(currDir);
+            workbook.write(outputStream);
+            workbook.close();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+
+        }
+        return currDir;
+    }
+
 
 }

@@ -8,4 +8,5 @@ import ru.hardy.udio.domain.struct.People;
 @Repository
 public interface IndividualHistoryInformingRepo extends JpaRepository<IndividualHistoryInforming, Long> {
     IndividualHistoryInforming findByPeople(People people);
+
 }

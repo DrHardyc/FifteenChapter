@@ -6,6 +6,7 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.dataview.GridListDataView;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
@@ -138,7 +139,7 @@ public class ReportTaskGrid {
         }
     }
     private static Component createFilterHeader(String labelText, Consumer<String> filterChangeConsumer) {
-        Label label = new Label(labelText);
+        Span label = new Span(labelText);
         TextField textField = new TextField();
         label.getStyle().set("padding-top", "var(--lumo-space-m)")
                 .set("font-size", "var(--lumo-font-size-xs)");

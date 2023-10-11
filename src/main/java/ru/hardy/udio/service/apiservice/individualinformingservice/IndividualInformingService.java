@@ -3,6 +3,7 @@ package ru.hardy.udio.service.apiservice.individualinformingservice;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInformingRequestRecord;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInforming;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
 import ru.hardy.udio.domain.struct.People;
@@ -10,6 +11,7 @@ import ru.hardy.udio.repo.apirepo.individualinformingrepo.IndividualInformingRep
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class IndividualInformingService {
@@ -17,7 +19,7 @@ public class IndividualInformingService {
     @Autowired
     private IndividualInformingRepo individualInformingRepo;
 
-    public void add(People people, IndividualInformingRequestRecord individualInformingRequestRecord) {
+    public void add(People people, ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord individualInformingRequestRecord) {
         IndividualInforming individualInforming = new IndividualInforming();
         individualInforming.setPeople(people);
         individualInforming.setDateBeg(Date.from(Instant.now()));

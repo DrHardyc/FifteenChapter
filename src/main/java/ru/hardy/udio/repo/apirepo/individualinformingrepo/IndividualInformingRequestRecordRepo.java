@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface IndividualInformingRequestRecordRepo extends JpaRepository<IndividualInformingRequestRecord, Long> {
-    @Query("select pa from IndividualInformingRequestRecord pa inner join pa.patient p where p.people = :people")
+    @Query("select iirr from IndividualInformingRequestRecord iirr join iirr.patient p where p.people = :people")
     List<IndividualInformingRequestRecord> findAllByPeople(People people);
 }
