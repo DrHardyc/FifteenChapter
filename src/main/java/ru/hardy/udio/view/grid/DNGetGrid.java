@@ -1,20 +1,12 @@
 package ru.hardy.udio.view.grid;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.dataview.GridListDataView;
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
-import com.vaadin.flow.data.value.ValueChangeMode;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.struct.DNGet;
 import ru.hardy.udio.service.UtilService;
-
-import java.util.function.Consumer;
 
 
 
@@ -40,25 +32,25 @@ public class DNGetGrid {
         HeaderRow headerRow = grid.appendHeaderRow();
 
         headerRow.getCell(fioCol).setComponent(
-                createFilterHeader("ФИО", dnGetFilter::setFio));
+                GridUtils.createFilterHeader("ФИО", dnGetFilter::setFio));
         headerRow.getCell(moAttachCol).setComponent(
-                createFilterHeader("МО прикрепления", dnGetFilter::setMo_attach));
+                GridUtils.createFilterHeader("МО прикрепления", dnGetFilter::setMo_attach));
         headerRow.getCell(moCol).setComponent(
-                createFilterHeader("МО", dnGetFilter::setMo));
+                GridUtils.createFilterHeader("МО", dnGetFilter::setMo));
         headerRow.getCell(sexCol).setComponent(
-                createFilterHeader("Пол", dnGetFilter::setSex));
+                GridUtils.createFilterHeader("Пол", dnGetFilter::setSex));
         headerRow.getCell(diagCol).setComponent(
-                createFilterHeader("Диагноз", dnGetFilter::setDiag));
+                GridUtils.createFilterHeader("Диагноз", dnGetFilter::setDiag));
         headerRow.getCell(profileCol).setComponent(
-                createFilterHeader("Специальность врача", dnGetFilter::setProfile));
+                GridUtils.createFilterHeader("Специальность врача", dnGetFilter::setProfile));
         headerRow.getCell(ageCol).setComponent(
-                createFilterHeader("Возраст", dnGetFilter::setAge));
+                GridUtils.createFilterHeader("Возраст", dnGetFilter::setAge));
         headerRow.getCell(invCol).setComponent(
-                createFilterHeader("Инвалидность", dnGetFilter::setInv));
+                GridUtils.createFilterHeader("Инвалидность", dnGetFilter::setInv));
         headerRow.getCell(date1Col).setComponent(
-                createFilterHeader("Дата взятия", dnGetFilter::setDate_1));
+                GridUtils.createFilterHeader("Дата взятия", dnGetFilter::setDate_1));
         headerRow.getCell(dateCallCol).setComponent(
-                createFilterHeader("Дата информирования", dnGetFilter::setDate_call));
+                GridUtils.createFilterHeader("Дата информирования", dnGetFilter::setDate_call));
     }
 
     private static class DNGetFilter{
@@ -162,22 +154,5 @@ public class DNGetGrid {
             return searchTerm == null || searchTerm.isEmpty() || value.toLowerCase().contains(searchTerm.toLowerCase());
         }
 
-    }
-    private static Component createFilterHeader(String labelText, Consumer<String> filterChangeConsumer) {
-        Label label = new Label(labelText);
-        TextField textField = new TextField();
-        label.getStyle().set("padding-top", "var(--lumo-space-m)")
-                .set("font-size", "var(--lumo-font-size-xs)");
-        textField.setValueChangeMode(ValueChangeMode.EAGER);
-        textField.setClearButtonVisible(true);
-        textField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
-        textField.setWidthFull();
-        textField.getStyle().set("max-width", "100%");
-        textField.addValueChangeListener(
-                e -> filterChangeConsumer.accept(e.getValue()));
-        VerticalLayout layout = new VerticalLayout(label, textField);
-        layout.getThemeList().clear();
-        layout.getThemeList().add("spacing-xs");
-        return layout;
     }
 }

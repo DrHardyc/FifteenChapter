@@ -88,8 +88,8 @@ public class ReportView extends VerticalLayout {
         );
 
         List<String> cbItems = new ArrayList<>();
-        cbItems.add("Файлы");
-        cbItems.add("Все");
+        //cbItems.add("Файлы");
+        //cbItems.add("Все");
         cbItems.add("Снятые");
         cbItems.add("ДН-терапефт");
         cbItems.add("ДН-онколог");

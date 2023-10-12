@@ -1,23 +1,14 @@
 package ru.hardy.udio.view.grid;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.dataview.GridListDataView;
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
-import com.vaadin.flow.data.value.ValueChangeMode;
-import ru.hardy.udio.domain.struct.DNOut;
 import ru.hardy.udio.domain.struct.dto.DNOutDto;
 import ru.hardy.udio.service.UtilService;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.function.Consumer;
 
 public class DNOutDtoGrid {
 
@@ -36,17 +27,17 @@ public class DNOutDtoGrid {
         HeaderRow headerRow = grid.appendHeaderRow();
 
         headerRow.getCell(fioCol).setComponent(
-                createFilterHeader("ФИО", DNOutDtoFilter::setFio));
+                GridUtils.createFilterHeader("ФИО", DNOutDtoFilter::setFio));
         headerRow.getCell(ageCol).setComponent(
-                createFilterHeader("Возраст", DNOutDtoFilter::setAge));
+                GridUtils.createFilterHeader("Возраст", DNOutDtoFilter::setAge));
         headerRow.getCell(sexCol).setComponent(
-                createFilterHeader("Пол", DNOutDtoFilter::setSex));
+                GridUtils.createFilterHeader("Пол", DNOutDtoFilter::setSex));
         headerRow.getCell(diagCol).setComponent(
-                createFilterHeader("Диагноз", DNOutDtoFilter::setDiag));
+                GridUtils.createFilterHeader("Диагноз", DNOutDtoFilter::setDiag));
         headerRow.getCell(dsCol).setComponent(
-                createFilterHeader("Дата смерти", DNOutDtoFilter::setDs));
+                GridUtils.createFilterHeader("Дата смерти", DNOutDtoFilter::setDs));
         headerRow.getCell(date1Col).setComponent(
-                createFilterHeader("Дата взятия", DNOutDtoFilter::setDate_1));
+                GridUtils.createFilterHeader("Дата взятия", DNOutDtoFilter::setDate_1));
     }
 
     private static class DNOutDtoFilter {
@@ -121,22 +112,5 @@ public class DNOutDtoGrid {
             }
             return searchTerm == null || searchTerm.isEmpty() || value.toLowerCase().contains(searchTerm.toLowerCase());
         }
-    }
-    private static Component createFilterHeader(String labelText, Consumer<String> filterChangeConsumer) {
-        Span label = new Span(labelText);
-        TextField textField = new TextField();
-        label.getStyle().set("padding-top", "var(--lumo-space-m)")
-                .set("font-size", "var(--lumo-font-size-xs)");
-        textField.setValueChangeMode(ValueChangeMode.EAGER);
-        textField.setClearButtonVisible(true);
-        textField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
-        textField.setWidthFull();
-        textField.getStyle().set("max-width", "100%");
-        textField.addValueChangeListener(
-                e -> filterChangeConsumer.accept(e.getValue()));
-        VerticalLayout layout = new VerticalLayout(label, textField);
-        layout.getThemeList().clear();
-        layout.getThemeList().add("spacing-xs");
-        return layout;
     }
 }

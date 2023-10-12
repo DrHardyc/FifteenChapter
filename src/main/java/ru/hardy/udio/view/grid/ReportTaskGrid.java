@@ -1,25 +1,17 @@
 package ru.hardy.udio.view.grid;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.dataview.GridListDataView;
 import com.vaadin.flow.component.html.Anchor;
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
-import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.server.StreamResource;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.task.ReportTask;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.function.Consumer;
 
 @Service
 public class ReportTaskGrid {
@@ -51,13 +43,32 @@ public class ReportTaskGrid {
         grid.getHeaderRows().clear();
         HeaderRow headerRow = grid.appendHeaderRow();
 
-        headerRow.getCell(nameCol).setComponent(createFilterHeader("Наименование", taskReportGrid::setName));
-        headerRow.getCell(filenameCol).setComponent(createFilterHeader("Файл excel", taskReportGrid::setFileName));
-        headerRow.getCell(statusCol).setComponent(createFilterHeader("Статус", taskReportGrid::setStatus));
-        headerRow.getCell(periodCol).setComponent(createFilterHeader("Период", taskReportGrid::setPeriod));
-        headerRow.getCell(usernameCol).setComponent(createFilterHeader("Пользователь", taskReportGrid::setUsername));
-        headerRow.getCell(dateBegCol).setComponent(createFilterHeader("Дата начала выполнения", taskReportGrid::setDateBeg));
-        headerRow.getCell(dateEditCol).setComponent(createFilterHeader("Дата окончания выполнения", taskReportGrid::setDateEdit));
+        headerRow
+                .getCell(nameCol)
+                .setComponent(GridUtils
+                        .createFilterHeader("Наименование", taskReportGrid::setName));
+        headerRow
+                .getCell(filenameCol)
+                .setComponent(GridUtils
+                        .createFilterHeader("Файл excel", taskReportGrid::setFileName));
+        headerRow
+                .getCell(statusCol)
+                .setComponent(GridUtils.createFilterHeader("Статус", taskReportGrid::setStatus));
+        headerRow
+                .getCell(periodCol)
+                .setComponent(GridUtils.createFilterHeader("Период", taskReportGrid::setPeriod));
+        headerRow
+                .getCell(usernameCol)
+                .setComponent(GridUtils
+                        .createFilterHeader("Пользователь", taskReportGrid::setUsername));
+        headerRow
+                .getCell(dateBegCol)
+                .setComponent(GridUtils
+                        .createFilterHeader("Дата начала выполнения", taskReportGrid::setDateBeg));
+        headerRow
+                .getCell(dateEditCol)
+                .setComponent(GridUtils
+                        .createFilterHeader("Дата окончания выполнения", taskReportGrid::setDateEdit));
     }
 
 
@@ -138,24 +149,4 @@ public class ReportTaskGrid {
             return searchTerm == null || searchTerm.isEmpty() || value.toLowerCase().contains(searchTerm.toLowerCase());
         }
     }
-    private static Component createFilterHeader(String labelText, Consumer<String> filterChangeConsumer) {
-        Span label = new Span(labelText);
-        TextField textField = new TextField();
-        label.getStyle().set("padding-top", "var(--lumo-space-m)")
-                .set("font-size", "var(--lumo-font-size-xs)");
-        textField.setValueChangeMode(ValueChangeMode.EAGER);
-        textField.setClearButtonVisible(true);
-        textField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
-        if (labelText.equals("Файл excel")){
-            textField.setWidth("300px");
-        } else textField.setWidthFull();
-        textField.getStyle().set("max-width", "100%");
-        textField.addValueChangeListener(
-                e -> filterChangeConsumer.accept(e.getValue()));
-        VerticalLayout layout = new VerticalLayout(label, textField);
-        layout.getThemeList().clear();
-        layout.getThemeList().add("spacing-xs");
-        return layout;
-    }
-
 }

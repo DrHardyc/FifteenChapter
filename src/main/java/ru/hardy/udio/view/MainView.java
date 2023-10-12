@@ -53,7 +53,7 @@ public class MainView extends AppLayout{
         hlVersion.add(titleVersion);
         addToDrawer(hlVersion);
 
-        Footer footer = new Footer(new Span("ИР ТФОМС РСО-А v1.4.2"));
+        Footer footer = new Footer(new Span("ИР ТФОМС РСО-А v1.4.3"));
         addToNavbar(footer);
     }
 

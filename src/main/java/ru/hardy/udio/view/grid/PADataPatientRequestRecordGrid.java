@@ -79,45 +79,45 @@ public class PADataPatientRequestRecordGrid {
 
         headerRow.getCell(mainDiagnosisCol)
                 .setComponent(
-                createFilterHeader("Основной диагноз",
+                        GridUtils.createFilterHeader("Основной диагноз",
                         paDataPatientRequestRecordGridFilter::setMainDiagnosis));
         headerRow.getCell(concomitantDiagnosisCol)
                 .setComponent(
-                createFilterHeader("Сопутствующий диагноз",
+                        GridUtils.createFilterHeader("Сопутствующий диагноз",
                         paDataPatientRequestRecordGridFilter::setConcomitantDiagnosis));
         headerRow.getCell(diagnosisComplicationsCol)
                 .setComponent(
-                createFilterHeader("Диагноз осложнения",
+                        GridUtils.createFilterHeader("Диагноз осложнения",
                         paDataPatientRequestRecordGridFilter::setDiagnosisComplications));
         headerRow.getCell(codeTypePreventiveActionsCol)
-                .setComponent(createFilterHeader("Код профмероприятия",
+                .setComponent(GridUtils.createFilterHeader("Код профмероприятия",
                         paDataPatientRequestRecordGridFilter::setCodeTypePreventiveActions));
         headerRow.getCell(nameTypePreventiveActionsCol)
-                .setComponent(createFilterHeader("Тип профмероприятия",
+                .setComponent(GridUtils.createFilterHeader("Тип профмероприятия",
                         paDataPatientRequestRecordGridFilter::setNameTypePreventiveActions));
         headerRow.getCell(dateIncludeCol)
-                .setComponent(createFilterHeader("Дата включения в группу Д-наблюдения",
+                .setComponent(GridUtils.createFilterHeader("Дата включения в группу Д-наблюдения",
                         paDataPatientRequestRecordGridFilter::setDateInclude));
         headerRow.getCell(periodPACol)
-                .setComponent(createFilterHeader("Период прохождения профмероприятий",
+                .setComponent(GridUtils.createFilterHeader("Период прохождения профмероприятий",
                         paDataPatientRequestRecordGridFilter::setPeriodPA));
         headerRow.getCell(specialtyDoctorCodeCol)
-                .setComponent(createFilterHeader("Код специальности врача",
+                .setComponent(GridUtils.createFilterHeader("Код специальности врача",
                         paDataPatientRequestRecordGridFilter::setSpecialtyDoctorCode));
         headerRow.getCell(scheduledMonthAdmissionCol)
-                .setComponent(createFilterHeader("Плановый период (месяц) проведения следующего профмероприятия",
+                .setComponent(GridUtils.createFilterHeader("Плановый период (месяц) проведения следующего профмероприятия",
                         paDataPatientRequestRecordGridFilter::setScheduledMonthAdmission));
         headerRow.getCell(locationInspectionCol)
-                .setComponent(createFilterHeader("Место проведения профмероприятия",
+                .setComponent(GridUtils.createFilterHeader("Место проведения профмероприятия",
                         paDataPatientRequestRecordGridFilter::setLocationInspection));
         headerRow.getCell(dateInsuranceCaseCol)
-                .setComponent(createFilterHeader("Дата посещения/обращения застрахованного лица",
+                .setComponent(GridUtils.createFilterHeader("Дата посещения/обращения застрахованного лица",
                         paDataPatientRequestRecordGridFilter::setDateInsuranceCase));
         headerRow.getCell(resultDispensaryAppointmentDoctorCol)
-                .setComponent(createFilterHeader("Результат профмероприятия",
+                .setComponent(GridUtils.createFilterHeader("Результат профмероприятия",
                         paDataPatientRequestRecordGridFilter::setResultDispensaryAppointmentDoctor));
         headerRow.getCell(resultDispensaryAppointmentCol)
-                .setComponent(createFilterHeader("Описание результата профмероприятия",
+                .setComponent(GridUtils.createFilterHeader("Описание результата профмероприятия",
                         paDataPatientRequestRecordGridFilter::setResultDispensaryAppointment));
 
     }
@@ -234,22 +234,5 @@ public class PADataPatientRequestRecordGrid {
         private boolean matches(String value, String searchTerm) {
             return searchTerm == null || searchTerm.isEmpty() || value.toLowerCase().contains(searchTerm.toLowerCase());
         }
-    }
-    private static Component createFilterHeader(String labelText, Consumer<String> filterChangeConsumer) {
-        Span label = new Span(labelText);
-        TextField textField = new TextField();
-        label.getStyle().set("padding-top", "var(--lumo-space-m)")
-                .set("font-size", "var(--lumo-font-size-xs)");
-        textField.setValueChangeMode(ValueChangeMode.EAGER);
-        textField.setClearButtonVisible(true);
-        textField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
-        textField.setWidthFull();
-        textField.getStyle().set("max-width", "100%");
-        textField.addValueChangeListener(
-                e -> filterChangeConsumer.accept(e.getValue()));
-        VerticalLayout layout = new VerticalLayout(label, textField);
-        layout.getThemeList().clear();
-        layout.getThemeList().add("spacing-xs");
-        return layout;
     }
 }

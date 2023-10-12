@@ -6,9 +6,9 @@ import com.vaadin.flow.component.sidenav.SideNavItem;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import ru.hardy.udio.domain.api.individualinforming.IndividualInforming;
 import ru.hardy.udio.domain.report.DateInterval;
 import ru.hardy.udio.view.*;
+import ru.hardy.udio.view.MOView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,13 +39,8 @@ public class UtilService {
         if (authentication.getAuthorities().stream()
                 .anyMatch(r -> r.getAuthority().equals("ROLE_TFOMS"))) {
             SideNavItem sniXVChapter = new SideNavItem("ХV Глава");
-            SideNavItem sniPeople = new SideNavItem("Люди", "", VaadinIcon.USERS.create());
-            sniPeople.addItem(new SideNavItem("Случаи", CasesView.class, VaadinIcon.STETHOSCOPE.create()));
-            sniPeople.addItem(new SideNavItem("Информирование", InformingView.class, VaadinIcon.PHONE.create()));
-            SideNavItem sniMO = new SideNavItem("Мед. организации");
-
-            sniXVChapter.addItem(sniPeople);
-            sniXVChapter.addItem(sniMO);
+            sniXVChapter.addItem(new SideNavItem("Люди", PeopleView.class, VaadinIcon.USERS.create()));
+            sniXVChapter.addItem(new SideNavItem("Мед. организации", MOView.class, VaadinIcon.DOCTOR.create()));
             sniXVChapter.addItem(new SideNavItem("Отчеты", ReportView.class, VaadinIcon.FILE_TABLE.create()));
             sniXVChapter.addItem(new SideNavItem("Задачи", TaskView.class, VaadinIcon.TASKS.create()));
             nav.addItem(sniXVChapter);
@@ -115,7 +110,6 @@ public class UtilService {
             default -> "";
         };
     }
-
 
     public boolean parseAge(String value, String searchTerm) {
         try
