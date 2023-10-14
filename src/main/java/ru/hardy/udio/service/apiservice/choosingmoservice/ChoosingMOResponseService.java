@@ -33,10 +33,6 @@ public class ChoosingMOResponseService {
     @Autowired
     private ChoosingMOResponseRecordService choosingMOResponseRecordService;
 
-    @Autowired
-    private TokenService tokenService;
-
-
     public void add(ChoosingMOResponse choosingMOResponse){
         choosingMOResponseRepo.save(choosingMOResponse);
     }

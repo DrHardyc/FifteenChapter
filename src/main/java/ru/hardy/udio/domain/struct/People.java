@@ -1,5 +1,6 @@
 package ru.hardy.udio.domain.struct;
 
+import com.vaadin.flow.component.datepicker.DatePicker;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,6 +51,15 @@ public class People extends InsuredPerson {
         this.setEnp(insuredPerson.getEnp());
         this.date_beg = Date.from(Instant.now());
         this.date_edit = Date.from(Instant.now());
+    }
+
+    public People(String surname, String name, String patronymic, Date dateBirth,
+                  String enp){
+        this.setSurname(surname);
+        this.setName(name);
+        this.setPatronymic(patronymic);
+        this.setDateBirth(dateBirth);
+        this.setEnp(enp);
     }
 
     public People() {

@@ -16,6 +16,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.stereotype.Service;
+import ru.hardy.udio.domain.api.individualhistoryonkocase.InsuranceCase;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
 import ru.hardy.udio.domain.button.BtnVariant;
@@ -79,6 +80,21 @@ public class DialogViewGen {
         individualInformingRequestRecordGrid.getGrid(grid, individualInformingRequestRecordGridListDataView);
         individualInformingRequestRecordGridListDataView.addItemCountChangeListener(ev -> {
             label.setText(String.valueOf(individualInformingRequestRecordGridListDataView.getItemCount()));
+        });
+        dialog.add(grid);
+
+        return dialog;
+    }
+
+    public Dialog getInsuranceCases(List<InsuranceCase> insuranceCases) {
+        initFooter();
+        Grid<InsuranceCase> grid = GridUtils.createNewDialogGrid(horizontalLayout, btnExcel);
+        InsuranceCaseGrid insuranceCaseGrid = new InsuranceCaseGrid();
+
+        GridListDataView<InsuranceCase> insuranceCaseGridListDataView = grid.setItems(insuranceCases);
+        insuranceCaseGrid.getGrid(grid, insuranceCaseGridListDataView);
+        insuranceCaseGridListDataView.addItemCountChangeListener(ev -> {
+            label.setText(String.valueOf(insuranceCaseGridListDataView.getItemCount()));
         });
         dialog.add(grid);
 

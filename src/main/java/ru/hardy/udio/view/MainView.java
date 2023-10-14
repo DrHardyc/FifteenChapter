@@ -3,20 +3,18 @@ package ru.hardy.udio.view;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
-import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.html.Footer;
+import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.H5;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.component.sidenav.SideNav;
-import com.vaadin.flow.component.tabs.Tabs;
-import com.vaadin.flow.component.template.Id;
-import com.vaadin.flow.router.NavigationEvent;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import ru.hardy.udio.domain.User;
 import ru.hardy.udio.service.UserService;
@@ -29,7 +27,7 @@ public class MainView extends AppLayout{
     @Autowired
     private UserService userService;
 
-    private final H3 avatar = new H3("sdfasd");
+    private final H3 avatar = new H3();
 
     public MainView() {
 

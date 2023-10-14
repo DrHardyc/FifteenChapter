@@ -15,6 +15,8 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
+import static ru.hardy.udio.service.UtilService.dateToLocalDate;
+
 @Getter
 @Setter
 @Entity
@@ -75,16 +77,6 @@ public class PADataPatientRequestRecord extends InsuredPerson {
 
     public LocalDate getDateInsuranceCaseLocalDate() {
         return dateToLocalDate(this.dateInsuranceCase);
-    }
-
-
-    private LocalDate dateToLocalDate(Date date){
-        if (date != null) {
-            return Instant.ofEpochMilli(date.getTime())
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate();
-        }
-        return null;
     }
 
 }

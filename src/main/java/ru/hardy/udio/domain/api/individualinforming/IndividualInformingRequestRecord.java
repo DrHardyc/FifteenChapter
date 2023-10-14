@@ -9,11 +9,10 @@ import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
 import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInforming;
 import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInformingResponseRecord;
 
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Date;
+
+import static ru.hardy.udio.service.UtilService.dateToLocalDate;
 
 @Getter
 @Setter
@@ -67,14 +66,6 @@ public class IndividualInformingRequestRecord extends InsuredPerson {
 
     public LocalDate getDateNotificationLocalDate() {
         return dateToLocalDate(this.dateNotification);
-    }
-    private LocalDate dateToLocalDate(Date date){
-        if (date != null) {
-            return Instant.ofEpochMilli(date.getTime())
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate();
-        }
-        return null;
     }
 
 

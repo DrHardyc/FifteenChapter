@@ -10,6 +10,5 @@ import java.util.List;
 
 @Repository
 public interface IndividualHistoryOnkoCaseRequestRecordRepo extends JpaRepository<IndividualHistoryOnkoCaseRequestRecord, Long> {
-    @Query("select iirr from IndividualHistoryOnkoCaseRequestRecord iirr where iirr.people = :people")
-    List<IndividualHistoryOnkoCaseRequestRecord> findAllByPeople(People people);
+
 }

@@ -15,6 +15,10 @@ public interface PeopleRepo extends JpaRepository<People, Long> {
     People findPeopleBySurnameIgnoreCaseAndNameIgnoreCaseAndPatronymicIgnoreCaseAndDateBirthAndEnp(
             String surname, String name, String patronymic, Date date_birth, String enp);
 
+//    @Query("select p from People p where (:surname is null or p.surname = :name) and ()")
+//    List<People> findAllBySurnameIgnoreCaseAndNameIgnoreCaseAndPatronymicIgnoreCaseAndDateBirthAndEnp(
+//             String surname, String name, String patronymic, Date date_birth, String enp);
+
     @Query("SELECT p FROM People p WHERE p.enp = :enp")
     People findPeopleByEnp(@Param("enp") String enp);
 

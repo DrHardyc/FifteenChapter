@@ -231,7 +231,17 @@ public class TestView extends VerticalLayout {
                     + requestRecord.getMainDiagnosis()));
         });
 
-        add(btnTestOneToOne, btnTestF003, buttonGen, btnSearchInSRZ, btnTestDNGetAll, btnEfficiency, monthBeg, monthEnd, yearBeg, yearEnd);
+
+        Button button = new Button("test");
+
+        button.addClickListener(e -> {
+            People people = new People();
+            people.setSurname("Черчесов");
+            //peopleService.getAllPeopleByJDBC(people.getSurname(), people.getName(), get));
+        });
+
+        add(button, btnTestOneToOne, btnTestF003, buttonGen, btnSearchInSRZ, btnTestDNGetAll,
+                btnEfficiency, monthBeg, monthEnd, yearBeg, yearEnd);
 
     }
 }

@@ -3,24 +3,46 @@ package ru.hardy.udio.domain.api;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
+import ru.hardy.udio.domain.api.individualhistoryonkocase.InsuranceCase;
+import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
+import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
 import ru.hardy.udio.domain.struct.People;
+
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class PeopleInfo extends InsuredPerson {
-    private int insuranceCase;
-    private int visitsCalls;
-    private int informing;
+    private List<PADataPatientRequestRecord> visitsCallsList;
+    private List<IndividualInformingRequestRecord> informingList;
+    private List<InsuranceCase> insuranceCaseList;
 
-    public PeopleInfo(People people, int insuranceCase, int visitsCalls, int informing){
+    public PeopleInfo(People people, List<PADataPatientRequestRecord> visitsCallsList,
+                      List<IndividualInformingRequestRecord> informingList,
+                      List<InsuranceCase> insuranceCaseList){
         this.setSurname(people.getSurname());
         this.setName(people.getName());
         this.setPatronymic(people.getPatronymic());
         this.setDateBirth(people.getDateBirth());
         this.setEnp(people.getEnp());
-        this.setInsuranceCase(insuranceCase);
-        this.setVisitsCalls(visitsCalls);
-        this.setInforming(informing);
+        this.setInsuranceCaseList(insuranceCaseList);
+        this.setVisitsCallsList(visitsCallsList);
+        this.setInformingList(informingList);
+    }
+
+
+    public int getInsuranceCase() {
+        return this.insuranceCaseList.size();
+    }
+
+
+    public int getVisitsCalls() {
+        return visitsCallsList.size();
+    }
+
+
+    public int getInforming() {
+        return informingList.size();
     }
 
     public PeopleInfo(){

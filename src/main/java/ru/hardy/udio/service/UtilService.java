@@ -18,6 +18,9 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -161,5 +164,14 @@ public class UtilService {
             }
         }
         return strings;
+    }
+
+    public static LocalDate dateToLocalDate(Date date){
+        if (date != null) {
+            return Instant.ofEpochMilli(date.getTime())
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+        }
+        return null;
     }
 }

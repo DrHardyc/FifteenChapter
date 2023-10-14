@@ -6,7 +6,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Date;
+
+import static ru.hardy.udio.service.UtilService.dateToLocalDate;
 
 @Getter
 @Setter
@@ -60,5 +63,21 @@ public class InsuranceCase {
         this.setComplicationsDiagnosis(complicationsDiagnosis);
         this.setResultSeeking(resultSeeking);
         this.setInformationDO(informationDO);
+    }
+
+    public InsuranceCase() {
+
+    }
+
+    public LocalDate getInvoiceDateLocalDate() {
+        return dateToLocalDate(this.invoiceDate);
+    }
+
+    public LocalDate getTreatmentStartDateLocalDate() {
+        return dateToLocalDate(this.treatmentStartDate);
+    }
+
+    public LocalDate getTreatmentEndDateLocalDate() {
+        return dateToLocalDate(this.treatmentEndDate);
     }
 }

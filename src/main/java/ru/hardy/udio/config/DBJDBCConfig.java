@@ -41,9 +41,12 @@ public class DBJDBCConfig{
     public Statement getUDIO() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl("jdbc:postgresql://192.168.2.157/udio");
-        dataSource.setUsername("mcherchesov");
-        dataSource.setPassword("123");
+//        dataSource.setUrl("jdbc:postgresql://192.168.2.157/udio");
+//        dataSource.setUsername("mcherchesov");
+//        dataSource.setPassword("123");
+        dataSource.setUrl("jdbc:postgresql://localhost:5433/testudio");
+        dataSource.setUsername("hardy");
+        dataSource.setPassword("Byntuhf84");
 
         try {
             Connection connection = dataSource.getConnection();

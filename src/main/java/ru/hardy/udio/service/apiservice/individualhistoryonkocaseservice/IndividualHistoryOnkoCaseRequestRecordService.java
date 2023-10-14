@@ -19,7 +19,4 @@ public class IndividualHistoryOnkoCaseRequestRecordService {
         individualHistoryOnkoCaseRequestRecordRepo.save(individualHistoryOnkoCaseRequestRecord);
     }
 
-    public List<IndividualHistoryOnkoCaseRequestRecord> getAllByPeople(People people) {
-        return individualHistoryOnkoCaseRequestRecordRepo.findAllByPeople(people);
-    }
 }

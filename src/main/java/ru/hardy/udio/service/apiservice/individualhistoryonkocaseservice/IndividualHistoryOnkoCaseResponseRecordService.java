@@ -3,6 +3,7 @@ package ru.hardy.udio.service.apiservice.individualhistoryonkocaseservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.config.DBJDBCConfig;
+import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.IndividualHistoryOnkoCaseRequestRecord;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.IndividualHistoryOnkoCaseResponseRecord;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.InsuranceCase;
@@ -27,7 +28,7 @@ public class IndividualHistoryOnkoCaseResponseRecordService {
 
     }
 
-    public List<InsuranceCase> getInsuredCases(IndividualHistoryOnkoCaseRequestRecord individualHistoryOnkoCaseRequestRecord){
+    public List<InsuranceCase> getInsuredCases(InsuredPerson insuredPerson){
         List<InsuranceCase> insuranceCases = new ArrayList<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
@@ -54,11 +55,11 @@ public class IndividualHistoryOnkoCaseResponseRecordService {
                     "left join nsi_med.med_help_results mhr on mhr.id = cb.rslt " +
                     "where (substring(mkb1.mkb_code, 1, 1) = 'C' or sl.ds_onk = 1) and " +
                     "cb.sumv > 0 and cb.is_regional_case = 1 " +
-                    "and upper(cbp.pac_fam) = upper('" + individualHistoryOnkoCaseRequestRecord.getSurname() + "') " +
-                    "and upper(cbp.pac_im) = upper('" + individualHistoryOnkoCaseRequestRecord.getName() + "') " +
-                    "and upper(cbp.pac_ot) = upper('" + individualHistoryOnkoCaseRequestRecord.getPatronymic() + "') " +
-                    "and cbp.pac_dr = to_date('" + dateFormat.format(individualHistoryOnkoCaseRequestRecord.getDateBirth()) + "', 'yyyy-mm-dd') " +
-                    "and cb.enp = '" + individualHistoryOnkoCaseRequestRecord.getEnp() + "'" +
+                    "and upper(cbp.pac_fam) = upper('" + insuredPerson.getSurname() + "') " +
+                    "and upper(cbp.pac_im) = upper('" + insuredPerson.getName() + "') " +
+                    "and upper(cbp.pac_ot) = upper('" + insuredPerson.getPatronymic() + "') " +
+                    "and cbp.pac_dr = to_date('" + dateFormat.format(insuredPerson.getDateBirth()) + "', 'yyyy-mm-dd') " +
+                    "and cb.enp = '" + insuredPerson.getEnp() + "'" +
                     "group by mor.reg_code, mor_attach.reg_code, cbp.pac_fam, cbp.pac_im, cbp.pac_ot, cbp.pac_dr, cb.enp, ms.caption, " +
                     "cbb.nschet, cbb.dschet, cb.usl_ok, sl.p_cel, cbp.tel, cb.date_1, cb.date_2, mkb1.mkb_code, mkb2.mkb_code, mkb3.mkb_code, mhr.caption, cb.pr_d_n, sl.pr_d_n, sl.dn");
 
