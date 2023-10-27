@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.abstractclasses.APIRequest;
 import ru.hardy.udio.domain.abstractclasses.APIResponse;
 import ru.hardy.udio.domain.api.schedulepianddispplot.*;
+import ru.hardy.udio.domain.nsi.MedicalOrganization;
 import ru.hardy.udio.repo.apirepo.schedulepianddispplotrepo.SchedulePIAndDispPlotResponseRepo;
 import ru.hardy.udio.service.apiservice.apiinterface.APIResponseServiceInterface;
 
@@ -43,7 +44,7 @@ public class SchedulePIAndDispPlotResponseService implements APIResponseServiceI
     @Override
     public SchedulePIAndDispPlotResponse processing(APIRequest apiRequest,
                                                     APIResponse apiResponse,
-                                                    int codeMO) {
+                                                    MedicalOrganization medicalOrganization) {
         SchedulePIAndDispPlotRequest schedulePIAndDispPlotRequest = (SchedulePIAndDispPlotRequest) apiRequest;
         SchedulePIAndDispPlotResponse schedulePIAndDispPlotResponse = (SchedulePIAndDispPlotResponse) apiResponse;
         String errMess = "Запись успешно обработана";
@@ -52,12 +53,13 @@ public class SchedulePIAndDispPlotResponseService implements APIResponseServiceI
         List<SchedulePIAndDispPlotResponseRecord> schedulePIAndDispPlotResponseRecords = new ArrayList<>();
 
         for (SchedulePIAndDispPlotRequestRecord departmentRequest : schedulePIAndDispPlotRequest.getDepartments()){
-            SchedulePIAndDispPlot schedulePIAndDispPlot = schedulePIAndDispPlotService.getByCodeMOAndCodeDep(codeMO, departmentRequest.getCodeDep());
+            SchedulePIAndDispPlot schedulePIAndDispPlot = schedulePIAndDispPlotService.getByCodeMOAndCodeDep(
+                    medicalOrganization.getCodeMO(), departmentRequest.getCodeDep());
             if (schedulePIAndDispPlot != null){
                 schedulePIAndDispPlotService.update(schedulePIAndDispPlot, departmentRequest);
                 errMess = "Запись успешно обновлена";
             } else {
-                schedulePIAndDispPlotService.add(departmentRequest, codeMO);
+                schedulePIAndDispPlotService.add(departmentRequest, medicalOrganization.getCodeMO());
             }
             schedulePIAndDispPlotResponse.setResultResponseCode(200);
             schedulePIAndDispPlotResponse.setNumberRecordsProcessed(count);

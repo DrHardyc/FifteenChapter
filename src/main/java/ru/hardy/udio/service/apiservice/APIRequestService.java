@@ -26,6 +26,7 @@ import ru.hardy.udio.domain.api.schedulepianddispplot.SchedulePIAndDispPlotReque
 import ru.hardy.udio.domain.api.schedulepianddispplot.SchedulePIAndDispPlotResponse;
 import ru.hardy.udio.domain.api.volumemedicalcare.VolumeMedicalCareRequest;
 import ru.hardy.udio.domain.api.volumemedicalcare.VolumeMedicalCareResponse;
+import ru.hardy.udio.domain.nsi.MedicalOrganization;
 import ru.hardy.udio.service.TokenService;
 import ru.hardy.udio.service.apiservice.apiinterface.APIRequestServiceInterface;
 import ru.hardy.udio.service.apiservice.choosingmoservice.ChoosingMORequestService;
@@ -38,9 +39,9 @@ import ru.hardy.udio.service.apiservice.numberavailableseatsservice.NumberAvaila
 import ru.hardy.udio.service.apiservice.operatingscheduleservice.OperatingScheduleRequestService;
 import ru.hardy.udio.service.apiservice.padatapatientsservice.PADataPatientRequestService;
 import ru.hardy.udio.service.apiservice.recommendationspatientservice.RecommendationsPatientRequestService;
-import ru.hardy.udio.service.apiservice.recommendationspatientservice.RecommendationsPatientResponseService;
 import ru.hardy.udio.service.apiservice.schedulepianddispplotservice.SchedulePIAndDispPlotRequestService;
 import ru.hardy.udio.service.apiservice.volumemedicalcareservice.VolumeMedicalCareRequestService;
+import ru.hardy.udio.service.nsiservice.MedicalOrganizationService;
 
 @Service
 public class APIRequestService implements APIRequestServiceInterface {
@@ -84,7 +85,7 @@ public class APIRequestService implements APIRequestServiceInterface {
     @Autowired
     private RecommendationsPatientRequestService recommendationsPatientRequestService;
     @Autowired
-    private RecommendationsPatientResponseService recommendationsPatientResponseService;
+    private MedicalOrganizationService medicalOrganizationService;
 
 
     @Override
@@ -148,7 +149,7 @@ public class APIRequestService implements APIRequestServiceInterface {
         if (apiResponse != null) {
             if (tokenService.checkToken(token)) {
                 try {
-                    apiRequest.setCodeMO(codeMO);
+                    setMedicalOrganization(apiRequest, medicalOrganizationService.getByCode(codeMO));
                     add(apiRequest);
                     setRequestForResponse(apiRequest, apiResponse);
                     if (apiResponseService.getWithReqId(apiRequest, codeMO) != null) {
@@ -167,7 +168,8 @@ public class APIRequestService implements APIRequestServiceInterface {
                         apiResponseService.add(apiResponse);
                         return apiResponse;
                     }
-                    return apiResponseService.processing(apiRequest, apiResponse, codeMO);
+                    return apiResponseService.processing(apiRequest, apiResponse,
+                            medicalOrganizationService.getByCode(tokenService.getCodeMOWithToken(token)));
                 } catch (Exception e) {
                     apiResponse.setResultResponseCode(400);
                     apiResponse.setResultRequestMess(e.getMessage());
@@ -181,13 +183,39 @@ public class APIRequestService implements APIRequestServiceInterface {
         return apiResponse;
     }
 
+    private void setMedicalOrganization(APIRequest apiRequest, MedicalOrganization medicalOrganization) {
+        if (apiRequest instanceof ChoosingMORequest){
+            ((ChoosingMORequest) apiRequest).setMedicalOrganization(medicalOrganization);
+        } else if (apiRequest instanceof IndividualHistoryInformingRequest){
+            ((IndividualHistoryInformingRequest) apiRequest).setMedicalOrganization(medicalOrganization);
+        } else if (apiRequest instanceof IndividualHistoryOnkoCaseRequest) {
+            ((IndividualHistoryOnkoCaseRequest) apiRequest).setMedicalOrganization(medicalOrganization);
+        } else if (apiRequest instanceof IndividualInformingRequest) {
+            ((IndividualInformingRequest) apiRequest).setMedicalOrganization(medicalOrganization);
+        } else if (apiRequest instanceof NumberAvailableSeatsRequest) {
+            ((NumberAvailableSeatsRequest) apiRequest).setMedicalOrganization(medicalOrganization);
+        } else if (apiRequest instanceof OperatingScheduleRequest) {
+            ((OperatingScheduleRequest) apiRequest).setMedicalOrganization(medicalOrganization);
+        } else if (apiRequest instanceof PADataPatientRequest) {
+            ((PADataPatientRequest) apiRequest).setMedicalOrganization(medicalOrganization);
+        } else if (apiRequest instanceof SchedulePIAndDispPlotRequest) {
+            ((SchedulePIAndDispPlotRequest) apiRequest).setMedicalOrganization(medicalOrganization);
+        } else if (apiRequest instanceof VolumeMedicalCareRequest) {
+            ((VolumeMedicalCareRequest) apiRequest).setMedicalOrganization(medicalOrganization);
+        } else if (apiRequest instanceof HospitalizationRequest) {
+            ((HospitalizationRequest) apiRequest).setMedicalOrganization(medicalOrganization);
+        } else if (apiRequest instanceof RecommendationsPatientRequest) {
+            ((RecommendationsPatientRequest) apiRequest).setMedicalOrganization(medicalOrganization);
+        }
+    }
+
     public APIResponse testAcceptance(String token, APIRequest apiRequest) {
         int codeMO = tokenService.getCodeMOWithToken(token);
         APIResponse apiResponse = getInstanceResponse(apiRequest);
         if (apiResponse != null) {
             if (tokenService.checkToken(token)) {
                 try {
-                    apiRequest.setCodeMO(codeMO);
+                    setMedicalOrganization(apiRequest, medicalOrganizationService.getByCode(codeMO));
                     setRequestForResponse(apiRequest, apiResponse);
                     if (apiResponseService.getWithReqId(apiRequest, codeMO) != null) {
                         apiResponse.setCodeMO(codeMO);
@@ -202,7 +230,8 @@ public class APIRequestService implements APIRequestServiceInterface {
                         apiResponse.setResultResponseCode(400);
                         return apiResponse;
                     }
-                    return apiResponseService.processing(apiRequest, apiResponse, codeMO);
+                    return apiResponseService.processing(apiRequest, apiResponse,
+                            medicalOrganizationService.getByCode(tokenService.getCodeMOWithToken(token)));
                 } catch (Exception e) {
                     apiResponse.setResultResponseCode(400);
                     apiResponse.setResultRequestMess(e.getMessage());
@@ -235,6 +264,8 @@ public class APIRequestService implements APIRequestServiceInterface {
             ((VolumeMedicalCareResponse) apiResponse).setRequest((VolumeMedicalCareRequest) apiRequest);
         } else if (apiRequest instanceof HospitalizationRequest) {
             ((HospitalizationResponse) apiResponse).setRequest((HospitalizationRequest) apiRequest);
+        } else if (apiRequest instanceof RecommendationsPatientRequest) {
+            ((RecommendationsPatientResponse) apiResponse).setRequest((RecommendationsPatientRequest) apiRequest);
         }
     }
 

@@ -8,6 +8,7 @@ import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsRequest
 import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsRequestRecord;
 import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsResponse;
 import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsResponseRecord;
+import ru.hardy.udio.domain.nsi.MedicalOrganization;
 import ru.hardy.udio.repo.apirepo.numberavailableseatsrepo.NumberAvailableSeatsResponseRepo;
 import ru.hardy.udio.service.apiservice.apiinterface.APIResponseServiceInterface;
 
@@ -46,7 +47,7 @@ public class NumberAvailableSeatsResponseService implements APIResponseServiceIn
 
     @Override
     public NumberAvailableSeatsResponse processing(APIRequest apiRequest,
-                                                   APIResponse apiResponse, int codeMO) {
+                                                   APIResponse apiResponse, MedicalOrganization medicalOrganization) {
         NumberAvailableSeatsRequest numberAvailableSeatsRequest = (NumberAvailableSeatsRequest) apiRequest;
         NumberAvailableSeatsResponse numberAvailableSeatsResponse = (NumberAvailableSeatsResponse) apiResponse;
 
@@ -63,7 +64,7 @@ public class NumberAvailableSeatsResponseService implements APIResponseServiceIn
             departmentRequest.setDateBeg(Date.from(Instant.now()));
             departmentRequest.setDateEdit(Date.from(Instant.now()));
 
-            numberAvailableSeatsService.add(departmentRequest, codeMO);
+            numberAvailableSeatsService.add(departmentRequest, medicalOrganization);
             numberAvailableSeatsResponse.setNumberRecordsProcessed(count);
             numberAvailableSeatsResponse.setResultResponseCode(200);
             add(numberAvailableSeatsResponse);

@@ -35,7 +35,7 @@ public class MOView extends VerticalLayout{
         grid.addColumn(PeopleInfo::getInsuranceCase).setHeader("Объемы");
         grid.addColumn(PeopleInfo::getInsuranceCase).setHeader("Койко-места");
         grid.addColumn(PeopleInfo::getInsuranceCase).setHeader("Госпитализация");
-        grid.addColumn(PeopleInfo::getVisitsCalls).setHeader("ЗЛ выбравшие данную МО!");
+        grid.addColumn(PeopleInfo::getVisitsCalls).setHeader("ЗЛ выбравшие данную МО");
         grid.setItems(new PeopleInfo());
 
         add(flMO, udioButton, grid);

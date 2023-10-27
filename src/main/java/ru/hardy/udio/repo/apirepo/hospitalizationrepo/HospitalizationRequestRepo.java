@@ -6,5 +6,5 @@ import ru.hardy.udio.domain.api.hospitalization.HospitalizationRequest;
 
 @Repository
 public interface HospitalizationRequestRepo extends JpaRepository<HospitalizationRequest, Long> {
-    HospitalizationRequest findByReqIDAndCodeMO(String reqID, int codeMO);
+   // HospitalizationRequest findByReqIDAndCodeMO(String reqID, int codeMO);
 }

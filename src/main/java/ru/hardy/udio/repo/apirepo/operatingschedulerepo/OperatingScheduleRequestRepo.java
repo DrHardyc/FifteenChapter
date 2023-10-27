@@ -10,5 +10,5 @@ import java.util.Collection;
 @Repository
 public interface OperatingScheduleRequestRepo extends JpaRepository<OperatingScheduleRequest, Long> {
 
-    Collection<Object> findAllByReqIDAndCodeMO(String reqID, int codeMO);
+    //Collection<Object> findAllByReqIDAnd(String reqID, int codeMO);
 }

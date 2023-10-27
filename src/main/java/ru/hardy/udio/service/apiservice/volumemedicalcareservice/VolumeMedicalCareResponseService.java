@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.abstractclasses.APIRequest;
 import ru.hardy.udio.domain.abstractclasses.APIResponse;
 import ru.hardy.udio.domain.api.volumemedicalcare.*;
+import ru.hardy.udio.domain.nsi.MedicalOrganization;
 import ru.hardy.udio.repo.apirepo.volumemedicalcarerepo.VolumeMedicalCareResponseRepo;
 import ru.hardy.udio.service.apiservice.apiinterface.APIResponseServiceInterface;
 
@@ -46,9 +47,8 @@ public class VolumeMedicalCareResponseService implements APIResponseServiceInter
     }
 
     @Override
-    public VolumeMedicalCareResponse processing(APIRequest apiRequest,
-                                                APIResponse apiResponse,
-                                                int codeMO) {
+    public VolumeMedicalCareResponse processing(APIRequest apiRequest, APIResponse apiResponse,
+                                                MedicalOrganization medicalOrganization) {
         VolumeMedicalCareRequest volumeMedicalCareRequest = (VolumeMedicalCareRequest) apiRequest;
         VolumeMedicalCareResponse volumeMedicalCareResponse = (VolumeMedicalCareResponse) apiResponse;
 
@@ -61,19 +61,19 @@ public class VolumeMedicalCareResponseService implements APIResponseServiceInter
             if (Integer.parseInt(new SimpleDateFormat("HH").format(Date.from(Instant.now()))) < 9) {
                 VolumeMedicalCare volumeMedicalCareBef9 = volumeMedicalCareService.
                         getByAllCodeDepAndCodeMOBef9(departmentRequest
-                                .getCodeDep(), codeMO, Instant.now().minus(Duration.ofDays(1)));
+                                .getCodeDep(), medicalOrganization.getCodeMO(), Instant.now().minus(Duration.ofDays(1)));
                 if (volumeMedicalCareBef9 != null) {
                     volumeMedicalCareService.update(volumeMedicalCareBef9, departmentRequest);
                     errMess = "Запись успешно обновлена";
-                } else volumeMedicalCareService.add(departmentRequest, codeMO);
+                } else volumeMedicalCareService.add(departmentRequest, medicalOrganization.getCodeMO());
             } else {
                 VolumeMedicalCare volumeMedicalCareAft9 = volumeMedicalCareService.
                         getAllByCodeDepAndCodeMOAft9(departmentRequest
-                                .getCodeDep(), codeMO, Instant.now().plus(Duration.ofDays(1)));
+                                .getCodeDep(), medicalOrganization.getCodeMO(), Instant.now().plus(Duration.ofDays(1)));
                 if (volumeMedicalCareAft9 != null) {
                     volumeMedicalCareService.update(volumeMedicalCareAft9, departmentRequest);
                     errMess = "Запись успешно обновлена";
-                } else volumeMedicalCareService.add(departmentRequest, codeMO);
+                } else volumeMedicalCareService.add(departmentRequest, medicalOrganization.getCodeMO());
             }
 
             volumeMedicalCareResponse.setNumberRecordsProcessed(count);

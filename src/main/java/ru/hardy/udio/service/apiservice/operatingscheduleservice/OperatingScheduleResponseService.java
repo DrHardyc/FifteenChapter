@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.abstractclasses.APIRequest;
 import ru.hardy.udio.domain.abstractclasses.APIResponse;
 import ru.hardy.udio.domain.api.operatingschedule.*;
+import ru.hardy.udio.domain.nsi.MedicalOrganization;
 import ru.hardy.udio.repo.apirepo.operatingschedulerepo.OperatingScheduleResponseRepo;
 import ru.hardy.udio.service.apiservice.apiinterface.APIResponseServiceInterface;
 
@@ -36,9 +37,7 @@ public class OperatingScheduleResponseService implements APIResponseServiceInter
     }
 
     @Override
-    public APIResponse processing(APIRequest apiRequest,
-                                                APIResponse apiResponse,
-                                                int codeMO) {
+    public APIResponse processing(APIRequest apiRequest, APIResponse apiResponse, MedicalOrganization medicalOrganization) {
         OperatingScheduleRequest operatingScheduleRequest = (OperatingScheduleRequest) apiRequest;
         OperatingScheduleResponse operatingScheduleResponse = (OperatingScheduleResponse) apiResponse;
 
@@ -51,7 +50,7 @@ public class OperatingScheduleResponseService implements APIResponseServiceInter
             departmentRequest.setDateBeg(Date.from(Instant.now()));
             departmentRequest.setDateEdit(Date.from(Instant.now()));
 
-            operatingScheduleService.add(departmentRequest, codeMO);
+            operatingScheduleService.add(departmentRequest, medicalOrganization.getCodeMO());
             operatingScheduleResponse.setNumberRecordsProcessed(count);
             operatingScheduleResponse.setResultResponseCode(200);
             add(operatingScheduleResponse);

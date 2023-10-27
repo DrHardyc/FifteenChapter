@@ -6,6 +6,7 @@ import ru.hardy.udio.domain.abstractclasses.APIRequest;
 import ru.hardy.udio.domain.abstractclasses.APIResponse;
 import ru.hardy.udio.domain.api.choosingmo.*;
 import ru.hardy.udio.domain.generic.ResultProcessingClass;
+import ru.hardy.udio.domain.nsi.MedicalOrganization;
 import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.repo.apirepo.choosingmorepo.ChoosingMOResponseRepo;
 import ru.hardy.udio.service.PeopleService;
@@ -55,7 +56,7 @@ public class ChoosingMOResponseService implements APIResponseServiceInterface {
     }
 
     @Override
-    public APIResponse processing(APIRequest apiRequest, APIResponse apiResponse, int codeMO) {
+    public APIResponse processing(APIRequest apiRequest, APIResponse apiResponse, MedicalOrganization medicalOrganization) {
         ChoosingMORequest choosingMORequest = (ChoosingMORequest) apiRequest;
         ChoosingMOResponse choosingMOResponse = (ChoosingMOResponse) apiResponse;
 
@@ -93,12 +94,12 @@ public class ChoosingMOResponseService implements APIResponseServiceInterface {
                         errCode = 504;
                         errMess = errMess + "|Ошибка распознавания поля 'enp' : " + choosingMORequestRecord.getEnp() + "|";
                     }
-                    if (choosingMOService.checkPatient(people.getProcessingClass(), codeMO)) {
+                    if (choosingMOService.checkPatient(people.getProcessingClass(), medicalOrganization.getCodeMO())) {
                         errCode = 502;
                         errMess = "Пациент ранее был добавлен для данной МО";
                     }
                     if (errCode == 500) {
-                        choosingMOService.add(people.getProcessingClass(), choosingMORequestRecord, codeMO);
+                        choosingMOService.add(people.getProcessingClass(), choosingMORequestRecord, medicalOrganization.getCodeMO());
                     }
                 }
             } else {

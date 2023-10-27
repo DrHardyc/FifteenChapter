@@ -11,6 +11,7 @@ import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRe
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingResponse;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingResponseRecord;
 import ru.hardy.udio.domain.generic.ResultProcessingClass;
+import ru.hardy.udio.domain.nsi.MedicalOrganization;
 import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.repo.apirepo.individualinformingrepo.IndividualInformingResponseRepo;
 import ru.hardy.udio.service.PeopleService;
@@ -59,7 +60,7 @@ public class IndividualInformingResponseService implements APIResponseServiceInt
 
     @Override
     public IndividualInformingResponse processing(APIRequest apiRequest,
-                                                  APIResponse apiResponse, int codeMO) {
+                                                  APIResponse apiResponse, MedicalOrganization medicalOrganization) {
         IndividualInformingRequest individualInformingRequest = (IndividualInformingRequest) apiRequest;
         IndividualInformingResponse individualInformingResponse = (IndividualInformingResponse) apiResponse;
 

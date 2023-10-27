@@ -7,6 +7,7 @@ import ru.hardy.udio.domain.abstractclasses.APIResponse;
 import ru.hardy.udio.domain.api.ResultRequest;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.*;
 import ru.hardy.udio.domain.generic.ResultProcessingClass;
+import ru.hardy.udio.domain.nsi.MedicalOrganization;
 import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.repo.apirepo.individualhistoryonkocaserepo.IndividualHistoryOnkoCaseResponseRepo;
 import ru.hardy.udio.service.PeopleService;
@@ -39,7 +40,7 @@ public class IndividualHistoryOnkoCaseResponseService implements APIResponseServ
 
     @Override
     public IndividualHistoryOnkoCaseResponse processing(APIRequest apiRequest,
-                                                        APIResponse apiResponse, int codeMO){
+                                                        APIResponse apiResponse, MedicalOrganization medicalOrganization) {
         IndividualHistoryOnkoCaseRequest individualHistoryOnkoCaseRequest = (IndividualHistoryOnkoCaseRequest) apiRequest;
         IndividualHistoryOnkoCaseResponse individualHistoryOnkoCaseResponse = (IndividualHistoryOnkoCaseResponse) apiResponse;
 

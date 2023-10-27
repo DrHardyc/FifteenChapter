@@ -7,6 +7,7 @@ import ru.hardy.udio.domain.abstractclasses.APIResponse;
 import ru.hardy.udio.domain.api.individualhistoryinforming.*;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
 import ru.hardy.udio.domain.generic.ResultProcessingClass;
+import ru.hardy.udio.domain.nsi.MedicalOrganization;
 import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.repo.apirepo.individualhistoryinformingresponserepo.IndividualHistoryInformingResponseRepo;
 import ru.hardy.udio.service.PeopleService;
@@ -64,7 +65,7 @@ public class IndividualHistoryInformingResponseService implements APIResponseSer
 
     @Override
     public IndividualHistoryInformingResponse processing(APIRequest apiRequest,
-                                                         APIResponse apiResponse, int codeMO) {
+                                                         APIResponse apiResponse, MedicalOrganization medicalOrganization) {
         IndividualHistoryInformingRequest individualHistoryInformingRequest = (IndividualHistoryInformingRequest) apiRequest;
         IndividualHistoryInformingResponse individualHistoryInformingResponse = (IndividualHistoryInformingResponse) apiResponse;
 

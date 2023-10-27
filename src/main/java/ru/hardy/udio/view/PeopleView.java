@@ -75,11 +75,11 @@ public class PeopleView extends VerticalLayout {
 //            tfPatronymic.setValue("юрьевич");
 //            tfENP.setValue("1558630820000121");
             //====================================================
-            tfSurname.getValue();
-            tfName.getValue();
-            tfPatronymic.getValue();
-            dpDateBirth.getValue();
-            tfENP.getValue();
+//            tfSurname.getValue();
+//            tfName.getValue();
+//            tfPatronymic.getValue();
+//            dpDateBirth.getValue();
+//            tfENP.getValue();
             grid.setItems(peopleService.getAllPeopleByNotEmptyField(tfSurname.getValue(), tfName.getValue(),
                     tfPatronymic.getValue(), dpDateBirth, tfENP.getValue()));
         });

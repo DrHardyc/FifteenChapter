@@ -6,6 +6,7 @@ import ru.hardy.udio.domain.abstractclasses.APIRequest;
 import ru.hardy.udio.domain.abstractclasses.APIResponse;
 import ru.hardy.udio.domain.api.hospitalization.*;
 import ru.hardy.udio.domain.generic.ResultProcessingClass;
+import ru.hardy.udio.domain.nsi.MedicalOrganization;
 import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.repo.apirepo.hospitalizationrepo.HospitalizationResponseRepo;
 import ru.hardy.udio.service.PeopleService;
@@ -43,7 +44,7 @@ public class HospitalizationResponseService implements APIResponseServiceInterfa
     }
 
     @Override
-    public APIResponse processing(APIRequest apiRequest, APIResponse apiResponse, int codeMO) {
+    public APIResponse processing(APIRequest apiRequest, APIResponse apiResponse, MedicalOrganization medicalOrganization) {
         HospitalizationRequest hospitalizationRequest = (HospitalizationRequest) apiRequest;
         HospitalizationResponse hospitalizationResponse = (HospitalizationResponse) apiResponse;
 

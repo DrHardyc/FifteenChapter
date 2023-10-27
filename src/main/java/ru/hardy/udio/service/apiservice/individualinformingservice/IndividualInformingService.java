@@ -24,7 +24,7 @@ public class IndividualInformingService {
         individualInforming.setPeople(people);
         individualInforming.setDateBeg(Date.from(Instant.now()));
         individualInforming.setDateEdit(Date.from(Instant.now()));
-        individualInforming.setCodeMO(individualInformingRequestRecord.getRequest().getCodeMO());
+        individualInforming.setCodeMO(individualInformingRequestRecord.getRequest().getMedicalOrganization().getCodeMO());
         individualInforming.setRequestRecord(individualInformingRequestRecord);
         individualInformingRepo.save(individualInforming);
     }

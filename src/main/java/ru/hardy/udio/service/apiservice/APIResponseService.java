@@ -26,6 +26,7 @@ import ru.hardy.udio.domain.api.schedulepianddispplot.SchedulePIAndDispPlotReque
 import ru.hardy.udio.domain.api.schedulepianddispplot.SchedulePIAndDispPlotResponse;
 import ru.hardy.udio.domain.api.volumemedicalcare.VolumeMedicalCareRequest;
 import ru.hardy.udio.domain.api.volumemedicalcare.VolumeMedicalCareResponse;
+import ru.hardy.udio.domain.nsi.MedicalOrganization;
 import ru.hardy.udio.service.apiservice.apiinterface.APIResponseServiceInterface;
 import ru.hardy.udio.service.apiservice.choosingmoservice.ChoosingMOResponseService;
 import ru.hardy.udio.service.apiservice.hospitalizationservice.HospitalizationRequestService;
@@ -121,29 +122,29 @@ public class APIResponseService implements APIResponseServiceInterface {
     }
 
     @Override
-    public APIResponse processing(APIRequest apiRequest, APIResponse apiResponse, int codeMO) {
+    public APIResponse processing(APIRequest apiRequest, APIResponse apiResponse, MedicalOrganization medicalOrganization) {
         if (apiResponse instanceof ChoosingMOResponse){
-            return choosingMOResponseService.processing(apiRequest, apiResponse, codeMO);
+            return choosingMOResponseService.processing(apiRequest, apiResponse, medicalOrganization);
         } else if (apiResponse instanceof IndividualHistoryInformingResponse){
-            return individualHistoryInformingResponseService.processing(apiRequest, apiResponse, codeMO);
+            return individualHistoryInformingResponseService.processing(apiRequest, apiResponse, medicalOrganization);
         } else if (apiResponse instanceof IndividualHistoryOnkoCaseResponse) {
-            return individualHistoryOnkoCaseResponseService.processing(apiRequest, apiResponse, codeMO);
+            return individualHistoryOnkoCaseResponseService.processing(apiRequest, apiResponse, medicalOrganization);
         } else if (apiResponse instanceof IndividualInformingResponse) {
-            return individualInformingResponseService.processing(apiRequest, apiResponse, codeMO);
+            return individualInformingResponseService.processing(apiRequest, apiResponse, medicalOrganization);
         } else if (apiResponse instanceof NumberAvailableSeatsResponse) {
-            return numberAvailableSeatsResponseService.processing(apiRequest, apiResponse, codeMO);
+            return numberAvailableSeatsResponseService.processing(apiRequest, apiResponse, medicalOrganization);
         } else if (apiResponse instanceof OperatingScheduleResponse) {
-            return operatingScheduleResponseService.processing(apiRequest, apiResponse, codeMO);
+            return operatingScheduleResponseService.processing(apiRequest, apiResponse, medicalOrganization);
         } else if (apiResponse instanceof PADataPatientResponse) {
-            return paDataPatientResponseService.processing(apiRequest, apiResponse, codeMO);
+            return paDataPatientResponseService.processing(apiRequest, apiResponse, medicalOrganization);
         } else if (apiResponse instanceof SchedulePIAndDispPlotResponse) {
-            return schedulePIAndDispPlotResponseService.processing(apiRequest, apiResponse, codeMO);
+            return schedulePIAndDispPlotResponseService.processing(apiRequest, apiResponse, medicalOrganization);
         } else if (apiResponse instanceof VolumeMedicalCareResponse) {
-            return volumeMedicalCareResponseService.processing(apiRequest, apiResponse, codeMO);
+            return volumeMedicalCareResponseService.processing(apiRequest, apiResponse, medicalOrganization);
         } else if (apiResponse instanceof HospitalizationResponse) {
-            return hospitalizationResponseService.processing(apiRequest, apiResponse, codeMO);
+            return hospitalizationResponseService.processing(apiRequest, apiResponse, medicalOrganization);
         } else if (apiResponse instanceof RecommendationsPatientResponse) {
-            return recommendationsPatientResponseService.processing(apiRequest, apiResponse, codeMO);
+            return recommendationsPatientResponseService.processing(apiRequest, apiResponse, medicalOrganization);
         }
         return null;
     }

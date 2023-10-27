@@ -15,6 +15,7 @@ import ru.hardy.udio.domain.api.recommendationspatient.RecommendationsPatientReq
 import ru.hardy.udio.domain.api.recommendationspatient.RecommendationsPatientResponse;
 import ru.hardy.udio.domain.api.recommendationspatient.RecommendationsPatientResponseRecord;
 import ru.hardy.udio.domain.generic.ResultProcessingClass;
+import ru.hardy.udio.domain.nsi.MedicalOrganization;
 import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.repo.apirepo.recommendationspatientrepo.RecommendationsPatientResponseRepo;
 import ru.hardy.udio.service.PeopleService;
@@ -55,7 +56,7 @@ public class RecommendationsPatientResponseService implements APIResponseService
     }
 
     @Override
-    public APIResponse processing(APIRequest apiRequest, APIResponse apiResponse, int codeMO) {
+    public APIResponse processing(APIRequest apiRequest, APIResponse apiResponse, MedicalOrganization medicalOrganization) {
         RecommendationsPatientRequest recommendationsPatientRequest = (RecommendationsPatientRequest) apiRequest;
         RecommendationsPatientResponse recommendationsPatientResponse = (RecommendationsPatientResponse) apiResponse;
 

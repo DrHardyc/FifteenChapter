@@ -11,6 +11,7 @@ import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsRespons
 import ru.hardy.udio.service.TokenService;
 import ru.hardy.udio.service.apiservice.APIRequestService;
 import ru.hardy.udio.service.apiservice.numberavailableseatsservice.NumberAvailableSeatsResponseService;
+import ru.hardy.udio.service.nsiservice.MedicalOrganizationService;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -28,6 +29,9 @@ public class NumberAvailableSeatsController {
 
     @Autowired
     private APIRequestService apiRequestService;
+
+    @Autowired
+    private MedicalOrganizationService medicalOrganizationService;
 
     @PostMapping("/api/1.1/getNumberAvailableSeats")
     public ResponseEntity<NumberAvailableSeatsResponse> registerNumberAvailableSeats(
@@ -55,7 +59,7 @@ public class NumberAvailableSeatsController {
                             500, "Успешное выполнение обработки записи"));
                 }
                 numberAvailableSeatsResponse.setDepartmentResponse(numberAvailableSeatsResponseRecords);
-                numberAvailableSeatsRequest.setCodeMO(tokenService.getCodeMOWithToken(token));
+                numberAvailableSeatsRequest.setMedicalOrganization(medicalOrganizationService.getByCode(tokenService.getCodeMOWithToken(token)));
                 numberAvailableSeatsRequest.setDateBeg(Date.from(Instant.now()));
                 numberAvailableSeatsRequest.setDateEdit(Date.from(Instant.now()));
 

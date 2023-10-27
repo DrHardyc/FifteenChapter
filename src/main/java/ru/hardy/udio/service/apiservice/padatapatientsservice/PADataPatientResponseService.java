@@ -6,6 +6,7 @@ import ru.hardy.udio.domain.abstractclasses.APIRequest;
 import ru.hardy.udio.domain.abstractclasses.APIResponse;
 import ru.hardy.udio.domain.api.ResultRequest;
 import ru.hardy.udio.domain.api.padatapatients.*;
+import ru.hardy.udio.domain.nsi.MedicalOrganization;
 import ru.hardy.udio.repo.apirepo.padatapatientsrepo.PADataPatientResponseRepo;
 import ru.hardy.udio.service.apiservice.ExamService;
 import ru.hardy.udio.service.apiservice.apiinterface.APIResponseServiceInterface;
@@ -46,7 +47,7 @@ public class PADataPatientResponseService implements APIResponseServiceInterface
 
     @Override
     public PADataPatientResponse processing(APIRequest apiRequest,
-                                            APIResponse apiResponse, int codeMO) {
+                                            APIResponse apiResponse, MedicalOrganization medicalOrganization) {
         PADataPatientRequest paDataPatientRequest = (PADataPatientRequest) apiRequest;
         PADataPatientResponse paDataPatientResponse = (PADataPatientResponse) apiResponse;
         int count = 0;
