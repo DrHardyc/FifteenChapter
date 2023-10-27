@@ -2,6 +2,7 @@
 http://localhost:8080/api/1.1/getIndividualInforming
 
 token: e/SGvhPZm?usABQ9RT-gf9lyeVvYpztQG779xYQZhPyaDZolE=QNldo3ka/chYxrV4Z4mhBMCwtOLouOXihizs0XLEA0RVcLaUmI79L6ZetOl7x8=dDi4ntQ?WRMbI/?
+token: RnhKpdzagxwTI!Nwsozs34E8Ngf7j7N?wT1necDCVAjw848r/V9=3k-j-EkozJKjxKBQBqyfELJkG75hfp4bXCg3=6FA2K05QSbqHOqh3TVCVLRecwOe-s82D=aZfmWZ
 
 {
   "reqID":"wert4-wertw-hddf-dndgn4",

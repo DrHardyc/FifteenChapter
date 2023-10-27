@@ -18,26 +18,24 @@ public class PADataPatientService {
 
 
     public void add(People people, PADataPatientRequestRecord paDataPatientRequestRecord){
-        PADataPatient PADataPatient = new PADataPatient();
-        PADataPatient.setPeople(people);
-        PADataPatient.setDateBeg(Date.from(Instant.now()));
-        PADataPatient.setDateEdit(Date.from(Instant.now()));
-        PADataPatient.setCodeMO(paDataPatientRequestRecord.getRequest().getCodeMO());
-        PADataPatient.setRequestRecord(paDataPatientRequestRecord);
-        paDataPatientRepo.save(PADataPatient);
+        PADataPatient paDataPatient = new PADataPatient();
+        paDataPatient.setPeople(people);
+        paDataPatient.setDateBeg(Date.from(Instant.now()));
+        paDataPatient.setDateEdit(Date.from(Instant.now()));
+        paDataPatient.setRequestRecord(paDataPatientRequestRecord);
+        paDataPatientRepo.save(paDataPatient);
     }
 
     public void update(PADataPatient paDataPatient){
         paDataPatientRepo.save(paDataPatient);
     }
 
-    public boolean checkPatient(People people, int codeMO, String mainDiag, int codeTypePreventiveActions, Date dateInsuranceCase) {
-        return paDataPatientRepo.findDODataPatientsByPeopleAndCodeMOAndRequestRecord_MainDiagnosisAndRequestRecord_CodeTypePreventiveActionsAndRequestRecord_DateInsuranceCase(
-                people, codeMO, mainDiag, codeTypePreventiveActions, dateInsuranceCase) != null;
+    public PADataPatient searchPatient(People people, String mainDiag, int codeType, Date dateInsurance) {
+        return paDataPatientRepo.findByPeopleAndRequestRecord_MainDiagnosisAndRequestRecord_CodeTypePreventiveActionsAndRequestRecord_DateInsuranceCase(
+                people, mainDiag, codeType, dateInsurance);
     }
 
-    public PADataPatient searchPatient(People people, int codeMO, String mainDiag, int codeTypePreventiveActions) {
-        return paDataPatientRepo.findDODataPatientsByPeopleAndCodeMOAndRequestRecord_MainDiagnosisAndRequestRecord_CodeTypePreventiveActions(
-                people, codeMO, mainDiag, codeTypePreventiveActions);
+    public PADataPatient searchPatient(People people){
+        return paDataPatientRepo.findByPeople(people);
     }
 }

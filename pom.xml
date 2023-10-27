@@ -76,13 +76,13 @@
             <artifactId>jooq-codegen</artifactId>
             <version>3.18.7</version>
         </dependency>
+
 <!--        DBF-->
         <dependency>
             <groupId>com.github.albfernandez</groupId>
             <artifactId>javadbf</artifactId>
             <version>1.13.1</version>
         </dependency>
-<!--        -->
 <!--        -->
 <!--        Excel-->
         <dependency>
@@ -95,6 +95,7 @@
             <artifactId>poi-ooxml</artifactId>
             <version>5.2.0</version>
         </dependency>
+
 <!--Apex Chart -->
         <dependency>
             <groupId>com.github.appreciated</groupId>
@@ -124,6 +125,7 @@
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
         </dependency>
+<!--        -->
 <!--    Encrypt    -->
         <dependency>
             <groupId>commons-codec</groupId>

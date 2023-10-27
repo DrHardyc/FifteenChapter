@@ -8,12 +8,10 @@ import ru.hardy.udio.domain.api.operatingschedule.OperatingScheduleRequest;
 import ru.hardy.udio.domain.api.operatingschedule.OperatingScheduleResponse;
 import ru.hardy.udio.domain.api.operatingschedule.OperatingScheduleResponseRecord;
 import ru.hardy.udio.service.TokenService;
-import ru.hardy.udio.service.apiservice.operatingscheduleservice.OperatingScheduleRequestService;
+import ru.hardy.udio.service.apiservice.APIRequestService;
 import ru.hardy.udio.service.apiservice.operatingscheduleservice.OperatingScheduleResponseService;
 
-import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -26,60 +24,16 @@ public class OperatingScheduleController {
     private OperatingScheduleResponseService operatingScheduleResponseService;
 
     @Autowired
-    private OperatingScheduleRequestService operatingScheduleRequestService;
+    private APIRequestService apiRequestService;
 
 
     @PostMapping("/api/1.1/getOperatingSchedule")
     public ResponseEntity<OperatingScheduleResponse> registerOperatingSchedule(
             @RequestHeader(name = "token") String token,
-            @RequestBody OperatingScheduleRequest operatingScheduleRequest)
-    {
-        int codeMO = tokenService.getCodeMOWithToken(token);
-        OperatingScheduleResponse operatingScheduleResponse = new OperatingScheduleResponse();
-
-        if (tokenService.checkToken(token)) {
-            if (operatingScheduleResponseService.getWithReqId(operatingScheduleRequest.getReqID(), codeMO) != null){
-                operatingScheduleResponse.setResultRequestCode(402);
-                operatingScheduleResponseService.add(operatingScheduleResponse);
-                return ResponseEntity.ok(operatingScheduleResponse);
-            }
-
-            operatingScheduleResponse.setResultRequestCode(201);
-            operatingScheduleResponse.setDate_beg(Date.from(Instant.now()));
-            operatingScheduleResponse.setDate_edit(Date.from(Instant.now()));
-            operatingScheduleResponse.setReqID(operatingScheduleRequest.getReqID());
-            operatingScheduleResponse.setCodeMO(tokenService.getCodeMOWithToken(token));
-            operatingScheduleResponseService.add(operatingScheduleResponse);
-
-            if (operatingScheduleRequest.getDepartments() == null){
-                operatingScheduleResponse.setResultRequestCode(400);
-                operatingScheduleResponseService.add(operatingScheduleResponse);
-                return ResponseEntity.ok(operatingScheduleResponse);
-            }
-
-            try {
-                operatingScheduleRequest.setCodeMO(tokenService.getCodeMOWithToken(token));
-                operatingScheduleRequest.setDate_beg(Date.from(Instant.now()));
-                operatingScheduleRequest.setDate_edit(Date.from(Instant.now()));
-                operatingScheduleRequestService.add(operatingScheduleRequest);
-
-                operatingScheduleResponse.setResultRequestCode(200);
-                operatingScheduleResponseService.add(operatingScheduleResponse);
-
-                return ResponseEntity.ok(operatingScheduleResponseService
-                        .processing(operatingScheduleRequest, operatingScheduleResponse,
-                                tokenService.getCodeMOWithToken(token)));
-
-            } catch (Exception e){
-                operatingScheduleResponse.setResultRequestCode(400);
-                operatingScheduleResponseService.add(operatingScheduleResponse);
-            }
-        } else {
-            operatingScheduleResponse.setResultRequestCode(403);
-            operatingScheduleResponseService.add(operatingScheduleResponse);
-        }
-        return ResponseEntity.ok(operatingScheduleResponse);
-
+            @RequestBody OperatingScheduleRequest operatingScheduleRequest){
+        return ResponseEntity
+                .ok((OperatingScheduleResponse) apiRequestService
+                        .acceptance(token, operatingScheduleRequest));
     }
 
     @PostMapping("/api/test/getOperatingSchedule")
@@ -97,16 +51,16 @@ public class OperatingScheduleController {
                             500, "Запись успешно обработана"));
                 });
                 operatingScheduleResponse.setDepartments(operatingScheduleResponseRecords);
-                operatingScheduleResponse.setResultRequestCode(200);
+                operatingScheduleResponse.setResultResponseCode(200);
                 operatingScheduleResponse.setCodeMO(tokenService.getCodeMOWithToken(token));
                 operatingScheduleResponse.setNumberRecordsProcessed(count);
 
             } catch (Exception e){
-                operatingScheduleResponse.setResultRequestCode(400);
+                operatingScheduleResponse.setResultResponseCode(400);
                 operatingScheduleResponseService.add(operatingScheduleResponse);
             }
         } else {
-            operatingScheduleResponse.setResultRequestCode(403);
+            operatingScheduleResponse.setResultResponseCode(403);
             operatingScheduleResponseService.add(operatingScheduleResponse);
         }
         return ResponseEntity.ok(operatingScheduleResponse);
@@ -127,13 +81,13 @@ public class OperatingScheduleController {
                 if (operatingScheduleResponseFromDB != null){
                     return ResponseEntity.ok(operatingScheduleResponseFromDB);
                 } else {
-                    operatingScheduleResponse.setResultRequestCode(401);
+                    operatingScheduleResponse.setResultResponseCode(401);
                 }
             } catch (Exception e){
-                operatingScheduleResponse.setResultRequestCode(400);
+                operatingScheduleResponse.setResultResponseCode(400);
             }
         } else {
-            operatingScheduleResponse.setResultRequestCode(403);
+            operatingScheduleResponse.setResultResponseCode(403);
         }
         return ResponseEntity.ok(operatingScheduleResponse);
     }

@@ -1,10 +1,10 @@
 package ru.hardy.udio.domain.struct;
 
-import com.vaadin.flow.component.datepicker.DatePicker;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
+import ru.hardy.udio.domain.abstractclasses.InsuredPerson;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -22,7 +22,7 @@ public class People extends InsuredPerson {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "people_seq")
-    @SequenceGenerator(name = "people_seq", allocationSize = 1)
+    @SequenceGenerator(name = "people_seq", allocationSize = 3)
     private Long id;
 
     private Integer sex;
@@ -40,8 +40,6 @@ public class People extends InsuredPerson {
     @OneToMany(mappedBy="people", fetch = FetchType.LAZY)
     private List<DNOut> dnouts; //случаи прохождения д-наблюдения
 
-    private Date date_beg;
-    private Date date_edit;
 
     public People(InsuredPerson insuredPerson){
         this.setSurname(insuredPerson.getSurname());
@@ -49,17 +47,23 @@ public class People extends InsuredPerson {
         this.setName(insuredPerson.getName());
         this.setDateBirth(insuredPerson.getDateBirth());
         this.setEnp(insuredPerson.getEnp());
-        this.date_beg = Date.from(Instant.now());
-        this.date_edit = Date.from(Instant.now());
+        this.setDateBeg(Date.from(Instant.now()));
+        this.setDateEdit(Date.from(Instant.now()));
     }
 
     public People(String surname, String name, String patronymic, Date dateBirth,
-                  String enp){
+                  String enp, int sex, Long idsrz, Date ds, int lpu){
         this.setSurname(surname);
         this.setName(name);
         this.setPatronymic(patronymic);
         this.setDateBirth(dateBirth);
         this.setEnp(enp);
+        this.setSex(sex);
+        this.setIdsrz(idsrz);
+        this.setDs(ds);
+        this.setMo_attach(lpu);
+        this.setDateBeg(Date.from(Instant.now()));
+        this.setDateEdit(Date.from(Instant.now()));
     }
 
     public People() {

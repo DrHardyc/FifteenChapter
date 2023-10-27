@@ -17,8 +17,6 @@ public class OperatingSchedule {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private int codeMO;
-
     @OneToOne(fetch = FetchType.LAZY)
     private OperatingScheduleRequestRecord requestRecord;
 

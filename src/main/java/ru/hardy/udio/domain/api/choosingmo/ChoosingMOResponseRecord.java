@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
+import ru.hardy.udio.domain.abstractclasses.APIInsuredPersonResponseRecord;
+import ru.hardy.udio.domain.abstractclasses.InsuredPerson;
 
 import java.time.Instant;
 import java.util.Date;
@@ -13,7 +14,7 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(schema = "udio_datacontrol")
-public class ChoosingMOResponseRecord extends InsuredPerson {
+public class ChoosingMOResponseRecord extends APIInsuredPersonResponseRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
@@ -24,13 +25,7 @@ public class ChoosingMOResponseRecord extends InsuredPerson {
     @JsonIgnore
     private ChoosingMOResponse response;
 
-    private int respCode;
-    private String respMessage;
 
-    @JsonIgnore
-    private Date date_beg;
-    @JsonIgnore
-    private Date date_edit;
 
     public ChoosingMOResponseRecord (ChoosingMORequestRecord patient, ChoosingMOResponse response,
                                      int respCode, String respMessage) {
@@ -39,11 +34,11 @@ public class ChoosingMOResponseRecord extends InsuredPerson {
         this.setPatronymic(patient.getPatronymic());
         this.setEnp(patient.getEnp());
         this.setDateBirth(patient.getDateBirth());
-        this.response = response;
-        this.respCode = respCode;
-        this.respMessage = respMessage;
-        this.date_beg = Date.from(Instant.now());
-        this.date_edit = Date.from(Instant.now());
+        this.setResponse(response);
+        this.setRespCode(respCode);
+        this.setRespMessage(respMessage);
+        this.setDateBeg(Date.from(Instant.now()));
+        this.setDateEdit(Date.from(Instant.now()));
     }
 
     public ChoosingMOResponseRecord() {

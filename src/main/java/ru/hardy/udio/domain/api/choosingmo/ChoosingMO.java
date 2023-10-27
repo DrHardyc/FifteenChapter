@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.stereotype.Component;
 import ru.hardy.udio.domain.struct.People;
 
 import java.util.Date;
@@ -13,6 +14,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Table(schema = "udio_tfoms")
+@Component
 public class ChoosingMO {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

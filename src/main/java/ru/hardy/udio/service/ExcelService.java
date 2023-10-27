@@ -1,11 +1,14 @@
 package ru.hardy.udio.service;
 
+import com.vaadin.flow.component.notification.Notification;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jooq.meta.derby.sys.Sys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.config.DBJDBCConfig;
+import ru.hardy.udio.domain.api.individualhistoryonkocase.InsuranceCase;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
 import ru.hardy.udio.domain.report.AgeLimit;
@@ -871,7 +874,7 @@ public class ExcelService {
         cell.setCellValue(value);
     }
 
-    public File getPADataPatientRequestRecord(Set<PADataPatientRequestRecord> paDataPatientRequestRecords) {
+    public File getPADataPatientRequestRecord(Set<PADataPatientRequestRecord> paDataPatientRequestRecordSet) {
         FileOutputStream outputStream;
         XSSFWorkbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Общий отчет");
@@ -894,7 +897,7 @@ public class ExcelService {
 
         DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         int indexCount = 1;
-        for (PADataPatientRequestRecord paDataPatientRequestRecord : paDataPatientRequestRecords){
+        for (PADataPatientRequestRecord paDataPatientRequestRecord : paDataPatientRequestRecordSet){
             Row row = sheet.createRow(indexCount);
             createValueCell(row, paDataPatientRequestRecord.getMainDiagnosis(), 0, workbook);
             createValueCell(row, String.valueOf(paDataPatientRequestRecord.getConcomitantDiagnosis()), 1, workbook);
@@ -966,4 +969,57 @@ public class ExcelService {
     }
 
 
+    public File getInsuranceCase(Set<InsuranceCase> insuranceCaseSet) {
+        FileOutputStream outputStream;
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Общий отчет");
+        Row header = sheet.createRow(0);
+
+        createHeaderCell(header, "Код МО прикрепления", 0, workbook);
+        createHeaderCell(header, "Код МО", 1, workbook);
+        createHeaderCell(header, "Контактные данные", 2, workbook);
+        createHeaderCell(header, "Номер счета", 3, workbook);
+        createHeaderCell(header, "Дата счета", 4, workbook);
+        createHeaderCell(header, "Посещение/обращение", 5, workbook);
+        createHeaderCell(header, "Дата начала лечения", 6, workbook);
+        createHeaderCell(header, "Дата окончания лечения", 7, workbook);
+        createHeaderCell(header, "Код основного диагноза", 8, workbook);
+        createHeaderCell(header, "Код сопутствующего диагноза", 9, workbook);
+        createHeaderCell(header, "Код диагноза осложнения", 10, workbook);
+        createHeaderCell(header, "Результат", 11, workbook);
+        createHeaderCell(header, "Сведения о Д-наблюдении", 12, workbook);
+
+        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        int indexCount = 1;
+        for (InsuranceCase insuranceCase : insuranceCaseSet){
+            Row row = sheet.createRow(indexCount);
+            createValueCell(row, String.valueOf(insuranceCase.getCodeMOAttach()), 0, workbook);
+            createValueCell(row, String.valueOf(insuranceCase.getCodeMO()), 1, workbook);
+            createValueCell(row, insuranceCase.getContactDetails(), 2, workbook);
+            createValueCell(row, insuranceCase.getInvoiceNumber(), 3, workbook);
+            createValueCell(row, dateFormat.format(insuranceCase.getInvoiceDate()), 4, workbook);
+            createValueCell(row, insuranceCase.getInsuranceCaseName(), 5, workbook);
+            createValueCell(row, dateFormat.format(insuranceCase.getTreatmentStartDate()), 6, workbook);
+            createValueCell(row, dateFormat.format(insuranceCase.getTreatmentEndDate()), 7, workbook);
+            createValueCell(row, insuranceCase.getMainDiagnosis(), 8, workbook);
+            createValueCell(row, insuranceCase.getConcomitantDiagnosis(), 9, workbook);
+            createValueCell(row, insuranceCase.getComplicationsDiagnosis(), 10, workbook);
+            createValueCell(row, insuranceCase.getResultSeeking(), 11, workbook);
+            createValueCell(row, insuranceCase.getInformationDO(), 12, workbook);
+
+            indexCount++;
+        }
+
+        File currDir = new File("C:\\udio\\reports\\" + UUID.randomUUID() + "_снятые.xlsx");
+        try {
+            outputStream = new FileOutputStream(currDir);
+            workbook.write(outputStream);
+            workbook.close();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+
+        }
+        return currDir;
+    }
 }

@@ -12,7 +12,7 @@ import java.util.Date;
 @Entity
 @Table(schema = "udio_datacontrol")
 public class MonthEvent {
-
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -28,7 +28,9 @@ public class MonthEvent {
     public int quantityPrevDept;
     public int quantityCE;
 
+    @JsonIgnore
     public Date dateBeg;
+    @JsonIgnore
     public Date dateEdit;
 
 }

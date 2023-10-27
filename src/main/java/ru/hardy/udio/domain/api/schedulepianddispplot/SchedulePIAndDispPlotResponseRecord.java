@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import ru.hardy.udio.domain.abstractclasses.APIDepartmentResponseRecord;
 
 import java.time.Instant;
 import java.util.Date;
@@ -12,7 +13,7 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(schema = "udio_datacontrol")
-public class SchedulePIAndDispPlotResponseRecord {
+public class SchedulePIAndDispPlotResponseRecord extends APIDepartmentResponseRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,23 +25,11 @@ public class SchedulePIAndDispPlotResponseRecord {
     @JsonIgnore
     private SchedulePIAndDispPlotResponse response;
 
-    private int departmentCode;
-    private String departmentName;
-    private int respCode;
-    private String respMessage;
-
-    @JsonIgnore
-    private Date dateBeg;
-
-    @JsonIgnore
-    private Date dateEdit;
-
-
     public SchedulePIAndDispPlotResponseRecord(SchedulePIAndDispPlotRequestRecord departmentRequest,
                                                SchedulePIAndDispPlotResponse schedulePIAndDispPlotResponse,
                                                int errCode, String errMess) {
-        this.setDepartmentCode(departmentRequest.getCodeDep());
-        this.setDepartmentName(departmentRequest.getNameDep());
+        this.setCodeDep(departmentRequest.getCodeDep());
+        this.setNameDep(departmentRequest.getNameDep());
         this.setResponse(schedulePIAndDispPlotResponse);
         this.setRespCode(errCode);
         this.setRespMessage(errMess);

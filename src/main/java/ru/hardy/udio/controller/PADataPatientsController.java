@@ -3,157 +3,38 @@ package ru.hardy.udio.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInforming;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequest;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientResponse;
-import ru.hardy.udio.domain.struct.People;
-import ru.hardy.udio.service.PeopleService;
 import ru.hardy.udio.service.TokenService;
-import ru.hardy.udio.service.apiservice.individualhistoryinformingresponseservice.IndividualHistoryInformingService;
-import ru.hardy.udio.service.apiservice.padatapatientsservice.PADataPatientRequestService;
+import ru.hardy.udio.service.apiservice.APIRequestService;
 import ru.hardy.udio.service.apiservice.padatapatientsservice.PADataPatientResponseService;
-
-import java.time.Instant;
-import java.util.Date;
 
 @RestController
 public class PADataPatientsController {
 
     @Autowired
     private TokenService tokenService;
-
     @Autowired
     private PADataPatientResponseService paDataPatientResponseService;
-
     @Autowired
-    private PADataPatientRequestService paDataPatientRequestService;
-
-    @Autowired
-    private PeopleService peopleService;
-
-    @Autowired
-    private IndividualHistoryInformingService individualHistoryInformingService;
+    private APIRequestService apiRequestService;
 
     @PostMapping("/api/1.1/getPADataPatient")
     public ResponseEntity<PADataPatientResponse> registerPADataPatient(
             @RequestHeader(name = "token") String token,
             @RequestBody PADataPatientRequest paDataPatientRequest) {
 
-        PADataPatientResponse paDataPatientResponse = new PADataPatientResponse();
-        paDataPatientResponse.setResultRequestCode(201);
-        paDataPatientResponseService.add(paDataPatientResponse);
-
-        if (tokenService.checkToken(token)) {
-            PADataPatientResponse PADataPatientResponseFromDB =
-                    paDataPatientResponseService.getWithReqId(paDataPatientRequest.getReqID(),
-                            tokenService.getCodeMOWithToken(token));
-            if (PADataPatientResponseFromDB != null){
-                paDataPatientResponse.setResultRequestCode(402);
-                paDataPatientResponseService.add(paDataPatientResponse);
-                return ResponseEntity.ok(paDataPatientResponse);
-            }
-
-            if (paDataPatientRequest.getPatients() == null){
-                paDataPatientResponse.setResultRequestCode(400);
-                paDataPatientResponseService.add(paDataPatientResponse);
-                return ResponseEntity.ok(paDataPatientResponse);
-            }
-            try {
-                paDataPatientResponse.setCodeMO(tokenService.getCodeMOWithToken(token));
-                paDataPatientResponse.setDateBeg(Date.from(Instant.now()));
-                paDataPatientResponse.setDateEdit(Date.from(Instant.now()));
-                paDataPatientResponse.setReqID(paDataPatientRequest.getReqID());
-                paDataPatientResponseService.add(paDataPatientResponse);
-
-                paDataPatientRequest.setCodeMO(tokenService.getCodeMOWithToken(token));
-                paDataPatientRequest.setDateBeg(Date.from(Instant.now()));
-                paDataPatientRequest.setDateEdit(Date.from(Instant.now()));
-
-                paDataPatientRequest.getPatients().forEach(patient -> {
-                    People people = peopleService.search(patient);
-                    if (people != null) {
-                        IndividualHistoryInforming individualHistoryInforming =
-                                individualHistoryInformingService.getByPeople(people);
-                        if (individualHistoryInforming != null){
-                            patient.setIndividualHistoryInforming(individualHistoryInforming);
-                            individualHistoryInformingService.update(individualHistoryInforming);
-                        } else {
-                            IndividualHistoryInforming individualHistoryInformingNew = new IndividualHistoryInforming();
-                            individualHistoryInformingNew.setDateBeg(Date.from(Instant.now()));
-                            individualHistoryInformingNew.setDateEdit(Date.from(Instant.now()));
-                            individualHistoryInformingNew.setPeople(people);
-                            individualHistoryInformingService.add(individualHistoryInformingNew);
-                            patient.setIndividualHistoryInforming(individualHistoryInformingNew);
-                        }
-                    }
-                });
-                paDataPatientRequestService.add(paDataPatientRequest);
-
-                return ResponseEntity.ok(paDataPatientResponseService
-                        .processing(paDataPatientRequest, paDataPatientResponse));
-
-            } catch (Exception e){
-                paDataPatientResponse.setResultRequestCode(400);
-                paDataPatientResponseService.add(paDataPatientResponse);
-            }
-
-        } else {
-            paDataPatientResponse.setResultRequestCode(403);
-            paDataPatientResponseService.add(paDataPatientResponse);
-        }
-        return ResponseEntity.ok(paDataPatientResponse);
+        return ResponseEntity
+                .ok((PADataPatientResponse) apiRequestService
+                        .acceptance(token, paDataPatientRequest));
     }
 
     @PostMapping("/api/test/getPADataPatient")
     public ResponseEntity<PADataPatientResponse> registerPADataPatientTest(
             @RequestHeader(name = "token") String token,
-            @RequestBody PADataPatientRequest doDataPatientsRequest) {
+            @RequestBody PADataPatientRequest paDataPatientRequest) {
 
-        PADataPatientResponse PADataPatientResponse = new PADataPatientResponse();
-        PADataPatientResponse.setResultRequestCode(201);
-        paDataPatientResponseService.add(PADataPatientResponse);
-
-        if (tokenService.checkToken(token) && doDataPatientsRequest.getPatients().get(0).getSurname().equals("Премудрая")) {
-            PADataPatientResponse PADataPatientResponseFromDB =
-                    paDataPatientResponseService.getWithReqId(doDataPatientsRequest.getReqID(),
-                            tokenService.getCodeMOWithToken(token));
-            if (PADataPatientResponseFromDB != null){
-                PADataPatientResponse.setResultRequestCode(402);
-                paDataPatientResponseService.add(PADataPatientResponse);
-                return ResponseEntity.ok(PADataPatientResponse);
-            }
-
-            if (doDataPatientsRequest.getPatients() == null){
-                PADataPatientResponse.setResultRequestCode(400);
-                paDataPatientResponseService.add(PADataPatientResponse);
-                return ResponseEntity.ok(PADataPatientResponse);
-            }
-            try {
-                PADataPatientResponse.setCodeMO(tokenService.getCodeMOWithToken(token));
-                PADataPatientResponse.setDateBeg(Date.from(Instant.now()));
-                PADataPatientResponse.setDateEdit(Date.from(Instant.now()));
-                PADataPatientResponse.setReqID(doDataPatientsRequest.getReqID());
-                paDataPatientResponseService.add(PADataPatientResponse);
-
-                doDataPatientsRequest.setCodeMO(tokenService.getCodeMOWithToken(token));
-                doDataPatientsRequest.setDateBeg(Date.from(Instant.now()));
-                doDataPatientsRequest.setDateEdit(Date.from(Instant.now()));
-                paDataPatientRequestService.add(doDataPatientsRequest);
-
-                return ResponseEntity.ok(paDataPatientResponseService
-                        .processing(doDataPatientsRequest, PADataPatientResponse));
-
-            } catch (Exception e){
-                PADataPatientResponse.setResultRequestCode(400);
-                paDataPatientResponseService.add(PADataPatientResponse);
-            }
-
-        } else {
-            PADataPatientResponse.setResultRequestCode(403);
-            paDataPatientResponseService.add(PADataPatientResponse);
-        }
-        return ResponseEntity.ok(PADataPatientResponse);
-    }
+        return ResponseEntity.ok((PADataPatientResponse) apiRequestService.acceptance(token, paDataPatientRequest));    }
 
     @GetMapping("/api/1.1/getPADataPatients/{reqID}")
     public ResponseEntity<PADataPatientResponse> getPADataPatients(
@@ -170,13 +51,13 @@ public class PADataPatientsController {
                 if (PADataPatientResponseFromDB != null){
                     return ResponseEntity.ok(PADataPatientResponseFromDB);
                 } else {
-                    PADataPatientResponse.setResultRequestCode(401);
+                    PADataPatientResponse.setResultResponseCode(401);
                 }
             } catch (Exception e){
-                PADataPatientResponse.setResultRequestCode(400);
+                PADataPatientResponse.setResultResponseCode(400);
             }
         } else {
-            PADataPatientResponse.setResultRequestCode(403);
+            PADataPatientResponse.setResultResponseCode(403);
         }
         return ResponseEntity.ok(PADataPatientResponse);
     }

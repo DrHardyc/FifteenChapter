@@ -1,18 +1,15 @@
 package ru.hardy.udio.domain.api.padatapatients;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
+import ru.hardy.udio.domain.abstractclasses.InsuredPerson;
 import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInforming;
 import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInformingResponseRecord;
 
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Date;
 
 import static ru.hardy.udio.service.UtilService.dateToLocalDate;
@@ -48,7 +45,10 @@ public class PADataPatientRequestRecord extends InsuredPerson {
     @JoinColumn(name = "ihiResponseRecord_id")
     private IndividualHistoryInformingResponseRecord ihiResponseRecord;
 
+    private int signUpdate;
+    private String numberHistory;
     private String mainDiagnosis;
+    private int firstIdentified;
     private String concomitantDiagnosis;
     private String diagnosisComplications;
     private int codeTypePreventiveActions;
@@ -61,11 +61,6 @@ public class PADataPatientRequestRecord extends InsuredPerson {
     private Date dateInsuranceCase;
     private int resultDispensaryAppointmentDoctor;
     private int resultDispensaryAppointment;
-
-    @JsonIgnore
-    private Date dateBeg;
-    @JsonIgnore
-    private Date dateEdit;
 
     public PADataPatientRequestRecord() {
 

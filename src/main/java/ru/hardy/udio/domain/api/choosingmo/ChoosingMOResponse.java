@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import ru.hardy.udio.domain.abstractclasses.APIResponse;
 
 import java.util.Date;
 import java.util.List;
@@ -13,23 +14,18 @@ import java.util.List;
 @Setter
 @Entity
 @Table(schema = "udio_datacontrol")
-public class ChoosingMOResponse  {
+public class ChoosingMOResponse extends APIResponse {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
     private Long id;
 
-    private int resultRequestCode;
-    private String reqID;
-    private int codeMO;
-    private int numberRecordsProcessed;
-
     @OneToMany(mappedBy = "response", fetch = FetchType.LAZY)
     private List<ChoosingMOResponseRecord> patients;
 
+    @OneToOne
+    @JoinColumn(name = "request_id")
     @JsonIgnore
-    private Date date_beg;
-    @JsonIgnore
-    private Date date_edit;
+    private ChoosingMORequest request;
 }

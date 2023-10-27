@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
 import ru.hardy.udio.domain.button.BtnVariant;
 import ru.hardy.udio.domain.button.UdioButton;
+import ru.hardy.udio.domain.generic.ResultProcessingClass;
 import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.service.PeopleService;
 import ru.hardy.udio.service.apiservice.individualinformingservice.IndividualInformingRequestRecordService;
@@ -63,11 +64,11 @@ public class InformingView extends VerticalLayout {
             historyInformingRequestRecord.setPatronymic(tfPatronymic.getValue());
             historyInformingRequestRecord.setEnp(tfENP.getValue());
 
-            People people = peopleService.search(historyInformingRequestRecord);
+            ResultProcessingClass<People> peopleResultProcessingClass = peopleService.search(historyInformingRequestRecord);
 
             List<IndividualInformingRequestRecord> individualInformingRequestRecordList =
-                    individualInformingRequestRecordService.getAllByPeople(people);
-            if (people != null) {
+                    individualInformingRequestRecordService.getAllByPeople(peopleResultProcessingClass.getProcessingClass());
+            if (peopleResultProcessingClass.getProcessingClass() != null) {
                 DialogViewGen dialogViewGen = new DialogViewGen();
                 Dialog dialog = dialogViewGen.getIndividualInformingRequestRecordDialog(individualInformingRequestRecordList);
                 dialog.open();

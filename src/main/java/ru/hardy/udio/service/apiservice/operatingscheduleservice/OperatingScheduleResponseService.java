@@ -2,17 +2,17 @@ package ru.hardy.udio.service.apiservice.operatingscheduleservice;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.hardy.udio.domain.abstractclasses.APIRequest;
+import ru.hardy.udio.domain.abstractclasses.APIResponse;
 import ru.hardy.udio.domain.api.operatingschedule.*;
 import ru.hardy.udio.repo.apirepo.operatingschedulerepo.OperatingScheduleResponseRepo;
+import ru.hardy.udio.service.apiservice.apiinterface.APIResponseServiceInterface;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
-public class OperatingScheduleResponseService {
+public class OperatingScheduleResponseService implements APIResponseServiceInterface {
 
     @Autowired
     private OperatingScheduleResponseRepo operatingScheduleResponseRepo;
@@ -23,24 +23,37 @@ public class OperatingScheduleResponseService {
     @Autowired
     private OperatingScheduleResponseRecordService operatingScheduleResponseRecordService;
 
-    public void add(OperatingScheduleResponse operatingScheduleResponse){
-        operatingScheduleResponseRepo.save(operatingScheduleResponse);
+    @Override
+    public void add(APIResponse apiResponse){
+        apiResponse.setDateBeg(Date.from(Instant.now()));
+        apiResponse.setDateEdit(Date.from(Instant.now()));
+        operatingScheduleResponseRepo.save((OperatingScheduleResponse) apiResponse);
     }
 
-    public OperatingScheduleResponse processing(OperatingScheduleRequest operatingScheduleRequest,
-                             OperatingScheduleResponse operatingScheduleResponse,
-                             int codeMO) {
+    @Override
+    public void addAll(List<APIResponse> apiResponses) {
+        operatingScheduleResponseRepo.saveAll(Collections.singletonList((OperatingScheduleResponse) apiResponses));
+    }
+
+    @Override
+    public APIResponse processing(APIRequest apiRequest,
+                                                APIResponse apiResponse,
+                                                int codeMO) {
+        OperatingScheduleRequest operatingScheduleRequest = (OperatingScheduleRequest) apiRequest;
+        OperatingScheduleResponse operatingScheduleResponse = (OperatingScheduleResponse) apiResponse;
+
         String errMess = "Запись успешно обработана";
         int errCode = 500;
         int count = 0;
         List<OperatingScheduleResponseRecord> operatingScheduleResponseRecords = new ArrayList<>();
 
         for (OperatingScheduleRequestRecord departmentRequest : operatingScheduleRequest.getDepartments()){
-            departmentRequest.setDate_beg(Date.from(Instant.now()));
-            departmentRequest.setDate_edit(Date.from(Instant.now()));
+            departmentRequest.setDateBeg(Date.from(Instant.now()));
+            departmentRequest.setDateEdit(Date.from(Instant.now()));
 
             operatingScheduleService.add(departmentRequest, codeMO);
             operatingScheduleResponse.setNumberRecordsProcessed(count);
+            operatingScheduleResponse.setResultResponseCode(200);
             add(operatingScheduleResponse);
 
             operatingScheduleResponseRecords.add(new OperatingScheduleResponseRecord(departmentRequest,

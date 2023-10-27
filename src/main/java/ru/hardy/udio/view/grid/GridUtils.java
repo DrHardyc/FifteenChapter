@@ -13,11 +13,13 @@ import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import org.springframework.stereotype.Service;
 import org.vaadin.olli.FileDownloadWrapper;
-import ru.hardy.udio.domain.button.BtnVariant;
-import ru.hardy.udio.domain.button.UdioButton;
+import ru.hardy.udio.domain.api.individualhistoryonkocase.InsuranceCase;
+import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
+import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
 import ru.hardy.udio.service.ExcelService;
 
 import java.io.File;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 @Service
@@ -56,14 +58,23 @@ public class GridUtils {
         btnExcel.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         btnExcel.addClickListener(ev -> {
             horizontalLayout.removeAll();
+            File file = null;
             ExcelService excelService = new ExcelService();
-            File file = excelService.getPADataPatientRequestRecord(grid.getSelectedItems());
+            for (Object object : grid.getSelectedItems()){
+                if (object instanceof PADataPatientRequestRecord)
+                    file = excelService.getPADataPatientRequestRecord(grid.getSelectedItems());
+                if (object instanceof IndividualInformingRequestRecord)
+                    file = excelService.getIndividualInformingRequestRecord(grid.getSelectedItems());
+                if (object instanceof InsuranceCase)
+                    file = excelService.getInsuranceCase(grid.getSelectedItems());
+                break;
+            }
 
             // Костыль имитирующий скачивание в эксель----
             Button downloadButton = new Button();
             downloadButton.setHeight("0px"); // что бы не было видно кнопки
             downloadButton.setWidth("0px");
-            FileDownloadWrapper downloadButtonWrapper = new FileDownloadWrapper(file.getName(), file);
+            FileDownloadWrapper downloadButtonWrapper = new FileDownloadWrapper(Objects.requireNonNull(file).getName(), file);
             downloadButtonWrapper.wrapComponent(downloadButton);
             horizontalLayout.add(downloadButtonWrapper);
             downloadButton.clickInClient();

@@ -14,6 +14,7 @@ import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRe
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
 import ru.hardy.udio.domain.button.BtnVariant;
 import ru.hardy.udio.domain.button.UdioButton;
+import ru.hardy.udio.domain.generic.ResultProcessingClass;
 import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.service.PeopleService;
 import ru.hardy.udio.service.apiservice.padatapatientsservice.PADataPatientRequestRecordService;
@@ -66,11 +67,11 @@ public class CasesView extends VerticalLayout {
             paDataPatientRequestRecord.setPatronymic(tfPatronymic.getValue());
             paDataPatientRequestRecord.setEnp(tfENP.getValue());
 
-            People people = peopleService.search(paDataPatientRequestRecord);
+            ResultProcessingClass<People> peopleResultProcessingClass = peopleService.search(paDataPatientRequestRecord);
 
             List<PADataPatientRequestRecord> paDataPatientRequestRecords =
-                    paDataPatientRequestRecordService.getAllByPeople(people);
-            if (people != null) {
+                    paDataPatientRequestRecordService.getAllByPeople(peopleResultProcessingClass.getProcessingClass());
+            if (peopleResultProcessingClass.getProcessingClass() != null) {
                 DialogViewGen dialogViewGen = new DialogViewGen();
                 Dialog dialog = dialogViewGen.getPADataPatientRequestRecordDialog(paDataPatientRequestRecords);
                 dialog.open();

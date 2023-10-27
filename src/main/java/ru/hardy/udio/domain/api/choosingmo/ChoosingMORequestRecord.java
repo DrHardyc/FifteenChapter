@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
+import ru.hardy.udio.domain.abstractclasses.InsuredPerson;
 
 import java.util.Date;
 
@@ -24,10 +24,4 @@ public class ChoosingMORequestRecord extends InsuredPerson {
 
     @OneToOne(mappedBy = "requestRecord")
     private ChoosingMO patient;
-
-    @JsonIgnore
-    private Date date_beg;
-    @JsonIgnore
-    private Date date_edit;
-
 }

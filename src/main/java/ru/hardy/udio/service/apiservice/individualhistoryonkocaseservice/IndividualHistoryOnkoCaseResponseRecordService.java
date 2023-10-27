@@ -3,8 +3,7 @@ package ru.hardy.udio.service.apiservice.individualhistoryonkocaseservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.config.DBJDBCConfig;
-import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
-import ru.hardy.udio.domain.api.individualhistoryonkocase.IndividualHistoryOnkoCaseRequestRecord;
+import ru.hardy.udio.domain.abstractclasses.InsuredPerson;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.IndividualHistoryOnkoCaseResponseRecord;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.InsuranceCase;
 import ru.hardy.udio.repo.apirepo.individualhistoryonkocaserepo.IndividualHistoryOnkoCaseResponseRecordRepo;
@@ -22,10 +21,8 @@ public class IndividualHistoryOnkoCaseResponseRecordService {
     @Autowired
     private IndividualHistoryOnkoCaseResponseRecordRepo individualHistoryOnkoCaseResponseRecordRepo;
 
-
     public void addAll(List<IndividualHistoryOnkoCaseResponseRecord> individualHistoryOnkoCaseResponseRecords) {
         individualHistoryOnkoCaseResponseRecordRepo.saveAll(individualHistoryOnkoCaseResponseRecords);
-
     }
 
     public List<InsuranceCase> getInsuredCases(InsuredPerson insuredPerson){
@@ -61,7 +58,8 @@ public class IndividualHistoryOnkoCaseResponseRecordService {
                     "and cbp.pac_dr = to_date('" + dateFormat.format(insuredPerson.getDateBirth()) + "', 'yyyy-mm-dd') " +
                     "and cb.enp = '" + insuredPerson.getEnp() + "'" +
                     "group by mor.reg_code, mor_attach.reg_code, cbp.pac_fam, cbp.pac_im, cbp.pac_ot, cbp.pac_dr, cb.enp, ms.caption, " +
-                    "cbb.nschet, cbb.dschet, cb.usl_ok, sl.p_cel, cbp.tel, cb.date_1, cb.date_2, mkb1.mkb_code, mkb2.mkb_code, mkb3.mkb_code, mhr.caption, cb.pr_d_n, sl.pr_d_n, sl.dn");
+                    "cbb.nschet, cbb.dschet, cb.usl_ok, sl.p_cel, cbp.tel, cb.date_1, cb.date_2, mkb1.mkb_code, mkb2.mkb_code, " +
+                    "mkb3.mkb_code, mhr.caption, cb.pr_d_n, sl.pr_d_n, sl.dn");
 
             while (resultSet.next()){
                 insuranceCases.add(new InsuranceCase(

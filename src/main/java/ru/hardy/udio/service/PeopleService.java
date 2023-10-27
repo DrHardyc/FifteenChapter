@@ -2,17 +2,18 @@ package ru.hardy.udio.service;
 
 import com.vaadin.flow.component.datepicker.DatePicker;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.hardy.udio.config.DBJDBCConfig;
-import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
+import ru.hardy.udio.domain.generic.ResultProcessingClass;
+import ru.hardy.udio.domain.abstractclasses.InsuredPerson;
 import ru.hardy.udio.domain.api.choosingmo.ChoosingMORequestRecord;
 import ru.hardy.udio.domain.report.DateInterval;
 import ru.hardy.udio.domain.struct.DataFilePatient;
 import ru.hardy.udio.domain.struct.People;
+import ru.hardy.udio.domain.struct.dto.PeopleDTO;
 import ru.hardy.udio.repo.PeopleRepo;
 
 import java.sql.ResultSet;
@@ -20,7 +21,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,7 +39,7 @@ public class PeopleService {
         return peopleRepo.findAll();
     }
 
-    public People search(InsuredPerson insuredPerson) {
+    public ResultProcessingClass<People> search(InsuredPerson insuredPerson) {
         People people;
         people = peopleRepo.findPeopleBySurnameIgnoreCaseAndNameIgnoreCaseAndPatronymicIgnoreCaseAndDateBirthAndEnp(
                 insuredPerson.getSurname().toUpperCase(),
@@ -47,37 +48,99 @@ public class PeopleService {
         if (people == null) {
             people = peopleRepo.findPeopleByEnp(insuredPerson.getEnp());
             if (people == null) {
-                int sex = searchFromSRZ(insuredPerson);
+                People peopleFromSRZWithInsuredPerson = searchFromSRZWithInsuredPerson(insuredPerson);
 //                System.out.println("Поиск cрз : тестовый режим");
 //                int sex = 1;
-                if (sex > 0) {
-                    people = new People(insuredPerson);
-                    people.setSex(sex);
+                if (peopleFromSRZWithInsuredPerson != null) {
+                    people = new People(peopleFromSRZWithInsuredPerson.getSurname(), peopleFromSRZWithInsuredPerson.getName(),
+                            peopleFromSRZWithInsuredPerson.getPatronymic(), peopleFromSRZWithInsuredPerson.getDateBirth(),
+                            peopleFromSRZWithInsuredPerson.getEnp(), peopleFromSRZWithInsuredPerson.getSex(),
+                            peopleFromSRZWithInsuredPerson.getIdsrz(), peopleFromSRZWithInsuredPerson.getDs(),
+                            peopleFromSRZWithInsuredPerson.getMo_attach());
                     peopleRepo.save(people);
-                    return people;
-                } else return null;
-            } else return people;
-        } else return people;
+                    if (peopleFromSRZWithInsuredPerson.getDs() == null){
+                        return new ResultProcessingClass<>(1, people);
+                    } else {
+                        return new ResultProcessingClass<>(2, people);
+                    }
+                } else{
+                    People peopleFromDBWithENP = searchFromSRZWithENP(insuredPerson.getEnp());
+                    if (peopleFromDBWithENP != null) {
+                        people = new People(peopleFromDBWithENP);
+                        peopleRepo.save(people);
+                        if (peopleFromDBWithENP.getDs() == null)
+                            return new ResultProcessingClass<>(1, peopleFromDBWithENP);
+                        else return new ResultProcessingClass<>(2, peopleFromDBWithENP);
+                    } else return null;
+                }
+            } else {
+                People peopleFromDBWithInsurePerson = searchFromSRZWithInsuredPerson(insuredPerson);
+                if (peopleFromDBWithInsurePerson != null) {
+                    updateWithPeopleSRZ(people, peopleFromDBWithInsurePerson);
+                    if (peopleFromDBWithInsurePerson.getDs() == null)
+                        return new ResultProcessingClass<>(1, people);
+                    else return new ResultProcessingClass<>(2, people);
+                } else {
+                    People peopleFromDBWithENP = searchFromSRZWithENP(insuredPerson.getEnp());
+                    if (peopleFromDBWithENP != null){
+                        updateWithPeopleSRZ(people, peopleFromDBWithENP);
+                        if (peopleFromDBWithENP.getDs() == null)
+                            return new ResultProcessingClass<>(1, people);
+                        else return new ResultProcessingClass<>(2, people);
+                    } else return new ResultProcessingClass<>(2, people);
+                }
+            }
+        } else {
+            People peopleFromDBWithInsurePerson = searchFromSRZWithInsuredPerson(insuredPerson);
+            if (peopleFromDBWithInsurePerson != null) {
+                if (people.getDs() == null && peopleFromDBWithInsurePerson.getDs() == null)
+                    return new ResultProcessingClass<>(1, people);
+                else return new ResultProcessingClass<>(2, people);
+            } return new ResultProcessingClass<>(2, people);
+        }
     }
 
-    private int searchFromSRZ(InsuredPerson insuredPerson) {
+    private People searchFromSRZWithENP(String enp) {
+        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
+        Statement statement = dbjdbcConfig.getSRZ();
+
+        try {
+            ResultSet resultSet = statement.executeQuery(
+                    "select p.fam, p.im, p.ot, p.dr, p.enp, p.w, p.id, p.ds, p.lpu from people p where p.enp = '"
+                            + enp + "'");
+            if (resultSet.next()) {
+                return new People(resultSet.getString(1), resultSet.getString(2),
+                        resultSet.getString(3), resultSet.getDate(4), resultSet.getString(5),
+                        resultSet.getInt(6), resultSet.getLong(7), resultSet.getDate(8),
+                        resultSet.getInt(9));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    private People searchFromSRZWithInsuredPerson(InsuredPerson insuredPerson) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
         Statement statement = dbjdbcConfig.getSRZ();
 
         try {
             ResultSet resultSet = statement.executeQuery(
-                    "select p.w from people p where p.fam = '" + insuredPerson.getSurname() +
+                    "select p.fam, p.im, p.ot, p.dr, p.enp, p.w, p.id, p.ds, p.lpu from people p where p.fam = '" + insuredPerson.getSurname() +
                             "' and p.im = '" + insuredPerson.getName() + "' and p.ot = '" + insuredPerson.getPatronymic() +
                             "' and p.dr = PARSE('" + dateFormat.format(insuredPerson.getDateBirth()) + "' as date) and p.enp = '"
-                            + insuredPerson.getEnp() + "' and p.DS is null");
+                            + insuredPerson.getEnp() + "'");
             if (resultSet.next()) {
-                return resultSet.getInt(1);
+                return new People(resultSet.getString(1), resultSet.getString(2),
+                        resultSet.getString(3), resultSet.getDate(4), resultSet.getString(5),
+                        resultSet.getInt(6), resultSet.getLong(7), resultSet.getDate(8),
+                        resultSet.getInt(9));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return 0;
+        return null;
     }
 
     @Transactional
@@ -91,7 +154,7 @@ public class PeopleService {
         people.setName(dataFilePatient.getIm());
         people.setPatronymic(dataFilePatient.getOt());
         people.setDateBirth(dataFilePatient.getDr());
-        people.setDate_edit(Date.from(Instant.now()));
+        people.setDateEdit(Date.from(Instant.now()));
         return save(people);
     }
 
@@ -208,42 +271,89 @@ public class PeopleService {
         return peopleRepo.findPeopleById(id);
     }
 
-    public List<People> getAllPeopleByJDBC(String surname, String name, String patronymic, DatePicker dateBirth,
-                                              String enp) {
+    public List<People> getAllPeopleByNotEmptyField(String surname, String name, String patronymic, DatePicker dateBirth,
+                                                    String enp) {
+        if (!surname.isEmpty() && name.isEmpty() && patronymic.isEmpty() && dateBirth.getValue() == null && enp.isEmpty())
+            return peopleRepo.findAllBySurname(surname);
+        else if (!surname.isEmpty() && !name.isEmpty() && patronymic.isEmpty() && dateBirth.getValue() == null && enp.isEmpty())
+            return peopleRepo.findAllBySurnameAndName(surname, name);
+        else if (!surname.isEmpty() && !name.isEmpty() && !patronymic.isEmpty() && dateBirth.getValue() == null && enp.isEmpty())
+            return peopleRepo.findAllBySurnameAndNameAndPatronymic(surname, name, patronymic);
+        else if (!surname.isEmpty() && !name.isEmpty() && !patronymic.isEmpty() && dateBirth.getValue() != null && enp.isEmpty())
+            return peopleRepo.findAllBySurnameAndNameAndPatronymicAndDateBirth(surname, name, patronymic,
+                    Date.from(dateBirth.getValue().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        else if (!surname.isEmpty() && !name.isEmpty() && !patronymic.isEmpty() && dateBirth.getValue() != null && !enp.isEmpty())
+            return peopleRepo.findAllBySurnameAndNameAndPatronymicAndDateBirthAndEnp(surname, name, patronymic,
+                    Date.from(dateBirth.getValue().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), enp);
+        else if (!surname.isEmpty() && name.isEmpty() && !patronymic.isEmpty() && dateBirth.getValue() != null && !enp.isEmpty())
+            return peopleRepo.findAllBySurnameAndPatronymicAndDateBirthAndEnp(surname, patronymic,
+                    Date.from(dateBirth.getValue().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), enp);
+        else if (!surname.isEmpty() && name.isEmpty() && patronymic.isEmpty() && dateBirth.getValue() != null && !enp.isEmpty())
+            return peopleRepo.findAllBySurnameAndDateBirthAndEnp(surname,
+                    Date.from(dateBirth.getValue().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), enp);
+        else if (!surname.isEmpty() && name.isEmpty() && patronymic.isEmpty() && dateBirth.getValue() == null && !enp.isEmpty())
+            return peopleRepo.findAllBySurnameAndEnp(surname, enp);
+        else if (!surname.isEmpty() && name.isEmpty() && !patronymic.isEmpty() && dateBirth.getValue() == null && enp.isEmpty())
+            return peopleRepo.findAllBySurnameAndPatronymic(surname, patronymic);
+        else if (!surname.isEmpty() && name.isEmpty() && patronymic.isEmpty() && dateBirth.getValue() != null && enp.isEmpty())
+            return peopleRepo.findAllBySurnameAndDateBirth(surname,
+                    Date.from(dateBirth.getValue().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        else if (surname.isEmpty() && !name.isEmpty() && patronymic.isEmpty() && dateBirth.getValue() == null && enp.isEmpty())
+            return peopleRepo.findAllByName(name);
+        else if (surname.isEmpty() && !name.isEmpty() && !patronymic.isEmpty() && dateBirth.getValue() == null && enp.isEmpty())
+            return peopleRepo.findAllByNameAndPatronymic(name, patronymic);
+        else if (surname.isEmpty() && !name.isEmpty() && !patronymic.isEmpty() && dateBirth.getValue() != null && enp.isEmpty())
+            return peopleRepo.findAllByNameAndPatronymicAndDateBirth(name, patronymic,
+                    Date.from(dateBirth.getValue().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        else if (surname.isEmpty() && !name.isEmpty() && !patronymic.isEmpty() && dateBirth.getValue() != null && !enp.isEmpty())
+            return peopleRepo.findAllByNameAndPatronymicAndDateBirthAndEnp(name, patronymic,
+                    Date.from(dateBirth.getValue().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), enp);
+        else if (surname.isEmpty() && !name.isEmpty() && patronymic.isEmpty() && dateBirth.getValue() != null && !enp.isEmpty())
+            return peopleRepo.findAllByNameAndDateBirthAndEnp(name,
+                    Date.from(dateBirth.getValue().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), enp);
+        else if (surname.isEmpty() && !name.isEmpty() && patronymic.isEmpty() && dateBirth.getValue() == null && !enp.isEmpty())
+            return peopleRepo.findAllByNameAndEnp(name, enp);
+        else if (surname.isEmpty() && !name.isEmpty() && patronymic.isEmpty() && dateBirth.getValue() != null && enp.isEmpty())
+            return peopleRepo.findAllByNameAndDateBirth(name, Date.from(dateBirth.getValue().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        else if (surname.isEmpty() && name.isEmpty() && !patronymic.isEmpty() && dateBirth.getValue() == null && enp.isEmpty())
+            return peopleRepo.findAllByPatronymic(patronymic);
+        else if (surname.isEmpty() && name.isEmpty() && !patronymic.isEmpty() && dateBirth.getValue() != null && enp.isEmpty())
+            return peopleRepo.findAllByPatronymicAndDateBirth(patronymic, Date.from(dateBirth.getValue().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        else if (surname.isEmpty() && name.isEmpty() && !patronymic.isEmpty() && dateBirth.getValue() != null && !enp.isEmpty())
+            return peopleRepo.findAllByPatronymicAndDateBirthAndEnp(patronymic,
+                    Date.from(dateBirth.getValue().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), enp);
+        else if (surname.isEmpty() && name.isEmpty() && patronymic.isEmpty() && dateBirth.getValue() != null && enp.isEmpty())
+            return peopleRepo.findAllByDateBirth(Date.from(dateBirth.getValue().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        else if (surname.isEmpty() && name.isEmpty() && patronymic.isEmpty() && dateBirth.getValue() != null && !enp.isEmpty())
+            return peopleRepo.findAllByDateBirthAndEnp(Date.from(dateBirth.getValue().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), enp);
+        else if (surname.isEmpty() && name.isEmpty() && patronymic.isEmpty() && dateBirth.getValue() != null && !enp.isEmpty())
+            return peopleRepo.findAllByEnp(enp);
+        else
+            return peopleRepo.findAll();
+    }
+
+    public void updateWithPeopleSRZ(People people, People peopleFromSRZ){
+        people.setSurname(peopleFromSRZ.getSurname());
+        people.setName(peopleFromSRZ.getName());
+        people.setPatronymic(peopleFromSRZ.getPatronymic());
+        people.setDateBirth(peopleFromSRZ.getDateBirth());
+        people.setEnp(peopleFromSRZ.getEnp());
+        peopleRepo.save(people);
+    };
+
+    public List<People> getPeopleWithJDBC() {
         List<People> peopleList = new ArrayList<>();
-        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
-        Statement statement = dbjdbcConfig.getUDIO();
-        String sql = "";
-        ResultSet resultSet;
+        Statement statement = new DBJDBCConfig().getUDIO();
         try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-            if (surname.isEmpty() && name.isEmpty() && patronymic.isEmpty() && dateBirth.getValue() == null
-                    && enp.isEmpty()){
-                resultSet = statement.executeQuery("select p.surname, p.name, p.patronymic, p.date_birth, p.enp " +
-                        "from udio_tfoms.people p ");
-            } else {
-                if (!surname.isEmpty())
-                    sql = sql + " p.surname = '" + surname + "' and ";
-                if (!name.isEmpty())
-                    sql = sql + "p.name = '" + name + "' and ";
-                if (!patronymic.isEmpty())
-                    sql = sql + "p.patronymic = '" + patronymic + "' and ";
-                if (dateBirth.getValue() != null)
-                    sql = sql + "p.date_birth = to_date('" + dateFormat.format(dateBirth.getValue()) + "', 'dd.mm.yyyy') and ";
-                if (!enp.isEmpty())
-                    sql = sql + "p.enp = '" + enp + "' and ";
-                resultSet = statement.executeQuery("select p.surname, p.name, p.patronymic, p.date_birth, p.enp " +
-                        "from udio_tfoms.people p where " + sql + "1 = 1");
-            }
+            ResultSet resultSet = statement.executeQuery("select * from udio_tfoms.people p where p.surname = 'Премудрая'");
+            int rowNum = 1;
             while (resultSet.next()){
-                peopleList.add(search(new People(resultSet.getString(1), resultSet.getString(2),
-                        resultSet.getString(3), resultSet.getDate(4), resultSet.getString(5))));
+                peopleList.add(new PeopleDTO().mapRow(resultSet, rowNum));
+                rowNum++;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
         return peopleList;
     }
-
 }

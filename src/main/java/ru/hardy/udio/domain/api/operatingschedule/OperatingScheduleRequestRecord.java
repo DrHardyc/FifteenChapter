@@ -1,8 +1,10 @@
 package ru.hardy.udio.domain.api.operatingschedule;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import ru.hardy.udio.domain.abstractclasses.Department;
 
 import java.util.Date;
 import java.util.List;
@@ -11,7 +13,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(schema = "udio_datacontrol")
-public class OperatingScheduleRequestRecord {
+public class OperatingScheduleRequestRecord extends Department {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,12 +29,7 @@ public class OperatingScheduleRequestRecord {
     @OneToOne(mappedBy = "requestRecord")
     private OperatingSchedule department;
 
-    public int codeDep;
-    public String nameDep;
     public String scheduleDep;
     public String holidaysDep;
     public String address;
-
-    private Date date_beg;
-    private Date date_edit;
 }

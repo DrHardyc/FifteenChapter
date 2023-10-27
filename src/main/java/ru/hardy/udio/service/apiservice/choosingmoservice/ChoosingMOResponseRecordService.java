@@ -13,10 +13,6 @@ public class ChoosingMOResponseRecordService {
     @Autowired
     private ChoosingMOResponseRecordRepo choosingMOResponseRecordRepo;
 
-
-    @Autowired
-    private ChoosingMOService choosingMOService;
-
     public void addAll(List<ChoosingMOResponseRecord> choosingMOResponseRecords){
         choosingMOResponseRecordRepo.saveAll(choosingMOResponseRecords);
     }

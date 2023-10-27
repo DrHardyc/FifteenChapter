@@ -26,8 +26,8 @@ public class Cabinet {
     private int cabinetNum;
     private String scheduleCabinet;
 
+    @JsonIgnore
     private Date dateBeg;
+    @JsonIgnore
     private Date dateEdit;
-    private JPanel panel1;
-    private JSlider slider1;
 }

@@ -2,11 +2,10 @@ package ru.hardy.udio.domain.api.individualhistoryonkocase;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
-import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInformingResponse;
+import ru.hardy.udio.domain.abstractclasses.APIInsuredPersonResponseRecord;
+import ru.hardy.udio.domain.abstractclasses.InsuredPerson;
 
 import java.time.Instant;
 import java.util.Date;
@@ -16,15 +15,12 @@ import java.util.List;
 @Setter
 @Entity
 @Table(schema = "udio_datacontrol")
-public class IndividualHistoryOnkoCaseResponseRecord extends InsuredPerson {
+public class IndividualHistoryOnkoCaseResponseRecord extends APIInsuredPersonResponseRecord {
 
     @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
-    private int respCode;
-    private String respMessage;
 
     @ManyToOne
     @JoinColumn(name = "response_id", nullable = false)
@@ -33,11 +29,6 @@ public class IndividualHistoryOnkoCaseResponseRecord extends InsuredPerson {
 
     @OneToMany(mappedBy = "responseRecord", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<InsuranceCase> insuranceCases;
-
-    @JsonIgnore
-    private Date dateBeg;
-    @JsonIgnore
-    private Date dateEdit;
 
     public IndividualHistoryOnkoCaseResponseRecord(IndividualHistoryOnkoCaseRequestRecord individualHistoryOnkoCaseRequestRecord,
                                                    IndividualHistoryOnkoCaseResponse individualHistoryOnkoCaseResponse,
@@ -58,7 +49,6 @@ public class IndividualHistoryOnkoCaseResponseRecord extends InsuredPerson {
         this.setRespMessage(errMess);
         this.setDateBeg(Date.from(Instant.now()));
         this.setDateEdit(Date.from(Instant.now()));
-
     }
 
     public IndividualHistoryOnkoCaseResponseRecord() {

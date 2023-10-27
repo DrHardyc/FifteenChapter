@@ -16,11 +16,7 @@ public class NumberAvailableSeats {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private int codeMO;
-    private int codeDep;
-    private String nameDep;
-
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private NumberAvailableSeatsRequestRecord requestRecord;
 
     @JsonIgnore

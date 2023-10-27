@@ -23,30 +23,25 @@ public class NumberAvailableSeatsService {
                     findByAllCodeDepAndCodeMOBef9(departmentRequest.getCodeDep(), codeMO, Instant.now().minus(Duration.ofDays(1)));
             if (numberAvailableSeatsBef9 != null) {
                 update(numberAvailableSeatsBef9, departmentRequest);
-            } else addNew(departmentRequest, codeMO);
+            } else addNew(departmentRequest);
         } else {
             NumberAvailableSeats numberAvailableSeatsAft9 = numberAvailableSeatsRepo.
                     findAllByCodeDepAndCodeMOAft9(departmentRequest.getCodeDep(), codeMO, Instant.now().plus(Duration.ofDays(1)));
             if (numberAvailableSeatsAft9 != null)
                 update(numberAvailableSeatsAft9, departmentRequest);
-            else addNew(departmentRequest, codeMO);
+            else addNew(departmentRequest);
         }
     }
 
     private void update(NumberAvailableSeats department, NumberAvailableSeatsRequestRecord departmentRequest){
         department.setRequestRecord(departmentRequest);
-        department.setCodeDep(departmentRequest.getCodeDep());
-        department.setNameDep(departmentRequest.getNameDep());
         department.setDateEdit(Date.from(Instant.now()));
         numberAvailableSeatsRepo.save(department);
     }
 
-    private void addNew(NumberAvailableSeatsRequestRecord departmentRequest, int codeMO){
+    private void addNew(NumberAvailableSeatsRequestRecord departmentRequest){
         NumberAvailableSeats department = new NumberAvailableSeats();
-        department.setCodeMO(codeMO);
         department.setRequestRecord(departmentRequest);
-        department.setCodeDep(departmentRequest.getCodeDep());
-        department.setNameDep(departmentRequest.getNameDep());
         department.setDateBeg(Date.from(Instant.now()));
         department.setDateEdit(Date.from(Instant.now()));
         numberAvailableSeatsRepo.save(department);

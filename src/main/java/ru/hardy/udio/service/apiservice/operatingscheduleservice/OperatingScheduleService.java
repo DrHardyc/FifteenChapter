@@ -18,7 +18,7 @@ public class OperatingScheduleService {
 
     public void add(OperatingScheduleRequestRecord operatingScheduleRequestRecord, int codeMO){
         OperatingSchedule operatingScheduleFromDB =
-                operatingScheduleRepo.findByCodeMOAndRequestRecord_CodeDepAndRequestRecord_HolidaysDep(codeMO,
+                operatingScheduleRepo.findByCodeMOAndCodeDepAndHolidaysDep(codeMO,
                 operatingScheduleRequestRecord.getCodeDep(), operatingScheduleRequestRecord.getHolidaysDep());
         if (operatingScheduleFromDB != null){
             operatingScheduleFromDB.setDate_edit(Date.from(Instant.now()));
@@ -26,7 +26,6 @@ public class OperatingScheduleService {
             operatingScheduleRepo.save(operatingScheduleFromDB);
         } else {
             OperatingSchedule operatingSchedule = new OperatingSchedule();
-            operatingSchedule.setCodeMO(codeMO);
             operatingSchedule.setDate_beg(Date.from(Instant.now()));
             operatingSchedule.setDate_edit(Date.from(Instant.now()));
             operatingSchedule.setRequestRecord(operatingScheduleRequestRecord);

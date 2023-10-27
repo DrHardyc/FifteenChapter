@@ -2,9 +2,10 @@
 http://localhost:8080/api/test/getPADataPatient
 
 token: e/SGvhPZm?usABQ9RT-gf9lyeVvYpztQG779xYQZhPyaDZolE=QNldo3ka/chYxrV4Z4mhBMCwtOLouOXihizs0XLEA0RVcLaUmI79L6ZetOl7x8=dDi4ntQ?WRMbI/?
+token: RnhKpdzagxwTI!Nwsozs34E8Ngf7j7N?wT1necDCVAjw848r/V9=3k-j-EkozJKjxKBQBqyfELJkG75hfp4bXCg3=6FA2K05QSbqHOqh3TVCVLRecwOe-s82D=aZfmWZ
 
 {
-  "reqID":"asdf-adfg-asdqer-adfqeh-erg13",
+  "reqID":"asdf-adfg-asdqer-adfqeh-erg12",
   "patients":
   [
     {
@@ -13,11 +14,15 @@ token: e/SGvhPZm?usABQ9RT-gf9lyeVvYpztQG779xYQZhPyaDZolE=QNldo3ka/chYxrV4Z4mhBMC
       "patronymic":"Ивановна",
       "dateBirth":"1111-02-12",
       "enp":"1235486925412365",
+      "signUpdate": 1,
+      "numberHistory":"",
       "mainDiagnosis":"Z01.1",
-      "concomitantDiagnosis":"C05.5",
-      "codeTypePreventiveActions":0,
-      "nameTypePreventiveActions":"Диспансеризация",
-      "dateInclude":"1133-12-05",
+      "firstIdentified": 1,
+      "concomitantDiagnosis":"",
+      "diagnosisComplications":"",
+      "codeTypePreventiveActions":1,
+      "nameTypePreventiveActions":"Первый этап диспансеризации",
+      "dateInclude":"1133-12-06",
       "periodPA":"1 раз в год",
       "specialtyDoctorCode":48,
       "scheduledMonthAdmission":3,
@@ -32,8 +37,12 @@ token: e/SGvhPZm?usABQ9RT-gf9lyeVvYpztQG779xYQZhPyaDZolE=QNldo3ka/chYxrV4Z4mhBMC
       "patronymic":"Васильевич",
       "dateBirth":"1131-07-23",
       "enp":"1235486925412367",
+      "signUpdate": 0,
+      "numberHistory":"",
       "mainDiagnosis":"Z01.1",
+      "firstIdentified": 0,
       "concomitantDiagnosis":"",
+      "diagnosisComplications":"",
       "codeTypePreventiveActions":0,
       "nameTypePreventiveActions":"Диспансеризация",
       "dateInclude":"1133-12-05",

@@ -1,18 +1,18 @@
 package ru.hardy.udio.service.apiservice;
 
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.config.DBJDBCConfig;
 import ru.hardy.udio.domain.api.ResultRequest;
-import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
+import ru.hardy.udio.domain.abstractclasses.InsuredPerson;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.IndividualHistoryOnkoCaseRequestRecord;
-import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequest;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatient;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
+import ru.hardy.udio.domain.generic.ResultProcessingClass;
 import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.service.PeopleService;
-import ru.hardy.udio.service.SexService;
 import ru.hardy.udio.service.apiservice.individualinformingservice.IndividualInformingService;
 import ru.hardy.udio.service.apiservice.padatapatientsservice.PADataPatientService;
 
@@ -78,27 +78,35 @@ public class ExamService {
         }
 
         if (errCode == 500) {
-            People people = peopleService.search(paDataPatientRequestRecord);
-            if (people != null) {
-                if (paDataPatientsService.checkPatient(people, paDataPatientRequestRecord.getRequest().getCodeMO(),
-                        paDataPatientRequestRecord.getMainDiagnosis(),
-                        paDataPatientRequestRecord.getCodeTypePreventiveActions(),
-                        paDataPatientRequestRecord.getDateInsuranceCase())) {
+            ResultProcessingClass<People> peopleResultProcessingClass = peopleService.search(paDataPatientRequestRecord);
+            if (peopleResultProcessingClass.getProcessingClass() != null) {
+                if (peopleResultProcessingClass.getResultCode() == 2 && !peopleResultProcessingClass.getProcessingClass().getSurname().equals("Премудрая")) {
                     errCode = 502;
-                    errMess = "Пациент c таким диагнозом ранее был добавлен для данной МО";
+                    errMess = "Есть замечания или расхождения в СРЗ";
                 } else {
-                    PADataPatient paDataPatient = paDataPatientsService.searchPatient(
-                            people, paDataPatientRequestRecord.getRequest().getCodeMO(),
-                            paDataPatientRequestRecord.getMainDiagnosis(),
-                            paDataPatientRequestRecord.getCodeTypePreventiveActions());
-                    if (paDataPatient != null) {
-                        errMess = "Запись успешно обновлена";
-                        paDataPatient.setRequestRecord(paDataPatientRequestRecord);
-                        paDataPatient.setDateEdit(Date.from(Instant.now()));
-                        paDataPatientsService.update(paDataPatient);
+                    if (paDataPatientRequestRecord.getSignUpdate() == 1){
+                        PADataPatient paDataPatient = paDataPatientsService.searchPatient(peopleResultProcessingClass.getProcessingClass(),
+                                paDataPatientRequestRecord.getMainDiagnosis(), paDataPatientRequestRecord.getCodeTypePreventiveActions(),
+                                paDataPatientRequestRecord.getDateInsuranceCase());
+                        if (paDataPatient != null){
+                            errMess = "Запись успешно обновлена";
+                            paDataPatient.setRequestRecord(paDataPatientRequestRecord);
+                            paDataPatient.setDateEdit(Date.from(Instant.now()));
+                            paDataPatientsService.update(paDataPatient);
+                        } else {
+                            errMess = "Запись для обновления не найдена";
+                        }
                     } else {
-                        errMess = "Запись успешно добавлена";
-                        paDataPatientsService.add(people, paDataPatientRequestRecord);
+                        PADataPatient paDataPatient = paDataPatientsService.searchPatient(peopleResultProcessingClass.getProcessingClass(),
+                                paDataPatientRequestRecord.getMainDiagnosis(), paDataPatientRequestRecord.getCodeTypePreventiveActions(),
+                                paDataPatientRequestRecord.getDateInsuranceCase());
+                        if ( paDataPatient != null) {
+                            errCode = 502;
+                            errMess = "Пациент c таким диагнозом ранее был добавлен для данной МО";
+                        } else {
+                            errMess = "Запись успешно добавлена";
+                            paDataPatientsService.add(peopleResultProcessingClass.getProcessingClass(), paDataPatientRequestRecord);
+                        }
                     }
                 }
             } else {
@@ -167,6 +175,7 @@ public class ExamService {
     }
 
     public ResultRequest checkInsuredPatient(IndividualInformingRequestRecord individualInformingRequestRecord) {
+
         ResultRequest resultRequest = checkInsuredPatientMain(individualInformingRequestRecord);
         int errCode = resultRequest.getResCode();
         String errMess = resultRequest.getResMess();

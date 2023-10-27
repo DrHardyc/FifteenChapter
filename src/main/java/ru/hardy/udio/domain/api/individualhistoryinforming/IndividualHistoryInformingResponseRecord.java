@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
+import ru.hardy.udio.domain.abstractclasses.APIInsuredPersonResponseRecord;
+import ru.hardy.udio.domain.abstractclasses.InsuredPerson;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
 
 import java.time.Instant;
@@ -15,14 +16,11 @@ import java.util.List;
 @Setter
 @Entity
 @Table(schema = "udio_datacontrol")
-public class IndividualHistoryInformingResponseRecord extends InsuredPerson {
+public class IndividualHistoryInformingResponseRecord extends APIInsuredPersonResponseRecord {
     @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
-    private int respCode;
-    private String respMessage;
 
     @ManyToOne
     @JoinColumn(name = "response_id", nullable = false)
@@ -34,11 +32,6 @@ public class IndividualHistoryInformingResponseRecord extends InsuredPerson {
 
     @OneToMany(mappedBy = "ihiResponseRecord", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PADataPatientRequestRecord> insuranceCase;
-
-    @JsonIgnore
-    private Date dateBeg;
-    @JsonIgnore
-    private Date dateEdit;
 
     public IndividualHistoryInformingResponseRecord(IndividualHistoryInformingRequestRecord individualHistoryInformingRequestRecord,
                                                     IndividualHistoryInformingResponse individualHistoryInformingResponse,

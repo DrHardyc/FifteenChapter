@@ -1,6 +1,7 @@
 package ru.hardy.udio.view.dialog;
 
 
+import ch.qos.logback.classic.net.server.HardenedLoggingEventInputStream;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -16,6 +17,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.stereotype.Service;
+import ru.hardy.udio.domain.api.individualhistoryonkocase.IndividualHistoryOnkoCaseResponseRecord;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.InsuranceCase;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
@@ -24,6 +26,7 @@ import ru.hardy.udio.domain.button.UdioButton;
 import ru.hardy.udio.domain.struct.DNGet;
 import ru.hardy.udio.domain.struct.dto.DNOutDto;
 import ru.hardy.udio.view.grid.*;
+import ru.hardy.udio.view.span.CMSpan;
 
 import java.util.List;
 
@@ -101,6 +104,53 @@ public class DialogViewGen {
         return dialog;
     }
 
+    public Dialog getPeopleInfo(List<IndividualInformingRequestRecord> individualInformingRequestRecordList,
+                                List<PADataPatientRequestRecord> paDataPatientRequestRecordList,
+                                List<InsuranceCase> insuranceCaseList) {
+        Dialog dialog1 = new Dialog();
+        Button closeButton = new Button(new Icon(VaadinIcon.CLOSE_SMALL),
+                (event) -> dialog1.close());
+        closeButton.getStyle().set("margin-left", "auto");
+        closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+
+        HorizontalLayout hlII = new HorizontalLayout();
+        Button btnII = new Button("Информирование");
+        btnII.addClickListener(e -> {
+            new DialogViewGen().getIndividualInformingRequestRecordDialog(individualInformingRequestRecordList).open();
+        });
+        Span spanII = new CMSpan(String.valueOf(individualInformingRequestRecordList.size()));
+        hlII.add(btnII, spanII);
+
+        HorizontalLayout hlPA = new HorizontalLayout();
+        Span spanPA = new CMSpan(String.valueOf(paDataPatientRequestRecordList.size()));
+        Button btnPa = new Button("Посещения/Обращения");
+        btnPa.addClickListener(e -> {
+            new DialogViewGen().getPADataPatientRequestRecordDialog(paDataPatientRequestRecordList).open();
+        });
+        hlPA.add(btnPa, spanPA);
+
+        HorizontalLayout hlOnko = new HorizontalLayout();
+        Span spanOnko = new CMSpan(String.valueOf(insuranceCaseList.size()));
+        Button btnOnko = new Button("История онко-случаев");
+        btnOnko.addClickListener(e -> {
+            new DialogViewGen().getInsuranceCases(insuranceCaseList).open();
+        });
+        hlOnko.add(btnOnko, spanOnko);
+
+        dialog1.add(hlII, hlPA, hlOnko);
+        dialog1.setHeight("25vh");
+        dialog1.setWidth("20vw");
+        Span badge = new Span("Общая информация");
+        badge.getStyle().set("font-weight", "bold");
+        dialog1.getHeader().add(badge);
+        dialog1.getHeader().add(closeButton);
+        dialog1.setCloseOnOutsideClick(false);
+        dialog1.setDraggable(true);
+        dialog1.setResizable(true);
+        dialog1.setModal(false);
+        return dialog1;
+    }
+
     public Dialog getDieReportDialog(List<DNOutDto> dnOutDtos){
         initFooter();
         Grid<DNOutDto> grid = GridUtils.createNewDialogGrid(horizontalLayout, btnExcel);
@@ -114,7 +164,6 @@ public class DialogViewGen {
         dialog.add(grid);
 
         return dialog;
-
     }
 
     public Dialog getMainReportDialog(List<DNGet> dnGets){
@@ -138,9 +187,13 @@ public class DialogViewGen {
 
         FormLayout formLayout = new FormLayout();
 
-        TextField tfRegAddress = new UdioTextField();
-        TextField tfLocationAddress = new UdioTextField();
-        TextField tfMOAttach = new UdioTextField();
+        TextField tfRegAddress = new TextField();
+        tfRegAddress.setReadOnly(true);
+        TextField tfLocationAddress = new TextField();
+        tfLocationAddress.setReadOnly(true);
+        TextField tfMOAttach = new TextField();
+        tfMOAttach.setReadOnly(true);
+
         Span spPolicy;
         if (bPolicy){
             spPolicy = new Span(createIcon(VaadinIcon.CHECK),
@@ -157,7 +210,8 @@ public class DialogViewGen {
             spPolicy.getElement().getThemeList().add("badge error");
         }
 
-        TextField tfCause = new UdioTextField();
+        TextField tfCause = new TextField();
+        tfCause.setReadOnly(true);
 
         formLayout.addFormItem(tfRegAddress, "Адрес регистрации");
         formLayout.addFormItem(tfLocationAddress, "Адрес места жительства");
@@ -173,13 +227,5 @@ public class DialogViewGen {
         Icon icon = vaadinIcon.create();
         icon.getStyle().set("padding", "var(--lumo-space-xs");
         return icon;
-    }
-
-    @Data
-    @EqualsAndHashCode(callSuper = true)
-    private static class UdioTextField extends TextField{
-        public UdioTextField(){
-            this.setReadOnly(true);
-        }
     }
 }

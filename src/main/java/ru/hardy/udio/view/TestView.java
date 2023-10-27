@@ -26,13 +26,22 @@ import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
 import ru.hardy.udio.domain.button.BtnVariant;
 import ru.hardy.udio.domain.button.UdioButton;
 import ru.hardy.udio.domain.combobox.UdioCombobox;
-import ru.hardy.udio.domain.struct.*;
+import ru.hardy.udio.domain.struct.DNGet;
+import ru.hardy.udio.domain.struct.DataFile;
+import ru.hardy.udio.domain.struct.F003;
+import ru.hardy.udio.domain.struct.People;
+import ru.hardy.udio.repo.PeopleRepo;
 import ru.hardy.udio.service.*;
 import ru.hardy.udio.service.SRZ.DBFSearchService;
+import ru.hardy.udio.service.apiservice.individualhistoryonkocaseservice.IndividualHistoryOnkoCaseResponseService;
 import ru.hardy.udio.service.apiservice.padatapatientsservice.PADataPatientRequestRecordService;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 @Route(layout = MainView.class)
@@ -54,6 +63,11 @@ public class TestView extends VerticalLayout {
     @Autowired
     private PADataPatientRequestRecordService paDataPatientRequestRecordService;
 
+    @Autowired
+    private PeopleRepo peopleRepo;
+
+    @Autowired
+    private IndividualHistoryOnkoCaseResponseService individualHistoryOnkoCaseResponseService;
 
 
     public TestView() {
@@ -149,10 +163,6 @@ public class TestView extends VerticalLayout {
         ComboBox<String> stringComboBox = new UdioCombobox<>();
         stringComboBox.setItems("asdfasdf", "asdfasdf");
 
-
-
-
-
         add(stringComboBox, button, anchor, upload);
     }
 
@@ -231,13 +241,9 @@ public class TestView extends VerticalLayout {
                     + requestRecord.getMainDiagnosis()));
         });
 
-
         Button button = new Button("test");
-
         button.addClickListener(e -> {
-            People people = new People();
-            people.setSurname("Черчесов");
-            //peopleService.getAllPeopleByJDBC(people.getSurname(), people.getName(), get));
+            System.out.println(individualHistoryOnkoCaseResponseService.getWithReqId("asdf-adfg-asdqer-adfqeh-erg4", 1) != null);
         });
 
         add(button, btnTestOneToOne, btnTestF003, buttonGen, btnSearchInSRZ, btnTestDNGetAll,
@@ -245,5 +251,7 @@ public class TestView extends VerticalLayout {
 
     }
 }
+
+
 
 

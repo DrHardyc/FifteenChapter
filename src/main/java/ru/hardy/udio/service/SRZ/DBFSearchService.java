@@ -4,9 +4,7 @@ package ru.hardy.udio.service.SRZ;
 import com.linuxense.javadbf.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-import ru.hardy.udio.domain.ResponseAnswerUdio;
 import ru.hardy.udio.domain.struct.DataFile;
 import ru.hardy.udio.domain.struct.DataFilePatient;
 import ru.hardy.udio.repo.DataFilePatientRepo;
@@ -118,7 +116,6 @@ public class DBFSearchService {
                 throw new RuntimeException(e);
             }
             if (sec > 86400) {
-                dataFile.setResultCode(ResponseAnswerUdio.PROCESSING_ERR);
                 dataFile.setResultDesc("Ошибка ожидания от СРЗ");
                 dataFileRepo.save(dataFile);
                 break;

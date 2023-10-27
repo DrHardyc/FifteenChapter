@@ -2,18 +2,11 @@ package ru.hardy.udio.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import ru.hardy.udio.domain.ResponseAnswerUdio;
-import ru.hardy.udio.domain.struct.*;
 import ru.hardy.udio.service.*;
 
-import java.io.IOException;
-import java.sql.Date;
-import java.time.Instant;
-
-@RestController
+@Controller
 public class DatafileController {
 
     @Autowired

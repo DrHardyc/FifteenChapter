@@ -8,12 +8,10 @@ import ru.hardy.udio.domain.api.schedulepianddispplot.SchedulePIAndDispPlotReque
 import ru.hardy.udio.domain.api.schedulepianddispplot.SchedulePIAndDispPlotResponse;
 import ru.hardy.udio.domain.api.schedulepianddispplot.SchedulePIAndDispPlotResponseRecord;
 import ru.hardy.udio.service.TokenService;
-import ru.hardy.udio.service.apiservice.schedulepianddispplotservice.SchedulePIAndDispPlotRequestService;
+import ru.hardy.udio.service.apiservice.APIRequestService;
 import ru.hardy.udio.service.apiservice.schedulepianddispplotservice.SchedulePIAndDispPlotResponseService;
 
-import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -26,63 +24,16 @@ public class SchedulePIAndDispPlotController {
     private SchedulePIAndDispPlotResponseService schedulePIAndDispPlotResponseService;
 
     @Autowired
-    private SchedulePIAndDispPlotRequestService schedulePIAndDispPlotRequestService;
+    private APIRequestService apiRequestService;
 
     @PostMapping("/api/1.1/getSchedulePIAndDispPlot")
     public ResponseEntity<SchedulePIAndDispPlotResponse> registerSchedulePIAndDispPlot(
             @RequestHeader(name = "token") String token,
             @RequestBody SchedulePIAndDispPlotRequest schedulePIAndDispPlotRequest) {
 
-        int codeMO = tokenService.getCodeMOWithToken(token);
-        SchedulePIAndDispPlotResponse schedulePIAndDispPlotResponse = new SchedulePIAndDispPlotResponse();
-
-        if (tokenService.checkToken(token)) {
-
-            if (schedulePIAndDispPlotResponseService.getWithReqId(schedulePIAndDispPlotRequest.getReqID(), codeMO) != null){
-                schedulePIAndDispPlotResponse.setResultRequestCode(402);
-                schedulePIAndDispPlotResponseService.add(schedulePIAndDispPlotResponse);
-                return ResponseEntity.ok(schedulePIAndDispPlotResponse);
-            }
-
-            schedulePIAndDispPlotResponse.setResultRequestCode(201);
-            schedulePIAndDispPlotResponse.setDate_beg(Date.from(Instant.now()));
-            schedulePIAndDispPlotResponse.setDate_edit(Date.from(Instant.now()));
-            schedulePIAndDispPlotResponse.setReqID(schedulePIAndDispPlotRequest.getReqID());
-            schedulePIAndDispPlotResponse.setCodeMO(tokenService.getCodeMOWithToken(token));
-            schedulePIAndDispPlotResponseService.add(schedulePIAndDispPlotResponse);
-
-            if (schedulePIAndDispPlotRequest.getDepartments() == null){
-                schedulePIAndDispPlotResponse.setResultRequestCode(400);
-                schedulePIAndDispPlotResponse.setDate_beg(Date.from(Instant.now()));
-                schedulePIAndDispPlotResponse.setDate_edit(Date.from(Instant.now()));
-                schedulePIAndDispPlotResponse.setReqID(schedulePIAndDispPlotRequest.getReqID());
-                schedulePIAndDispPlotResponseService.add(schedulePIAndDispPlotResponse);
-                return ResponseEntity.ok(schedulePIAndDispPlotResponse);
-            }
-
-            try {
-                schedulePIAndDispPlotRequest.setCodeMO(tokenService.getCodeMOWithToken(token));
-                schedulePIAndDispPlotRequest.setDate_beg(Date.from(Instant.now()));
-                schedulePIAndDispPlotRequest.setDate_edit(Date.from(Instant.now()));
-                schedulePIAndDispPlotRequestService.add(schedulePIAndDispPlotRequest);
-
-                schedulePIAndDispPlotResponse.setResultRequestCode(200);
-                schedulePIAndDispPlotResponseService.add(schedulePIAndDispPlotResponse);
-
-                return ResponseEntity.ok(schedulePIAndDispPlotResponseService
-                        .processing(schedulePIAndDispPlotRequest, schedulePIAndDispPlotResponse,
-                                tokenService.getCodeMOWithToken(token)));
-
-            } catch (Exception e){
-                schedulePIAndDispPlotResponse.setResultRequestCode(400);
-                schedulePIAndDispPlotResponseService.add(schedulePIAndDispPlotResponse);
-            }
-
-        } else {
-            schedulePIAndDispPlotResponse.setResultRequestCode(403);
-            schedulePIAndDispPlotResponseService.add(schedulePIAndDispPlotResponse);
-        }
-        return ResponseEntity.ok(schedulePIAndDispPlotResponse);
+        return ResponseEntity
+                .ok((SchedulePIAndDispPlotResponse) apiRequestService
+                        .acceptance(token, schedulePIAndDispPlotRequest));
     }
 
     @PostMapping("/api/test/getSchedulePIAndDispPlot")
@@ -100,14 +51,14 @@ public class SchedulePIAndDispPlotController {
                             schedulePIAndDispPlotResponse, 500, "Запись успешно обработана"));
                 });
 
-                schedulePIAndDispPlotResponse.setResultRequestCode(200);
+                schedulePIAndDispPlotResponse.setResultResponseCode(200);
                 schedulePIAndDispPlotResponse.setReqID(schedulePIAndDispPlotRequest.getReqID());
                 schedulePIAndDispPlotResponse.setCodeMO(tokenService.getCodeMOWithToken(token));
                 schedulePIAndDispPlotResponse.setNumberRecordsProcessed(2);
                 schedulePIAndDispPlotResponse.setDepartments(schedulePIAndDispPlotResponsesRecords);
             }
         } else {
-            schedulePIAndDispPlotResponse.setResultRequestCode(403);
+            schedulePIAndDispPlotResponse.setResultResponseCode(403);
             schedulePIAndDispPlotResponseService.add(schedulePIAndDispPlotResponse);
         }
         return ResponseEntity.ok(schedulePIAndDispPlotResponse);
@@ -128,13 +79,13 @@ public class SchedulePIAndDispPlotController {
                 if (schedulePIAndDispPlotResponseFromDB != null){
                     return ResponseEntity.ok(schedulePIAndDispPlotResponseFromDB);
                 } else {
-                    schedulePIAndDispPlotResponse.setResultRequestCode(401);
+                    schedulePIAndDispPlotResponse.setResultResponseCode(401);
                 }
             } catch (Exception e){
-                schedulePIAndDispPlotResponse.setResultRequestCode(400);
+                schedulePIAndDispPlotResponse.setResultResponseCode(400);
             }
         } else {
-            schedulePIAndDispPlotResponse.setResultRequestCode(403);
+            schedulePIAndDispPlotResponse.setResultResponseCode(403);
         }
         return ResponseEntity.ok(schedulePIAndDispPlotResponse);
     }

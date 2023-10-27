@@ -2,20 +2,23 @@ package ru.hardy.udio.service.apiservice.numberavailableseatsservice;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.hardy.udio.domain.abstractclasses.APIRequest;
+import ru.hardy.udio.domain.abstractclasses.APIResponse;
 import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsRequest;
 import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsRequestRecord;
 import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsResponse;
 import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsResponseRecord;
 import ru.hardy.udio.repo.apirepo.numberavailableseatsrepo.NumberAvailableSeatsResponseRepo;
-import ru.hardy.udio.service.TokenService;
+import ru.hardy.udio.service.apiservice.apiinterface.APIResponseServiceInterface;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 @Service
-public class NumberAvailableSeatsResponseService {
+public class NumberAvailableSeatsResponseService implements APIResponseServiceInterface {
 
     @Autowired
     private NumberAvailableSeatsResponseRepo numberAvailableSeatsResponseRepo;
@@ -27,17 +30,26 @@ public class NumberAvailableSeatsResponseService {
     private NumberAvailableSeatsService numberAvailableSeatsService;
 
     @Autowired
-    private TokenService tokenService;
-
-    @Autowired
     private NumberAvailableSeatsRequestRecordService numberAvailableSeatsRequestRecordService;
 
-    public void add(NumberAvailableSeatsResponse numberAvailableSeatsResponse){
-        numberAvailableSeatsResponseRepo.save(numberAvailableSeatsResponse);
+    @Override
+    public void add(APIResponse apiResponse){
+        apiResponse.setDateBeg(Date.from(Instant.now()));
+        apiResponse.setDateEdit(Date.from(Instant.now()));
+        numberAvailableSeatsResponseRepo.save((NumberAvailableSeatsResponse) apiResponse);
     }
 
-    public NumberAvailableSeatsResponse processing(NumberAvailableSeatsRequest numberAvailableSeatsRequest,
-                             NumberAvailableSeatsResponse numberAvailableSeatsResponse, int codeMO) {
+    @Override
+    public void addAll(List<APIResponse> apiResponses) {
+        numberAvailableSeatsResponseRepo.saveAll(Collections.singletonList((NumberAvailableSeatsResponse) apiResponses));
+    }
+
+    @Override
+    public NumberAvailableSeatsResponse processing(APIRequest apiRequest,
+                                                   APIResponse apiResponse, int codeMO) {
+        NumberAvailableSeatsRequest numberAvailableSeatsRequest = (NumberAvailableSeatsRequest) apiRequest;
+        NumberAvailableSeatsResponse numberAvailableSeatsResponse = (NumberAvailableSeatsResponse) apiResponse;
+
         String errMess = "Запись успешно обработана";
         int errCode = 500;
         int count = 0;
@@ -48,11 +60,12 @@ public class NumberAvailableSeatsResponseService {
         numberAvailableSeatsRequestRecordService.addAll(numberAvailableSeatsRequest.getDepartments());
 
         for (NumberAvailableSeatsRequestRecord departmentRequest : numberAvailableSeatsRequest.getDepartments()){
-            departmentRequest.setDate_beg(Date.from(Instant.now()));
-            departmentRequest.setDate_edit(Date.from(Instant.now()));
+            departmentRequest.setDateBeg(Date.from(Instant.now()));
+            departmentRequest.setDateEdit(Date.from(Instant.now()));
 
             numberAvailableSeatsService.add(departmentRequest, codeMO);
             numberAvailableSeatsResponse.setNumberRecordsProcessed(count);
+            numberAvailableSeatsResponse.setResultResponseCode(200);
             add(numberAvailableSeatsResponse);
 
             numberAvailableSeatsResponseRecords.add(new NumberAvailableSeatsResponseRecord(departmentRequest,
@@ -74,4 +87,6 @@ public class NumberAvailableSeatsResponseService {
     public NumberAvailableSeatsResponse getWithReqId(String reqID, int codeMO) {
         return numberAvailableSeatsResponseRepo.findByReqIDAndCodeMO(reqID, codeMO);
     }
+
+
 }

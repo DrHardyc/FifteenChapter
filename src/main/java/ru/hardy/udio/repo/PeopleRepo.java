@@ -3,6 +3,7 @@ package ru.hardy.udio.repo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Repository;
 import ru.hardy.udio.domain.struct.People;
 
@@ -14,6 +15,12 @@ public interface PeopleRepo extends JpaRepository<People, Long> {
 
     People findPeopleBySurnameIgnoreCaseAndNameIgnoreCaseAndPatronymicIgnoreCaseAndDateBirthAndEnp(
             String surname, String name, String patronymic, Date date_birth, String enp);
+
+    List<People> findAllBySurnameIgnoreCaseAndNameIgnoreCaseAndPatronymicIgnoreCaseAndEnp(
+            String surname, String name, String patronymic, String enp);
+
+//    @Query("select p from People p where p.surname = :surname")
+//    People findPeopleBySurname(String surname);
 
 //    @Query("select p from People p where (:surname is null or p.surname = :name) and ()")
 //    List<People> findAllBySurnameIgnoreCaseAndNameIgnoreCaseAndPatronymicIgnoreCaseAndDateBirthAndEnp(
@@ -90,6 +97,54 @@ public interface PeopleRepo extends JpaRepository<People, Long> {
     List<People> findDistinctDie();
 
     People findPeopleById(Long id);
+
+    List<People> findAllByName(String surname);
+
+    List<People> findAllBySurname(String surname);
+
+    List<People> findAllBySurnameAndName(String surname, String name);
+
+    List<People> findAllBySurnameAndNameAndPatronymic(String surname, String name, String patronymic);
+
+    List<People> findAllBySurnameAndNameAndPatronymicAndDateBirth(String surname, String name, String patronymic, @DateTimeFormat(pattern = "dd.MM.yyyy") Date dateBirth);
+
+    List<People> findAllBySurnameAndNameAndPatronymicAndDateBirthAndEnp(String surname, String name, String patronymic, @DateTimeFormat(pattern = "dd.MM.yyyy") Date from, String enp);
+
+    List<People> findAllBySurnameAndPatronymicAndDateBirthAndEnp(String surname, String patronymic, @DateTimeFormat(pattern = "dd.MM.yyyy") Date from, String enp);
+
+    List<People> findAllBySurnameAndDateBirthAndEnp(String surname, @DateTimeFormat(pattern = "dd.MM.yyyy") Date from, String enp);
+
+    List<People> findAllBySurnameAndEnp(String surname, String enp);
+
+    List<People> findAllByNameAndPatronymic(String name, String patronymic);
+
+    List<People> findAllByNameAndPatronymicAndDateBirth(String name, String patronymic, @DateTimeFormat(pattern = "dd.MM.yyyy") Date dateBirth);
+
+    List<People> findAllByNameAndPatronymicAndDateBirthAndEnp(String name, String patronymic, @DateTimeFormat(pattern = "dd.MM.yyyy") Date dateBirth, String enp);
+
+    List<People> findAllByNameAndDateBirthAndEnp(String name, @DateTimeFormat(pattern = "dd.MM.yyyy") Date dateBirth, String enp);
+
+    List<People> findAllByNameAndEnp(String name, String enp);
+
+    List<People> findAllByPatronymic(String patronymic);
+
+    List<People> findAllByPatronymicAndDateBirth(String patronymic, @DateTimeFormat(pattern = "dd.MM.yyyy") Date dateBirth);
+
+    List<People> findAllByPatronymicAndDateBirthAndEnp(String patronymic, @DateTimeFormat(pattern = "dd.MM.yyyy") Date from, String enp);
+
+    List<People> findAllByDateBirth(@DateTimeFormat(pattern = "dd.MM.yyyy") Date dateBirth);
+
+    List<People> findAllByDateBirthAndEnp(@DateTimeFormat(pattern = "dd.MM.yyyy") Date from, String enp);
+
+    List<People> findAllByEnp(String enp);
+
+    List<People> findAllBySurnameAndPatronymic(String surname, String patronymic);
+
+    List<People> findAllBySurnameAndDateBirth(String surname, @DateTimeFormat(pattern = "dd.MM.yyyy") Date dateBirth);
+
+    List<People> findAllByNameAndDateBirth(String name, @DateTimeFormat(pattern = "dd.MM.yyyy") Date dateBirth);
+
+
 }
 
 

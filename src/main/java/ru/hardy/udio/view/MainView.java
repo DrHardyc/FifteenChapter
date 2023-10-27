@@ -62,6 +62,4 @@ public class MainView extends AppLayout{
         Tooltip.forComponent(avatar).withText(user.getPosition()).setPosition(Tooltip.TooltipPosition.BOTTOM_START);
         avatar.getStyle().set("margin", "auto");
     }
-
-
 }

@@ -9,9 +9,8 @@ import java.util.Date;
 
 @Repository
 public interface PADataPatientRepo extends JpaRepository<PADataPatient, Long> {
-    PADataPatient findDODataPatientsByPeopleAndCodeMOAndRequestRecord_MainDiagnosisAndRequestRecord_CodeTypePreventiveActionsAndRequestRecord_DateInsuranceCase(
-            People people, int codeMO, String mainDiag, int codeTypePreventiveActions, Date insuranceDate);
+    PADataPatient findByPeopleAndRequestRecord_MainDiagnosisAndRequestRecord_CodeTypePreventiveActionsAndRequestRecord_DateInsuranceCase(
+            People people, String mainDiag, int codeType, Date dateInsurance);
 
-    PADataPatient findDODataPatientsByPeopleAndCodeMOAndRequestRecord_MainDiagnosisAndRequestRecord_CodeTypePreventiveActions(
-            People people, int codeMO, String mainDiag, int codeTypePreventiveActions);
+    PADataPatient findByPeople(People people);
 }

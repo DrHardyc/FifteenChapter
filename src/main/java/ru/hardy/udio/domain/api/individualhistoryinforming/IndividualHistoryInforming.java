@@ -4,14 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import ru.hardy.udio.domain.api.abstractclasses.InsuredPerson;
-import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
-import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
 import ru.hardy.udio.domain.struct.People;
 
-import java.time.Instant;
 import java.util.Date;
-import java.util.List;
 
 @Getter
 @Setter

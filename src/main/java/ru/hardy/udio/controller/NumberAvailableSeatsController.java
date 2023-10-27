@@ -9,7 +9,7 @@ import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsRequest
 import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsResponse;
 import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsResponseRecord;
 import ru.hardy.udio.service.TokenService;
-import ru.hardy.udio.service.apiservice.numberavailableseatsservice.NumberAvailableSeatsRequestService;
+import ru.hardy.udio.service.apiservice.APIRequestService;
 import ru.hardy.udio.service.apiservice.numberavailableseatsservice.NumberAvailableSeatsResponseService;
 
 import java.time.Instant;
@@ -27,58 +27,16 @@ public class NumberAvailableSeatsController {
     private TokenService tokenService;
 
     @Autowired
-    private NumberAvailableSeatsRequestService numberAvailableSeatsRequestService;
+    private APIRequestService apiRequestService;
 
     @PostMapping("/api/1.1/getNumberAvailableSeats")
     public ResponseEntity<NumberAvailableSeatsResponse> registerNumberAvailableSeats(
             @RequestHeader(name = "token") String token,
             @RequestBody NumberAvailableSeatsRequest numberAvailableSeatsRequest) {
 
-        int codeMO = tokenService.getCodeMOWithToken(token);
-        NumberAvailableSeatsResponse numberAvailableSeatsResponse = new NumberAvailableSeatsResponse();
-
-        if (tokenService.checkToken(token)) {
-            if (numberAvailableSeatsResponseService.getWithReqId(numberAvailableSeatsRequest.getReqID(), codeMO) != null){
-                numberAvailableSeatsResponse.setResultRequestCode(402);
-                numberAvailableSeatsResponseService.add(numberAvailableSeatsResponse);
-                return ResponseEntity.ok(numberAvailableSeatsResponse);
-            }
-
-            numberAvailableSeatsResponse.setResultRequestCode(201);
-            numberAvailableSeatsResponse.setDate_beg(Date.from(Instant.now()));
-            numberAvailableSeatsResponse.setDate_edit(Date.from(Instant.now()));
-            numberAvailableSeatsResponse.setReqID(numberAvailableSeatsRequest.getReqID());
-            numberAvailableSeatsResponse.setCodeMO(tokenService.getCodeMOWithToken(token));
-            numberAvailableSeatsResponseService.add(numberAvailableSeatsResponse);
-
-            if (numberAvailableSeatsRequest.getDepartments() == null){
-                numberAvailableSeatsResponse.setResultRequestCode(400);
-                numberAvailableSeatsResponseService.add(numberAvailableSeatsResponse);
-                return ResponseEntity.ok(numberAvailableSeatsResponse);
-            }
-
-            try {
-                numberAvailableSeatsRequest.setCodeMO(codeMO);
-                numberAvailableSeatsRequest.setDate_beg(Date.from(Instant.now()));
-                numberAvailableSeatsRequest.setDate_edit(Date.from(Instant.now()));
-                numberAvailableSeatsRequestService.add(numberAvailableSeatsRequest);
-
-                numberAvailableSeatsResponse.setResultRequestCode(200);
-                numberAvailableSeatsResponseService.add(numberAvailableSeatsResponse);
-
-                return ResponseEntity.ok(numberAvailableSeatsResponseService
-                        .processing(numberAvailableSeatsRequest, numberAvailableSeatsResponse, codeMO));
-
-            } catch (Exception e){
-                numberAvailableSeatsResponse.setResultRequestCode(400);
-                numberAvailableSeatsResponseService.add(numberAvailableSeatsResponse);
-            }
-
-        } else {
-            numberAvailableSeatsResponse.setResultRequestCode(403);
-            numberAvailableSeatsResponseService.add(numberAvailableSeatsResponse);
-        }
-        return ResponseEntity.ok(numberAvailableSeatsResponse);
+        return ResponseEntity
+                .ok((NumberAvailableSeatsResponse) apiRequestService
+                        .acceptance(token, numberAvailableSeatsRequest));
     }
 
     @PostMapping("/api/test/getNumberAvailableSeats")
@@ -98,21 +56,21 @@ public class NumberAvailableSeatsController {
                 }
                 numberAvailableSeatsResponse.setDepartmentResponse(numberAvailableSeatsResponseRecords);
                 numberAvailableSeatsRequest.setCodeMO(tokenService.getCodeMOWithToken(token));
-                numberAvailableSeatsRequest.setDate_beg(Date.from(Instant.now()));
-                numberAvailableSeatsRequest.setDate_edit(Date.from(Instant.now()));
+                numberAvailableSeatsRequest.setDateBeg(Date.from(Instant.now()));
+                numberAvailableSeatsRequest.setDateEdit(Date.from(Instant.now()));
 
                 numberAvailableSeatsResponse.setReqID(numberAvailableSeatsRequest.getReqID());
                 numberAvailableSeatsResponse.setNumberRecordsProcessed(1);
-                numberAvailableSeatsResponse.setResultRequestCode(200);
+                numberAvailableSeatsResponse.setResultResponseCode(200);
 
                 return ResponseEntity.ok(numberAvailableSeatsResponse);
 
             } catch (Exception e){
-                numberAvailableSeatsResponse.setResultRequestCode(400);
+                numberAvailableSeatsResponse.setResultResponseCode(400);
             }
 
         } else {
-            numberAvailableSeatsResponse.setResultRequestCode(403);
+            numberAvailableSeatsResponse.setResultResponseCode(403);
         }
         return ResponseEntity.ok(numberAvailableSeatsResponse);
     }
@@ -131,13 +89,13 @@ public class NumberAvailableSeatsController {
                 if (numberAvailableSeatsResponseFromDB != null){
                     return ResponseEntity.ok(numberAvailableSeatsResponseFromDB);
                 } else {
-                    numberAvailableSeatsResponse.setResultRequestCode(401);
+                    numberAvailableSeatsResponse.setResultResponseCode(401);
                 }
             } catch (Exception e){
-                numberAvailableSeatsResponse.setResultRequestCode(400);
+                numberAvailableSeatsResponse.setResultResponseCode(400);
             }
         } else {
-            numberAvailableSeatsResponse.setResultRequestCode(403);
+            numberAvailableSeatsResponse.setResultResponseCode(403);
         }
         return ResponseEntity.ok(numberAvailableSeatsResponse);
     }

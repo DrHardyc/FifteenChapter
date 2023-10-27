@@ -1,15 +1,55 @@
+http://localhost:8080/api/1.1/getNumberAvailableSeats
+
 
 token: e/SGvhPZm?usABQ9RT-gf9lyeVvYpztQG779xYQZhPyaDZolE=QNldo3ka/chYxrV4Z4mhBMCwtOLouOXihizs0XLEA0RVcLaUmI79L6ZetOl7x8=dDi4ntQ?WRMbI/?
+token: RnhKpdzagxwTI!Nwsozs34E8Ngf7j7N?wT1necDCVAjw848r/V9=3k-j-EkozJKjxKBQBqyfELJkG75hfp4bXCg3=6FA2K05QSbqHOqh3TVCVLRecwOe-s82D=aZfmWZ
 
 {
-  "reqID":"asdf-adfg-asdqer-adfqeh-erg3",
+  "reqID":"asdf-adfg-asdqer-adfqeh-erg17",
   "departments":
   [
     {
-      "codeDep:"78",
+      "codeDep":78,
       "nameDep":"Терапефтическое",
-      "numberPlacesCurrentDay":"2",
+      "numberPlacesCurrentDay":"3",
       "numberPlacesNext10Days":"6",
+      "dateNumberVacantPlaces":
+      [
+        {
+	      "earliestReleaseDate":"2023-11-11",
+    	  "numberPlacesAvailableSoon":"1"
+        },
+        {
+	      "earliestReleaseDate":"2023-11-12",
+    	  "numberPlacesAvailableSoon":"3"
+        },
+        {
+	      "earliestReleaseDate":"2023-11-13",
+    	  "numberPlacesAvailableSoon":"1"
+        },
+        {
+	      "earliestReleaseDate":"2023-11-15",
+    	  "numberPlacesAvailableSoon":"1"
+        },
+        {
+	      "earliestReleaseDate":"2023-11-16",
+    	  "numberPlacesAvailableSoon":"1"
+        },
+        {
+	      "earliestReleaseDate":"2023-11-17",
+    	  "numberPlacesAvailableSoon":"2"
+        },
+        {
+	      "earliestReleaseDate":"2023-11-18",
+    	  "numberPlacesAvailableSoon":"1"
+        }
+      ]
+    },
+    {
+      "codeDep":55,
+      "nameDep":"Онкологическое",
+      "numberPlacesCurrentDay":"8",
+      "numberPlacesNext10Days":"10",
       "dateNumberVacantPlaces":
       [
         {

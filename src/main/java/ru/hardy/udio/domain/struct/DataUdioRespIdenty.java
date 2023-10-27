@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import ru.hardy.udio.domain.ResponseAnswerUdio;
 
 import java.time.Instant;
 import java.util.Date;
@@ -36,13 +35,6 @@ public class DataUdioRespIdenty {
     private Date date_beg;
     @JsonIgnore
     private Date date_edit;
-
-    public DataUdioRespIdenty(DataUdioRespIdentyGen dataUdioRespIdentyGen) {
-        this.setStatus(ResponseAnswerUdio.PROCESSING);
-        this.setIdenty(dataUdioRespIdentyGen.getGenId());
-        this.date_beg = Date.from(Instant.now());
-        this.date_edit = Date.from(Instant.now());
-    }
 
     public DataUdioRespIdenty() {
     }

@@ -7,5 +7,4 @@ import lombok.Data;
 public class ResultRequest {
     private int resCode;
     private String resMess;
-
 }
