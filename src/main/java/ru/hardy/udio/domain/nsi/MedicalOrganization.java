@@ -17,4 +17,14 @@ public class MedicalOrganization {
     private String fullName;
     private String shortName;
 
+    public MedicalOrganization(int codeMO, String fullName, String shortName){
+        this.setCodeMO(codeMO);
+        this.setFullName(fullName);
+        this.setShortName(shortName);
+
+    }
+
+    public MedicalOrganization() {
+
+    }
 }

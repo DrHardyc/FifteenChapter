@@ -1,6 +1,8 @@
 package ru.hardy.udio.service;
 
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.treegrid.TreeGrid;
+import com.vaadin.flow.data.provider.hierarchy.TreeDataProvider;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -11,6 +13,7 @@ import ru.hardy.udio.config.DBJDBCConfig;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.InsuranceCase;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
+import ru.hardy.udio.domain.api.schedulepianddispplot.DTO.SchedulePIAndDispPlotRequestRecordDTO;
 import ru.hardy.udio.domain.report.AgeLimit;
 import ru.hardy.udio.domain.report.Efficiency;
 import ru.hardy.udio.domain.report.VisitType;
@@ -1021,5 +1024,83 @@ public class ExcelService {
 
         }
         return currDir;
+    }
+
+    public File getSchedulePIAndDispPlotRequestRecordDTO(TreeGrid<SchedulePIAndDispPlotRequestRecordDTO> treeGrid) {
+        FileOutputStream outputStream;
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Общий отчет");
+        Row header = sheet.createRow(0);
+
+        ((TreeDataProvider<SchedulePIAndDispPlotRequestRecordDTO>)
+                treeGrid.getDataProvider()).getTreeData().getChildren(
+                ((TreeDataProvider<SchedulePIAndDispPlotRequestRecordDTO>)
+                        treeGrid.getDataProvider()).getTreeData().getRootItems().get(0));
+        createHeaderCell(header, "Наименование отделения", 0, workbook);
+        createHeaderCell(header, "Январь", 1, workbook);
+        createHeaderCell(header, "Февраль", 2, workbook);
+        createHeaderCell(header, "Март", 3, workbook);
+        createHeaderCell(header, "Апрель", 4, workbook);
+        createHeaderCell(header, "Май", 5, workbook);
+        createHeaderCell(header, "Июнь", 6, workbook);
+        createHeaderCell(header, "Июль", 7, workbook);
+        createHeaderCell(header, "Август", 8, workbook);
+        createHeaderCell(header, "Сентябрь", 9, workbook);
+        createHeaderCell(header, "Октябрь", 10, workbook);
+        createHeaderCell(header, "Ноябрь", 11, workbook);
+        createHeaderCell(header, "Декабрь", 12, workbook);
+
+
+        int indexCount = 1;
+        for (SchedulePIAndDispPlotRequestRecordDTO parent :
+                ((TreeDataProvider<SchedulePIAndDispPlotRequestRecordDTO>)treeGrid.getDataProvider()).getTreeData().getRootItems()) {
+            Row rowParent = sheet.createRow(indexCount);
+            createValueCell(rowParent, parent.getName(), 0, workbook);
+            createValueCell(rowParent, String.valueOf(parent.getMonth1()), 1, workbook);
+            createValueCell(rowParent, String.valueOf(parent.getMonth2()), 2, workbook);
+            createValueCell(rowParent, String.valueOf(parent.getMonth3()), 3, workbook);
+            createValueCell(rowParent, String.valueOf(parent.getMonth4()), 4, workbook);
+            createValueCell(rowParent, String.valueOf(parent.getMonth5()), 5, workbook);
+            createValueCell(rowParent, String.valueOf(parent.getMonth6()), 6, workbook);
+            createValueCell(rowParent, String.valueOf(parent.getMonth7()), 7, workbook);
+            createValueCell(rowParent, String.valueOf(parent.getMonth8()), 8, workbook);
+            createValueCell(rowParent, String.valueOf(parent.getMonth9()), 9, workbook);
+            createValueCell(rowParent, String.valueOf(parent.getMonth10()), 10, workbook);
+            createValueCell(rowParent, String.valueOf(parent.getMonth11()), 11, workbook);
+            createValueCell(rowParent, String.valueOf(parent.getMonth12()), 12, workbook);
+            indexCount++;
+            for (SchedulePIAndDispPlotRequestRecordDTO child :
+                    ((TreeDataProvider<SchedulePIAndDispPlotRequestRecordDTO>)treeGrid.getDataProvider()).getTreeData().getChildren(parent)) {
+                Row rowChild = sheet.createRow(indexCount);
+                createValueCell(rowChild, child.getName(), 0, workbook);
+                createValueCell(rowChild, String.valueOf(child.getMonth1()), 1, workbook);
+                createValueCell(rowChild, String.valueOf(child.getMonth2()), 2, workbook);
+                createValueCell(rowChild, String.valueOf(child.getMonth3()), 3, workbook);
+                createValueCell(rowChild, String.valueOf(child.getMonth4()), 4, workbook);
+                createValueCell(rowChild, String.valueOf(child.getMonth5()), 5, workbook);
+                createValueCell(rowChild, String.valueOf(child.getMonth6()), 6, workbook);
+                createValueCell(rowChild, String.valueOf(child.getMonth7()), 7, workbook);
+                createValueCell(rowChild, String.valueOf(child.getMonth8()), 8, workbook);
+                createValueCell(rowChild, String.valueOf(child.getMonth9()), 9, workbook);
+                createValueCell(rowChild, String.valueOf(child.getMonth10()), 10, workbook);
+                createValueCell(rowChild, String.valueOf(child.getMonth11()), 11, workbook);
+                createValueCell(rowChild, String.valueOf(child.getMonth12()), 12, workbook);
+                indexCount++;
+            }
+        }
+
+
+        File currDir = new File("C:\\udio\\reports\\" + UUID.randomUUID() + "_план-график.xlsx");
+        try {
+            outputStream = new FileOutputStream(currDir);
+            workbook.write(outputStream);
+            workbook.close();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+
+        }
+        return currDir;
+
     }
 }

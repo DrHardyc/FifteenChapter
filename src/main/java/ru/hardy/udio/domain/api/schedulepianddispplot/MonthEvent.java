@@ -24,13 +24,22 @@ public class MonthEvent {
 
     public int month;
     public int quantityPlan;
-    public int quantityInDepth;
-    public int quantityPrevDept;
-    public int quantityCE;
+    public int codeTypePreventiveActions;
 
     @JsonIgnore
     public Date dateBeg;
     @JsonIgnore
     public Date dateEdit;
+
+    public String getNameByCodeTypePreventiveActions(){
+        return switch (this.getCodeTypePreventiveActions()) {
+            case 0 -> "Диспансеризация";
+            case 1 -> "Первый этап диспансеризации";
+            case 2 -> "Второй этап диспансеризации";
+            case 3 -> "Д-наблюдение";
+            case 4 -> "Профосмотр";
+            default -> "Код не опознан";
+        };
+    }
 
 }

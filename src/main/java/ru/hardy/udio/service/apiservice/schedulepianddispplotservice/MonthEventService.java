@@ -16,6 +16,9 @@ public class MonthEventService {
 
     public void addAll(List<MonthEvent> monthEvents){
         monthEventRepo.saveAll(monthEvents);
+    }
 
+    public List<MonthEvent> getAll(){
+        return monthEventRepo.findAll();
     }
 }

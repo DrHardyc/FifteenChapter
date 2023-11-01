@@ -1,11 +1,10 @@
 package ru.hardy.udio.view;
 
+import com.sun.source.tree.Tree;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
@@ -15,34 +14,32 @@ import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
-import com.vaadin.flow.data.renderer.LocalDateRenderer;
+import com.vaadin.flow.data.provider.hierarchy.TreeDataProvider;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
+import ru.hardy.udio.domain.api.schedulepianddispplot.DTO.SchedulePIAndDispPlotRequestRecordDTO;
 import ru.hardy.udio.domain.button.BtnVariant;
 import ru.hardy.udio.domain.button.UdioButton;
 import ru.hardy.udio.domain.combobox.UdioCombobox;
-import ru.hardy.udio.domain.struct.DNGet;
 import ru.hardy.udio.domain.struct.DataFile;
 import ru.hardy.udio.domain.struct.F003;
 import ru.hardy.udio.domain.struct.People;
-import ru.hardy.udio.repo.PeopleRepo;
 import ru.hardy.udio.service.*;
 import ru.hardy.udio.service.SRZ.DBFSearchService;
-import ru.hardy.udio.service.apiservice.individualhistoryonkocaseservice.IndividualHistoryOnkoCaseResponseService;
 import ru.hardy.udio.service.apiservice.padatapatientsservice.PADataPatientRequestRecordService;
+import ru.hardy.udio.view.grid.SchedulePIAndDispPlotRequestRecordGrid;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Route(layout = MainView.class)
 @RolesAllowed("ROLE_ADMIN")
@@ -64,10 +61,7 @@ public class TestView extends VerticalLayout {
     private PADataPatientRequestRecordService paDataPatientRequestRecordService;
 
     @Autowired
-    private PeopleRepo peopleRepo;
-
-    @Autowired
-    private IndividualHistoryOnkoCaseResponseService individualHistoryOnkoCaseResponseService;
+    private SchedulePIAndDispPlotRequestRecordGrid schedulePIAndDispPlotRequestRecordGrid;
 
 
     public TestView() {
@@ -191,21 +185,11 @@ public class TestView extends VerticalLayout {
             System.out.println(dataFile1.getDataFilePatient());
         });
 
-        Button btnTestDNGetAll = new Button();
+        Button btnTestDNGetAll = new Button("Test Grid");
+
         btnTestDNGetAll.addClickListener(e -> {
-            Grid<DNGet> dnGetGrid = new Grid<>();
-            List<DNGet> dnGetList = dnGetService.getAll();
-            dnGetGrid.addColumn(DNGet::getFIO).setHeader("ФИО").setSortable(true);
-            dnGetGrid.addColumn(DNGet::getDiag).setHeader("Диагноз").setSortable(true);
-            dnGetGrid.addColumn(new LocalDateRenderer<>(
-                    DNGet::getLocalDateTimeDate_1, "dd.MM.yyyy")).setResizable(true).setComparator(DNGet::getLocalDateTimeDate_1);
-            dnGetGrid.setItems(dnGetList);
-            Dialog dialog = new Dialog();
-            dialog.setSizeFull();
-            dialog.add(dnGetGrid);
-            dnGetGrid.setSizeFull();
-            //add(dialog);
-            dialog.open();
+            TreeGrid<SchedulePIAndDispPlotRequestRecordDTO> schedulePIAndDispPlotRequestRecordDTOTreeGrid =  new TreeGrid<>();
+            //schedulePIAndDispPlotRequestRecordGrid.getGrid(schedulePIAndDispPlotRequestRecordDTOTreeGrid);
         });
 
         TextField monthBeg = new TextField();
@@ -243,7 +227,7 @@ public class TestView extends VerticalLayout {
 
         Button button = new Button("test");
         button.addClickListener(e -> {
-            System.out.println(individualHistoryOnkoCaseResponseService.getWithReqId("asdf-adfg-asdqer-adfqeh-erg4", 1) != null);
+
         });
 
         add(button, btnTestOneToOne, btnTestF003, buttonGen, btnSearchInSRZ, btnTestDNGetAll,

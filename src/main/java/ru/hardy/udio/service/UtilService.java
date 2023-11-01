@@ -28,7 +28,7 @@ import java.util.List;
 @Service
 public class UtilService {
 
-    public SideNav getTabs(){
+    public static SideNav getTabs(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         SideNav nav = new SideNav();
 
@@ -43,7 +43,7 @@ public class UtilService {
                 .anyMatch(r -> r.getAuthority().equals("ROLE_TFOMS"))) {
             SideNavItem sniXVChapter = new SideNavItem("ХV Глава");
             sniXVChapter.addItem(new SideNavItem("Люди", PeopleView.class, VaadinIcon.USERS.create()));
-            sniXVChapter.addItem(new SideNavItem("Мед. организации", MOView.class, VaadinIcon.DOCTOR.create()));
+            sniXVChapter.addItem(new SideNavItem("Мед. организации", MOView.class, VaadinIcon.HOSPITAL.create()));
             sniXVChapter.addItem(new SideNavItem("Отчеты", ReportView.class, VaadinIcon.FILE_TABLE.create()));
             sniXVChapter.addItem(new SideNavItem("Задачи", TaskView.class, VaadinIcon.TASKS.create()));
             nav.addItem(sniXVChapter);

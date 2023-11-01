@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.nsi.MedicalOrganization;
 import ru.hardy.udio.repo.nsirepo.MedicalOrganizationRepo;
 
+import java.util.List;
+
 @Service
 public class MedicalOrganizationService {
 
@@ -14,5 +16,9 @@ public class MedicalOrganizationService {
 
     public MedicalOrganization getByCode(int codeMO) {
         return medicalOrganizationRepo.findByCodeMO(codeMO);
+    }
+
+    public List<MedicalOrganization> getAll(){
+        return medicalOrganizationRepo.findAll();
     }
 }

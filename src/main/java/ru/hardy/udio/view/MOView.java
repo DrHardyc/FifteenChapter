@@ -1,43 +1,55 @@
 package ru.hardy.udio.view;
 
+import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.dataview.GridListDataView;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.RolesAllowed;
-import ru.hardy.udio.domain.api.PeopleInfo;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.hardy.udio.domain.button.BtnVariant;
 import ru.hardy.udio.domain.button.UdioButton;
-import ru.hardy.udio.view.MainView;
+import ru.hardy.udio.domain.nsi.MedicalOrganization;
+import ru.hardy.udio.service.nsiservice.MedicalOrganizationService;
+import ru.hardy.udio.view.grid.GridUtils;
+import ru.hardy.udio.view.grid.MedicalOrganizationGrid;
+import ru.hardy.udio.view.span.CMSpan;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Route(layout = MainView.class)
 @RolesAllowed("ROLE_TFOMS")
 public class MOView extends VerticalLayout{
 
+    @Autowired
+    private MedicalOrganizationService medicalOrganizationService;
+
+    @Autowired
+    private MedicalOrganizationGrid medicalOrganizationGrid;
+
     public MOView(){
-        FormLayout flMO = new FormLayout();
 
-        TextField tfCodeMO = new TextField();
-        tfCodeMO.setPlaceholder("Введите код МО");
-
-        TextField tfCodeDep = new TextField();
-        tfCodeDep.setPlaceholder("Введите код отделения");
-
-        UdioButton udioButton = new UdioButton("Поиск", BtnVariant.SEARCH);
-        flMO.addFormItem(tfCodeMO, "Код МО");
-        flMO.addFormItem(tfCodeDep, "Код отделения");
-
-        Grid<PeopleInfo> grid = new Grid<>();
-        grid.addColumn(PeopleInfo::getSurname).setHeader("Код МО");
-        grid.addColumn(PeopleInfo::getName).setHeader("Наименование МО");
-        grid.addColumn(PeopleInfo::getInforming).setHeader("План-графики профмероприятий");
-        grid.addColumn(PeopleInfo::getInsuranceCase).setHeader("Объемы");
-        grid.addColumn(PeopleInfo::getInsuranceCase).setHeader("Койко-места");
-        grid.addColumn(PeopleInfo::getInsuranceCase).setHeader("Госпитализация");
-        grid.addColumn(PeopleInfo::getVisitsCalls).setHeader("ЗЛ выбравшие данную МО");
-        grid.setItems(new PeopleInfo());
-
-        add(flMO, udioButton, grid);
     }
+
+    @Override
+    public void onAttach(AttachEvent attachEvent){
+        Grid<MedicalOrganization> grid = new Grid<>();
+        GridListDataView<MedicalOrganization> medicalOrganizationGridListDataView = grid.setItems(medicalOrganizationService.getAll());
+        medicalOrganizationGrid.getGrid(grid, medicalOrganizationGridListDataView);
+        setSizeFull();
+        grid.setHeight("50em");
+        add(grid);
+    }
+
 }

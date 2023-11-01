@@ -22,7 +22,7 @@ public class SchedulePIAndDispPlotRequestRecord {
     @JoinColumn(name = "request_id", nullable = false)
     private SchedulePIAndDispPlotRequest request;
 
-    @OneToMany(mappedBy = "requestRecord", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "requestRecord", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<MonthEvent> months;
 
     @OneToOne(mappedBy = "requestRecord")

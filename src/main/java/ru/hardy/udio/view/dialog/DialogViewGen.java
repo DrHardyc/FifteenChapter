@@ -1,26 +1,30 @@
 package ru.hardy.udio.view.dialog;
 
 
-import ch.qos.logback.classic.net.server.HardenedLoggingEventInputStream;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.dataview.GridListDataView;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.theme.lumo.LumoUtility;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.hardy.udio.domain.api.individualhistoryonkocase.IndividualHistoryOnkoCaseResponseRecord;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.InsuranceCase;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
+import ru.hardy.udio.domain.api.operatingschedule.OperatingScheduleRequest;
+import ru.hardy.udio.domain.api.operatingschedule.OperatingScheduleRequestRecord;
+import ru.hardy.udio.domain.api.operatingschedule.OperatingScheduleResponseRecord;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
+import ru.hardy.udio.domain.api.schedulepianddispplot.DTO.SchedulePIAndDispPlotRequestRecordDTO;
+import ru.hardy.udio.domain.api.schedulepianddispplot.SchedulePIAndDispPlotRequestRecord;
 import ru.hardy.udio.domain.button.BtnVariant;
 import ru.hardy.udio.domain.button.UdioButton;
 import ru.hardy.udio.domain.struct.DNGet;
@@ -28,6 +32,7 @@ import ru.hardy.udio.domain.struct.dto.DNOutDto;
 import ru.hardy.udio.view.grid.*;
 import ru.hardy.udio.view.span.CMSpan;
 
+import java.awt.*;
 import java.util.List;
 
 @Service
@@ -38,7 +43,6 @@ public class DialogViewGen {
 
     private final Span label = new Span();
     private UdioButton btnExcel;
-
 
     public DialogViewGen(){
         Button closeButton = new Button(new Icon(VaadinIcon.CLOSE_SMALL),
@@ -64,6 +68,7 @@ public class DialogViewGen {
         initFooter();
         Grid<PADataPatientRequestRecord> grid = GridUtils.createNewDialogGrid(horizontalLayout, btnExcel);
         PADataPatientRequestRecordGrid paDataPatientRequestRecordGrid = new PADataPatientRequestRecordGrid();
+        grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
 
         GridListDataView<PADataPatientRequestRecord> paDataPatientRequestRecordGridListDataView = grid.setItems(paDataPatientRequestRecords);
         paDataPatientRequestRecordGrid.getGrid(grid, paDataPatientRequestRecordGridListDataView);
@@ -78,6 +83,7 @@ public class DialogViewGen {
         initFooter();
         Grid<IndividualInformingRequestRecord> grid = GridUtils.createNewDialogGrid(horizontalLayout, btnExcel);
         IndividualInformingRequestRecordGrid individualInformingRequestRecordGrid = new IndividualInformingRequestRecordGrid();
+        grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
 
         GridListDataView<IndividualInformingRequestRecord> individualInformingRequestRecordGridListDataView = grid.setItems(individualInformingRequestRecords);
         individualInformingRequestRecordGrid.getGrid(grid, individualInformingRequestRecordGridListDataView);
@@ -89,10 +95,26 @@ public class DialogViewGen {
         return dialog;
     }
 
+    public Dialog geOperatingScheduleResponseRecordDialog(List<OperatingScheduleRequestRecord> operatingScheduleRequestRecords){
+        initFooter();
+        Grid<OperatingScheduleRequestRecord> grid = GridUtils.createNewDialogGrid(horizontalLayout, btnExcel);
+        grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+
+        GridListDataView<OperatingScheduleRequestRecord> operatingScheduleRequestRecordGridListDataView = grid.setItems(operatingScheduleRequestRecords);
+        OperatingScheduleRequestRecordGrid.getGrid(grid, operatingScheduleRequestRecordGridListDataView);
+        operatingScheduleRequestRecordGridListDataView.addItemCountChangeListener(ev -> {
+            label.setText(String.valueOf(operatingScheduleRequestRecordGridListDataView.getItemCount()));
+        });
+        dialog.add(grid);
+
+        return dialog;
+    }
+
     public Dialog getInsuranceCases(List<InsuranceCase> insuranceCases) {
         initFooter();
         Grid<InsuranceCase> grid = GridUtils.createNewDialogGrid(horizontalLayout, btnExcel);
         InsuranceCaseGrid insuranceCaseGrid = new InsuranceCaseGrid();
+        grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
 
         GridListDataView<InsuranceCase> insuranceCaseGridListDataView = grid.setItems(insuranceCases);
         insuranceCaseGrid.getGrid(grid, insuranceCaseGridListDataView);
@@ -103,7 +125,6 @@ public class DialogViewGen {
 
         return dialog;
     }
-
     public Dialog getPeopleInfo(List<IndividualInformingRequestRecord> individualInformingRequestRecordList,
                                 List<PADataPatientRequestRecord> paDataPatientRequestRecordList,
                                 List<InsuranceCase> insuranceCaseList) {
@@ -228,4 +249,6 @@ public class DialogViewGen {
         icon.getStyle().set("padding", "var(--lumo-space-xs");
         return icon;
     }
+
+
 }

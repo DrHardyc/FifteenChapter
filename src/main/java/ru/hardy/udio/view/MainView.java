@@ -33,10 +33,7 @@ public class MainView extends AppLayout{
 
         DrawerToggle toggle = new DrawerToggle();
         H5 titleVersion = new H5("Разработчик Cherminel IT. Whatsapp 918-742-28-78");
-        UtilService su = new UtilService();
-        SideNav tabs = su.getTabs();
-
-        addToDrawer(tabs);
+        addToDrawer(UtilService.getTabs());
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         horizontalLayout.setSizeFull();
         VerticalLayout verticalLayout = new VerticalLayout();
@@ -51,7 +48,7 @@ public class MainView extends AppLayout{
         hlVersion.add(titleVersion);
         addToDrawer(hlVersion);
 
-        Footer footer = new Footer(new Span("ИР ТФОМС РСО-А v1.4.3"));
+        Footer footer = new Footer(new Span("ИР ТФОМС РСО-А v1.4.4"));
         addToNavbar(footer);
     }
 
