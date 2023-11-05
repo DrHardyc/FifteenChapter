@@ -3,7 +3,7 @@ package ru.hardy.udio.service.apiservice.schedulepianddispplotservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.api.schedulepianddispplot.SchedulePIAndDispPlotRequestRecord;
-import ru.hardy.udio.domain.api.schedulepianddispplot.DTO.SchedulePIAndDispPlotRequestRecordDTO;
+import ru.hardy.udio.domain.api.schedulepianddispplot.DTO.SchedulePIAndDispPlotDTO;
 import ru.hardy.udio.domain.nsi.MedicalOrganization;
 import ru.hardy.udio.repo.apirepo.schedulepianddispplotrepo.SchedulePIAndDispPlotRequestRecordRepo;
 
@@ -23,7 +23,7 @@ public class SchedulePIAndDispPlotRequestRecordService {
         return schedulePIAndDispPlotRequestRecordRepo.findAllActualByMO(medicalOrganization);
     }
 
-    public List<SchedulePIAndDispPlotRequestRecordDTO> getDTO(MedicalOrganization medicalOrganization) {
+    public List<SchedulePIAndDispPlotDTO> getDTO(MedicalOrganization medicalOrganization) {
 //        List<SchedulePIAndDispPlotRequestRecordDTO> schedulePIAndDispPlotRequestRecordDTO = new ArrayList<>();
 //        List<SchedulePIAndDispPlotRequestRecord> schedulePIAndDispPlotRequestRecords = schedulePIAndDispPlotRequestRecordRepo.findAllActualByMO(medicalOrganization);
 //

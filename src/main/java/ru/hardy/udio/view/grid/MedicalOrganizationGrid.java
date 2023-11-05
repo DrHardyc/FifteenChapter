@@ -10,12 +10,17 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.hardy.udio.domain.api.volumemedicalcare.VolumeMedicalCareDiagnosis;
+import ru.hardy.udio.domain.api.volumemedicalcare.dto.VolumeMedicalCareDTO;
 import ru.hardy.udio.domain.nsi.MedicalOrganization;
+import ru.hardy.udio.service.UtilService;
 import ru.hardy.udio.service.apiservice.operatingscheduleservice.OperatingScheduleRequestRecordService;
 import ru.hardy.udio.service.apiservice.schedulepianddispplotservice.SchedulePIAndDispPlotRequestRecordService;
+import ru.hardy.udio.service.apiservice.volumemedicalcareservice.VolumeMedicalCareDiagnosisService;
+import ru.hardy.udio.service.apiservice.volumemedicalcareservice.VolumeMedicalCareRequestRecordService;
+import ru.hardy.udio.service.apiservice.volumemedicalcareservice.dto.VolumeMedicalCareDTOService;
 import ru.hardy.udio.service.nsiservice.MedicalOrganizationService;
 import ru.hardy.udio.view.dialog.DialogViewGen;
-import ru.hardy.udio.view.dialog.SchedulePIAndDispPlotResponseRecordDialog;
 
 @Service
 public class MedicalOrganizationGrid {
@@ -29,7 +34,12 @@ public class MedicalOrganizationGrid {
     @Autowired
     private SchedulePIAndDispPlotRequestRecordService schedulePIAndDispPlotRequestRecordService;
 
+    @Autowired
+    private VolumeMedicalCareDTOService volumeMedicalCareDTOService;
+
+
     public void getGrid(Grid<MedicalOrganization> grid, GridListDataView<MedicalOrganization> medicalOrganizationGridListDataView) {
+
         Grid.Column<MedicalOrganization> codeMOCol = grid
                 .addColumn(MedicalOrganization::getCodeMO)
                 .setResizable(true)
@@ -42,7 +52,7 @@ public class MedicalOrganizationGrid {
                 .addColumn(new ComponentRenderer<>(Button::new, (button, medicalOrganization) -> {
                     button.setIcon(new Icon(VaadinIcon.CHART_LINE));
                     button.addClickListener(event -> {
-                        new SchedulePIAndDispPlotResponseRecordDialog()
+                        new DialogViewGen()
                                 .getSchedulePIAndDispPlotResponseRecordDialog(schedulePIAndDispPlotRequestRecordService.getAllByMO(
                                         medicalOrganizationService.getByCode(medicalOrganization.getCodeMO())
                                 )).open();
@@ -52,7 +62,7 @@ public class MedicalOrganizationGrid {
                 .addColumn(new ComponentRenderer<>(Button::new, (button, medicalOrganization) -> {
                     button.setIcon(new Icon(VaadinIcon.CALENDAR));
                     button.addClickListener(event -> {
-                        new DialogViewGen().geOperatingScheduleResponseRecordDialog(
+                        new DialogViewGen().getOperatingScheduleResponseRecordDialog(
                                 operatingScheduleRequestRecordService.getAllByMO(
                                         medicalOrganizationService.getByCode(medicalOrganization.getCodeMO()))).open();
                     });
@@ -61,7 +71,8 @@ public class MedicalOrganizationGrid {
                 .addColumn(new ComponentRenderer<>(Button::new, (button, medicalOrganization) -> {
                     button.setIcon(new Icon(VaadinIcon.DOCTOR));
                     button.addClickListener(event -> {
-                        //todo
+                        new DialogViewGen().getVolumeMedicalCareResponseRecordDialog(
+                                volumeMedicalCareDTOService.getAllByDateInterval(medicalOrganization)).open();
                     });
                 }));
         Grid.Column<MedicalOrganization> seatsCol = grid

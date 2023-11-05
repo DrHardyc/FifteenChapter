@@ -18,8 +18,6 @@ public class VolumeMedicalCare {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private int codeMO;
-
     @OneToOne(fetch = FetchType.LAZY)
     private VolumeMedicalCareRequestRecord requestRecord;
 

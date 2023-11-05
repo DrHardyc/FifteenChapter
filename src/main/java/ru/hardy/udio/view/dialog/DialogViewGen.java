@@ -15,16 +15,15 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.theme.lumo.LumoUtility;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.InsuranceCase;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
-import ru.hardy.udio.domain.api.operatingschedule.OperatingScheduleRequest;
 import ru.hardy.udio.domain.api.operatingschedule.OperatingScheduleRequestRecord;
-import ru.hardy.udio.domain.api.operatingschedule.OperatingScheduleResponseRecord;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
-import ru.hardy.udio.domain.api.schedulepianddispplot.DTO.SchedulePIAndDispPlotRequestRecordDTO;
+import ru.hardy.udio.domain.api.schedulepianddispplot.DTO.SchedulePIAndDispPlotDTO;
 import ru.hardy.udio.domain.api.schedulepianddispplot.SchedulePIAndDispPlotRequestRecord;
+import ru.hardy.udio.domain.api.volumemedicalcare.VolumeMedicalCareRequestRecord;
+import ru.hardy.udio.domain.api.volumemedicalcare.dto.VolumeMedicalCareDTO;
 import ru.hardy.udio.domain.button.BtnVariant;
 import ru.hardy.udio.domain.button.UdioButton;
 import ru.hardy.udio.domain.struct.DNGet;
@@ -32,7 +31,6 @@ import ru.hardy.udio.domain.struct.dto.DNOutDto;
 import ru.hardy.udio.view.grid.*;
 import ru.hardy.udio.view.span.CMSpan;
 
-import java.awt.*;
 import java.util.List;
 
 @Service
@@ -64,6 +62,19 @@ public class DialogViewGen {
         btnExcel = new UdioButton(".xlsx", BtnVariant.XLS);
         dialog.getFooter().add(label, btnExcel);
     }
+
+    public Dialog getSchedulePIAndDispPlotResponseRecordDialog(List<SchedulePIAndDispPlotRequestRecord> schedulePIAndDispPlotRequestRecords) {
+        initFooter();
+        TreeGrid<SchedulePIAndDispPlotDTO> grid = GridUtils.createNewDialogSchedulePIAndDispPlotDTOGrid(horizontalLayout, btnExcel);
+        grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+        SchedulePIAndDispPlotGrid schedulePIAndDispPlotGrid = new SchedulePIAndDispPlotGrid();
+
+        schedulePIAndDispPlotGrid.getGrid(grid, schedulePIAndDispPlotRequestRecords);
+        dialog.add(grid);
+
+        return dialog;
+    }
+
     public Dialog getPADataPatientRequestRecordDialog(List<PADataPatientRequestRecord> paDataPatientRequestRecords) {
         initFooter();
         Grid<PADataPatientRequestRecord> grid = GridUtils.createNewDialogGrid(horizontalLayout, btnExcel);
@@ -95,7 +106,7 @@ public class DialogViewGen {
         return dialog;
     }
 
-    public Dialog geOperatingScheduleResponseRecordDialog(List<OperatingScheduleRequestRecord> operatingScheduleRequestRecords){
+    public Dialog getOperatingScheduleResponseRecordDialog(List<OperatingScheduleRequestRecord> operatingScheduleRequestRecords){
         initFooter();
         Grid<OperatingScheduleRequestRecord> grid = GridUtils.createNewDialogGrid(horizontalLayout, btnExcel);
         grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
@@ -250,5 +261,15 @@ public class DialogViewGen {
         return icon;
     }
 
+    public Dialog getVolumeMedicalCareResponseRecordDialog(List<VolumeMedicalCareDTO> volumeMedicalCareDTOS) {
+        initFooter();
+        TreeGrid<VolumeMedicalCareDTO> grid = GridUtils.createNewDialogVolumeMedicalCareDTOGrid(horizontalLayout, btnExcel);
+        grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+        VolumeMedicalCareDTOGrid volumeMedicalCareDTOGrid = new VolumeMedicalCareDTOGrid();
 
+        volumeMedicalCareDTOGrid.getGrid(grid, volumeMedicalCareDTOS);
+        dialog.add(grid);
+
+        return dialog;
+    }
 }

@@ -4,12 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.api.volumemedicalcare.VolumeMedicalCare;
 import ru.hardy.udio.domain.api.volumemedicalcare.VolumeMedicalCareRequestRecord;
+import ru.hardy.udio.domain.nsi.MedicalOrganization;
 import ru.hardy.udio.repo.apirepo.volumemedicalcarerepo.VolumeMedicalCareRepo;
 
-import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class VolumeMedicalCareService {
@@ -20,7 +20,6 @@ public class VolumeMedicalCareService {
 
     public void add(VolumeMedicalCareRequestRecord departmentRequest, int codeMO) {
         VolumeMedicalCare volumeMedicalCare = new VolumeMedicalCare();
-        volumeMedicalCare.setCodeMO(codeMO);
         volumeMedicalCare.setDate_beg(Date.from(Instant.now()));
         volumeMedicalCare.setDate_edit(Date.from(Instant.now()));
         volumeMedicalCare.setRequestRecord(departmentRequest);

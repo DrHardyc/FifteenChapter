@@ -21,7 +21,7 @@ public class VolumeMedicalCareRequestRecord extends Department {
     @JoinColumn(name = "request_id", nullable = false)
     private VolumeMedicalCareRequest request;
 
-    @OneToMany(mappedBy = "requestRecord", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "requestRecord", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<VolumeMedicalCareDiagnosis> diagnoses;
 
     @OneToOne(mappedBy = "requestRecord")

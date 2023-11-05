@@ -21,12 +21,25 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Service
 public class UtilService {
+
+    public static Date DateTo900Format(int minusDay){
+        try {
+            return new SimpleDateFormat("dd.MM.yyyy HH:mm:ss")
+                    .parse((new SimpleDateFormat("dd.MM.yyyy ")
+                            .format(Date.from(Instant
+                                    .now()
+                                    .minus(minusDay, ChronoUnit.DAYS)))) + " 09:00:00");
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public static SideNav getTabs(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

@@ -6,13 +6,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import ru.hardy.udio.domain.api.volumemedicalcare.VolumeMedicalCareRequestRecord;
 import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.repo.PeopleRepo;
 import ru.hardy.udio.repo.apirepo.numberavailableseatsrepo.NumberAvailableSeatsRepo;
-import ru.hardy.udio.service.PeopleService;
+import ru.hardy.udio.repo.apirepo.volumemedicalcarerepo.VolumeMedicalCareRequestRecordRepo;
+import ru.hardy.udio.repo.nsirepo.MedicalOrganizationRepo;
+import ru.hardy.udio.service.nsiservice.MedicalOrganizationService;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import static ru.hardy.udio.service.UtilService.DateTo900Format;
 
 
 @ExtendWith(SpringExtension.class)
@@ -26,31 +33,39 @@ public class MainTest {
     @Autowired
     private PeopleRepo peopleRepo;
 
+    @Autowired
+    private VolumeMedicalCareRequestRecordRepo volumeMedicalCareRequestRecordRepo;
+
+    @Autowired
+    private MedicalOrganizationRepo medicalOrganizationRepo;
+
     @Test
     public void test() throws ParseException {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 9);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
 
-//        NumberAvailableSeats numberAvailableSeats = numberAvailableSeatsRepo.
-//                findByAllCodeDepAndCodeMOBef9(78, -1, Instant.now().minus(Duration.ofDays(1)));
-//
-//        System.out.println(numberAvailableSeats);
-        System.out.println(peopleRepo.findPeopleBySurnameIgnoreCaseAndNameIgnoreCaseAndPatronymicIgnoreCaseAndDateBirthAndEnp(
-                "Премудрая", "Василиса", "Ивановна", dateFormat.parse("1111-02-12"), "1235486925412365") != null);
+//        calendar.setTime();
+        List<People> peopleList = peopleRepo.findAll();
 
-        System.out.println(peopleRepo.findAllBySurnameIgnoreCaseAndNameIgnoreCaseAndPatronymicIgnoreCaseAndEnp(
-                "Durak", "Ivan", "Vasilevich", "1235486925412367").size());
+//        peopleList.forEach(people -> {
+//            if (Integer.parseInt(new SimpleDateFormat("HH").format(people.getDateBeg())) < 9
+//                    && Integer.parseInt(new SimpleDateFormat("HH").format(newDate)) > 9){
+//                System.out.println(people.getFIO());
+//            }
+//        });
+        List<VolumeMedicalCareRequestRecord> volumeMedicalCareRequestRecords =
+                volumeMedicalCareRequestRecordRepo.findAllByMOLast7Days(medicalOrganizationRepo.findByCodeMO(1),
+                        DateTo900Format(7), DateTo900Format(0));
 
-        System.out.println(peopleRepo.findAllBySurname("Durak").size());
+//        List<VolumeMedicalCareRequestRecord> volumeMedicalCareRequestRecords =
+//                volumeMedicalCareRequestRecordRepo.findAll();
 
-//        JdbcTemplate jdbcTemplate = new JdbcTemplate();
-//        jdbcTemplate.setDataSource(new DBJDBCConfig().getUDIODataSource());
-//        People people = jdbcTemplate.queryForObject("select * from udio_tfoms.people p where p.surname = 'Премудрая'", People.class);
-//        System.out.println(Objects.requireNonNull(people).getFIO());
+        System.out.println(volumeMedicalCareRequestRecords);
 
-        People people = new PeopleService().getPeopleWithJDBC().get(0);
-        people.setSex(1);
-        peopleRepo.save(people);
-        System.out.println(people.getFIO());
 
-   }
+    }
+
+
 }

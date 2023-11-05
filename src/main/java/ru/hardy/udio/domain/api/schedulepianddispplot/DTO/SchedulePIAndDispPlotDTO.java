@@ -7,7 +7,7 @@ import ru.hardy.udio.domain.api.schedulepianddispplot.SchedulePIAndDispPlotReque
 import java.util.List;
 
 @Data
-public class SchedulePIAndDispPlotRequestRecordDTO {
+public class SchedulePIAndDispPlotDTO {
     private String name;
     private int month1;
     private int month2;
@@ -22,10 +22,10 @@ public class SchedulePIAndDispPlotRequestRecordDTO {
     private int month11;
     private int month12;
 
-    private SchedulePIAndDispPlotRequestRecordDTO parent;
+    private SchedulePIAndDispPlotDTO parent;
 
-    public SchedulePIAndDispPlotRequestRecordDTO(List<MonthEventDTO> months, String typeName,
-                                                 SchedulePIAndDispPlotRequestRecordDTO parent){
+    public SchedulePIAndDispPlotDTO(List<MonthEventDTO> months, String typeName,
+                                    SchedulePIAndDispPlotDTO parent){
 
         this.setName(typeName);
         this.setParent(parent);
@@ -47,8 +47,8 @@ public class SchedulePIAndDispPlotRequestRecordDTO {
         });
     }
 
-    public SchedulePIAndDispPlotRequestRecordDTO(String nameDep,
-                                                 SchedulePIAndDispPlotRequestRecord schedulePIAndDispPlotRequestRecord){
+    public SchedulePIAndDispPlotDTO(String nameDep,
+                                    SchedulePIAndDispPlotRequestRecord schedulePIAndDispPlotRequestRecord){
         this.setName(nameDep);
         this.month1 = schedulePIAndDispPlotRequestRecord
                 .getMonths()

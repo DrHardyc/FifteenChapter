@@ -1,6 +1,5 @@
 package ru.hardy.udio.view;
 
-import com.sun.source.tree.Tree;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
@@ -17,13 +16,12 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
-import com.vaadin.flow.data.provider.hierarchy.TreeDataProvider;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
-import ru.hardy.udio.domain.api.schedulepianddispplot.DTO.SchedulePIAndDispPlotRequestRecordDTO;
+import ru.hardy.udio.domain.api.schedulepianddispplot.DTO.SchedulePIAndDispPlotDTO;
 import ru.hardy.udio.domain.button.BtnVariant;
 import ru.hardy.udio.domain.button.UdioButton;
 import ru.hardy.udio.domain.combobox.UdioCombobox;
@@ -33,13 +31,11 @@ import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.service.*;
 import ru.hardy.udio.service.SRZ.DBFSearchService;
 import ru.hardy.udio.service.apiservice.padatapatientsservice.PADataPatientRequestRecordService;
-import ru.hardy.udio.view.grid.SchedulePIAndDispPlotRequestRecordGrid;
+import ru.hardy.udio.view.grid.SchedulePIAndDispPlotGrid;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Route(layout = MainView.class)
 @RolesAllowed("ROLE_ADMIN")
@@ -61,7 +57,7 @@ public class TestView extends VerticalLayout {
     private PADataPatientRequestRecordService paDataPatientRequestRecordService;
 
     @Autowired
-    private SchedulePIAndDispPlotRequestRecordGrid schedulePIAndDispPlotRequestRecordGrid;
+    private SchedulePIAndDispPlotGrid schedulePIAndDispPlotGrid;
 
 
     public TestView() {
@@ -188,7 +184,7 @@ public class TestView extends VerticalLayout {
         Button btnTestDNGetAll = new Button("Test Grid");
 
         btnTestDNGetAll.addClickListener(e -> {
-            TreeGrid<SchedulePIAndDispPlotRequestRecordDTO> schedulePIAndDispPlotRequestRecordDTOTreeGrid =  new TreeGrid<>();
+            TreeGrid<SchedulePIAndDispPlotDTO> schedulePIAndDispPlotRequestRecordDTOTreeGrid =  new TreeGrid<>();
             //schedulePIAndDispPlotRequestRecordGrid.getGrid(schedulePIAndDispPlotRequestRecordDTOTreeGrid);
         });
 

@@ -1,19 +1,18 @@
 package ru.hardy.udio.service;
 
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.provider.hierarchy.TreeDataProvider;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.jooq.meta.derby.sys.Sys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.config.DBJDBCConfig;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.InsuranceCase;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
-import ru.hardy.udio.domain.api.schedulepianddispplot.DTO.SchedulePIAndDispPlotRequestRecordDTO;
+import ru.hardy.udio.domain.api.schedulepianddispplot.DTO.SchedulePIAndDispPlotDTO;
+import ru.hardy.udio.domain.api.volumemedicalcare.dto.VolumeMedicalCareDTO;
 import ru.hardy.udio.domain.report.AgeLimit;
 import ru.hardy.udio.domain.report.Efficiency;
 import ru.hardy.udio.domain.report.VisitType;
@@ -33,6 +32,8 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -1026,15 +1027,15 @@ public class ExcelService {
         return currDir;
     }
 
-    public File getSchedulePIAndDispPlotRequestRecordDTO(TreeGrid<SchedulePIAndDispPlotRequestRecordDTO> treeGrid) {
+    public File getSchedulePIAndDispPlotRequestRecordDTO(TreeGrid<SchedulePIAndDispPlotDTO> treeGrid) {
         FileOutputStream outputStream;
         XSSFWorkbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Общий отчет");
         Row header = sheet.createRow(0);
 
-        ((TreeDataProvider<SchedulePIAndDispPlotRequestRecordDTO>)
+        ((TreeDataProvider<SchedulePIAndDispPlotDTO>)
                 treeGrid.getDataProvider()).getTreeData().getChildren(
-                ((TreeDataProvider<SchedulePIAndDispPlotRequestRecordDTO>)
+                ((TreeDataProvider<SchedulePIAndDispPlotDTO>)
                         treeGrid.getDataProvider()).getTreeData().getRootItems().get(0));
         createHeaderCell(header, "Наименование отделения", 0, workbook);
         createHeaderCell(header, "Январь", 1, workbook);
@@ -1052,8 +1053,8 @@ public class ExcelService {
 
 
         int indexCount = 1;
-        for (SchedulePIAndDispPlotRequestRecordDTO parent :
-                ((TreeDataProvider<SchedulePIAndDispPlotRequestRecordDTO>)treeGrid.getDataProvider()).getTreeData().getRootItems()) {
+        for (SchedulePIAndDispPlotDTO parent :
+                ((TreeDataProvider<SchedulePIAndDispPlotDTO>)treeGrid.getDataProvider()).getTreeData().getRootItems()) {
             Row rowParent = sheet.createRow(indexCount);
             createValueCell(rowParent, parent.getName(), 0, workbook);
             createValueCell(rowParent, String.valueOf(parent.getMonth1()), 1, workbook);
@@ -1069,8 +1070,8 @@ public class ExcelService {
             createValueCell(rowParent, String.valueOf(parent.getMonth11()), 11, workbook);
             createValueCell(rowParent, String.valueOf(parent.getMonth12()), 12, workbook);
             indexCount++;
-            for (SchedulePIAndDispPlotRequestRecordDTO child :
-                    ((TreeDataProvider<SchedulePIAndDispPlotRequestRecordDTO>)treeGrid.getDataProvider()).getTreeData().getChildren(parent)) {
+            for (SchedulePIAndDispPlotDTO child :
+                    ((TreeDataProvider<SchedulePIAndDispPlotDTO>)treeGrid.getDataProvider()).getTreeData().getChildren(parent)) {
                 Row rowChild = sheet.createRow(indexCount);
                 createValueCell(rowChild, child.getName(), 0, workbook);
                 createValueCell(rowChild, String.valueOf(child.getMonth1()), 1, workbook);
@@ -1091,6 +1092,68 @@ public class ExcelService {
 
 
         File currDir = new File("C:\\udio\\reports\\" + UUID.randomUUID() + "_план-график.xlsx");
+        try {
+            outputStream = new FileOutputStream(currDir);
+            workbook.write(outputStream);
+            workbook.close();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+
+        }
+        return currDir;
+
+    }
+
+    public File getVolumeMedicalCareDTO(TreeGrid<VolumeMedicalCareDTO> treeGrid) {
+        FileOutputStream outputStream;
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Общий отчет");
+        Row header = sheet.createRow(0);
+
+        ((TreeDataProvider<VolumeMedicalCareDTO>)
+                treeGrid.getDataProvider()).getTreeData().getChildren(
+                ((TreeDataProvider<VolumeMedicalCareDTO>)
+                        treeGrid.getDataProvider()).getTreeData().getRootItems().get(0));
+        createHeaderCell(header, "Наименование отделения", 0, workbook);
+        createHeaderCell(header, "вчера", 1, workbook);
+        createHeaderCell(header, "позавчера", 2, workbook);
+        createHeaderCell(header, "2 дня назад", 3, workbook);
+        createHeaderCell(header, "3 дня назад", 4, workbook);
+        createHeaderCell(header, "4 дня назад", 5, workbook);
+        createHeaderCell(header, "5 дней назад", 6, workbook);
+        createHeaderCell(header, "6 дней назад", 7, workbook);
+
+
+        int indexCount = 1;
+        for (VolumeMedicalCareDTO parent :
+                ((TreeDataProvider<VolumeMedicalCareDTO>) treeGrid.getDataProvider()).getTreeData().getRootItems()) {
+            Row rowParent = sheet.createRow(indexCount);
+            createValueCell(rowParent, parent.getName(), 0, workbook);
+            createValueCell(rowParent, String.valueOf(parent.getDay1()), 1, workbook);
+            createValueCell(rowParent, String.valueOf(parent.getDay2()), 2, workbook);
+            createValueCell(rowParent, String.valueOf(parent.getDay3()), 3, workbook);
+            createValueCell(rowParent, String.valueOf(parent.getDay4()), 4, workbook);
+            createValueCell(rowParent, String.valueOf(parent.getDay5()), 5, workbook);
+            createValueCell(rowParent, String.valueOf(parent.getDay6()), 6, workbook);
+            createValueCell(rowParent, String.valueOf(parent.getDay7()), 7, workbook);
+            indexCount++;
+            for (VolumeMedicalCareDTO child :
+                    ((TreeDataProvider<VolumeMedicalCareDTO>) treeGrid.getDataProvider()).getTreeData().getChildren(parent)) {
+                Row rowChild = sheet.createRow(indexCount);
+                createValueCell(rowChild, child.getName(), 0, workbook);
+                createValueCell(rowChild, String.valueOf(child.getDay1()), 1, workbook);
+                createValueCell(rowChild, String.valueOf(child.getDay2()), 2, workbook);
+                createValueCell(rowChild, String.valueOf(child.getDay3()), 3, workbook);
+                createValueCell(rowChild, String.valueOf(child.getDay4()), 4, workbook);
+                createValueCell(rowChild, String.valueOf(child.getDay5()), 5, workbook);
+                createValueCell(rowChild, String.valueOf(child.getDay6()), 6, workbook);
+                createValueCell(rowChild, String.valueOf(child.getDay7()), 7, workbook);
+                indexCount++;
+            }
+        }
+
+        File currDir = new File("C:\\udio\\reports\\" + UUID.randomUUID() + "_объемы.xlsx");
         try {
             outputStream = new FileOutputStream(currDir);
             workbook.write(outputStream);
