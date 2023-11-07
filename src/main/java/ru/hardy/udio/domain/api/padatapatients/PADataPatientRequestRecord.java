@@ -45,6 +45,10 @@ public class PADataPatientRequestRecord extends InsuredPerson {
     @JoinColumn(name = "ihiResponseRecord_id")
     private IndividualHistoryInformingResponseRecord ihiResponseRecord;
 
+    private String city;
+    private String street;
+    private String house;
+    private String apartment;
     private int signUpdate;
     private String numberHistory;
     private String mainDiagnosis;
@@ -52,6 +56,7 @@ public class PADataPatientRequestRecord extends InsuredPerson {
     private String concomitantDiagnosis;
     private String diagnosisComplications;
     private int codeTypePreventiveActions;
+    private int statusTypePreventiveActions;
     private String nameTypePreventiveActions;
     private Date dateInclude;
     private String periodPA;

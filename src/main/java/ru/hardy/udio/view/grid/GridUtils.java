@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.vaadin.olli.FileDownloadWrapper;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.InsuranceCase;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
+import ru.hardy.udio.domain.api.numberavailableseats.DTO.NumberAvailableSeatsDTO;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
 import ru.hardy.udio.domain.api.schedulepianddispplot.DTO.SchedulePIAndDispPlotDTO;
 import ru.hardy.udio.domain.api.volumemedicalcare.dto.VolumeMedicalCareDTO;
@@ -73,6 +74,8 @@ public class GridUtils {
                     file = excelService.getIndividualInformingRequestRecord(grid.getSelectedItems());
                 if (object instanceof InsuranceCase)
                     file = excelService.getInsuranceCase(grid.getSelectedItems());
+                if (object instanceof NumberAvailableSeatsDTO)
+                    file = excelService.getNumberAvailableSeatsDTO(grid.getSelectedItems());
                 break;
             }
 
@@ -153,4 +156,5 @@ public class GridUtils {
         grid.setSizeFull();
         return grid;
     }
+
 }

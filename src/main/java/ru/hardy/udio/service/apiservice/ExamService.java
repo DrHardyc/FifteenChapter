@@ -31,9 +31,6 @@ public class ExamService {
     @Autowired
     private PADataPatientService paDataPatientsService;
 
-    @Autowired
-    private IndividualInformingService individualInformingService;
-
     public boolean checkMKB(String mkb){
         DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
         Statement statement = dbjdbcConfig.getBars();
@@ -84,10 +81,11 @@ public class ExamService {
                     errCode = 502;
                     errMess = "Есть замечания или расхождения в СРЗ";
                 } else {
+                    PADataPatient paDataPatient = paDataPatientsService.searchPatient(peopleResultProcessingClass.getProcessingClass(),
+                            paDataPatientRequestRecord.getMainDiagnosis(), paDataPatientRequestRecord.getCodeTypePreventiveActions(),
+                            paDataPatientRequestRecord.getStatusTypePreventiveActions(),
+                            paDataPatientRequestRecord.getDateInsuranceCase());
                     if (paDataPatientRequestRecord.getSignUpdate() == 1){
-                        PADataPatient paDataPatient = paDataPatientsService.searchPatient(peopleResultProcessingClass.getProcessingClass(),
-                                paDataPatientRequestRecord.getMainDiagnosis(), paDataPatientRequestRecord.getCodeTypePreventiveActions(),
-                                paDataPatientRequestRecord.getDateInsuranceCase());
                         if (paDataPatient != null){
                             errMess = "Запись успешно обновлена";
                             paDataPatient.setRequestRecord(paDataPatientRequestRecord);
@@ -97,9 +95,6 @@ public class ExamService {
                             errMess = "Запись для обновления не найдена";
                         }
                     } else {
-                        PADataPatient paDataPatient = paDataPatientsService.searchPatient(peopleResultProcessingClass.getProcessingClass(),
-                                paDataPatientRequestRecord.getMainDiagnosis(), paDataPatientRequestRecord.getCodeTypePreventiveActions(),
-                                paDataPatientRequestRecord.getDateInsuranceCase());
                         if ( paDataPatient != null) {
                             errCode = 502;
                             errMess = "Пациент c таким диагнозом ранее был добавлен для данной МО";

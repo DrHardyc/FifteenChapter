@@ -7,8 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 import ru.hardy.udio.domain.abstractclasses.Department;
 
-
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -26,7 +24,6 @@ public class NumberAvailableSeatsRequestRecord extends Department {
     private List<DateNumberVacantPlaces> dateNumberVacantPlaces;
 
     private int numberPlacesCurrentDay;
-    private int numberPlacesNext10Days;
 
     @ManyToOne
     @JoinColumn(name = "request_id", nullable = false)

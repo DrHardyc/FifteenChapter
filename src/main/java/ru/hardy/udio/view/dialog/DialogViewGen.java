@@ -18,11 +18,11 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.InsuranceCase;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
+import ru.hardy.udio.domain.api.numberavailableseats.DTO.NumberAvailableSeatsDTO;
 import ru.hardy.udio.domain.api.operatingschedule.OperatingScheduleRequestRecord;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
 import ru.hardy.udio.domain.api.schedulepianddispplot.DTO.SchedulePIAndDispPlotDTO;
 import ru.hardy.udio.domain.api.schedulepianddispplot.SchedulePIAndDispPlotRequestRecord;
-import ru.hardy.udio.domain.api.volumemedicalcare.VolumeMedicalCareRequestRecord;
 import ru.hardy.udio.domain.api.volumemedicalcare.dto.VolumeMedicalCareDTO;
 import ru.hardy.udio.domain.button.BtnVariant;
 import ru.hardy.udio.domain.button.UdioButton;
@@ -268,6 +268,18 @@ public class DialogViewGen {
         VolumeMedicalCareDTOGrid volumeMedicalCareDTOGrid = new VolumeMedicalCareDTOGrid();
 
         volumeMedicalCareDTOGrid.getGrid(grid, volumeMedicalCareDTOS);
+        dialog.add(grid);
+
+        return dialog;
+    }
+
+    public Dialog getNumberAvailableSeatsDialog(List<NumberAvailableSeatsDTO> numberAvailableSeatsDTOS) {
+        initFooter();
+        Grid grid = GridUtils.createNewDialogGrid(horizontalLayout, btnExcel);
+        grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+        NumberAvailableSeatsGrid numberAvailableSeatsGrid = new NumberAvailableSeatsGrid();
+
+        numberAvailableSeatsGrid.getGrid(grid, numberAvailableSeatsDTOS);
         dialog.add(grid);
 
         return dialog;

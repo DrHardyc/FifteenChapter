@@ -1,5 +1,5 @@
 
-http://localhost:8080/api/test/getPADataPatient
+http://localhost:8080/api/1.1/getPADataPatient
 
 token: e/SGvhPZm?usABQ9RT-gf9lyeVvYpztQG779xYQZhPyaDZolE=QNldo3ka/chYxrV4Z4mhBMCwtOLouOXihizs0XLEA0RVcLaUmI79L6ZetOl7x8=dDi4ntQ?WRMbI/?
 token: RnhKpdzagxwTI!Nwsozs34E8Ngf7j7N?wT1necDCVAjw848r/V9=3k-j-EkozJKjxKBQBqyfELJkG75hfp4bXCg3=6FA2K05QSbqHOqh3TVCVLRecwOe-s82D=aZfmWZ
@@ -14,6 +14,10 @@ token: RnhKpdzagxwTI!Nwsozs34E8Ngf7j7N?wT1necDCVAjw848r/V9=3k-j-EkozJKjxKBQBqyfE
       "patronymic":"Ивановна",
       "dateBirth":"1111-02-12",
       "enp":"1235486925412365",
+      "sity":"Владимир",
+      "street":"Мудреная",
+      "house":"25",
+      "apartment":"",
       "signUpdate": 1,
       "numberHistory":"",
       "mainDiagnosis":"Z01.1",
@@ -21,6 +25,7 @@ token: RnhKpdzagxwTI!Nwsozs34E8Ngf7j7N?wT1necDCVAjw848r/V9=3k-j-EkozJKjxKBQBqyfE
       "concomitantDiagnosis":"",
       "diagnosisComplications":"",
       "codeTypePreventiveActions":1,
+      "statusTypePreventiveActions":2,
       "nameTypePreventiveActions":"Первый этап диспансеризации",
       "dateInclude":"1133-12-06",
       "periodPA":"1 раз в год",
@@ -37,6 +42,10 @@ token: RnhKpdzagxwTI!Nwsozs34E8Ngf7j7N?wT1necDCVAjw848r/V9=3k-j-EkozJKjxKBQBqyfE
       "patronymic":"Васильевич",
       "dateBirth":"1131-07-23",
       "enp":"1235486925412367",
+      "sity":"Муром",
+      "street":"33-х Багатырей",
+      "house":"1/1",
+      "apartment":"1",
       "signUpdate": 0,
       "numberHistory":"",
       "mainDiagnosis":"Z01.1",
@@ -44,6 +53,7 @@ token: RnhKpdzagxwTI!Nwsozs34E8Ngf7j7N?wT1necDCVAjw848r/V9=3k-j-EkozJKjxKBQBqyfE
       "concomitantDiagnosis":"",
       "diagnosisComplications":"",
       "codeTypePreventiveActions":0,
+      "statusTypePreventiveActions":0,
       "nameTypePreventiveActions":"Диспансеризация",
       "dateInclude":"1133-12-05",
       "periodPA":"1 раз в год",

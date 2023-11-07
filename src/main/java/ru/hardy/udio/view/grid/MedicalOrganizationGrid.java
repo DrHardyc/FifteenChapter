@@ -10,10 +10,12 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.hardy.udio.domain.api.numberavailableseats.DTO.NumberAvailableSeatsDTO;
 import ru.hardy.udio.domain.api.volumemedicalcare.VolumeMedicalCareDiagnosis;
 import ru.hardy.udio.domain.api.volumemedicalcare.dto.VolumeMedicalCareDTO;
 import ru.hardy.udio.domain.nsi.MedicalOrganization;
 import ru.hardy.udio.service.UtilService;
+import ru.hardy.udio.service.apiservice.numberavailableseatsservice.DTO.NumberAvailableSeatsDTOService;
 import ru.hardy.udio.service.apiservice.operatingscheduleservice.OperatingScheduleRequestRecordService;
 import ru.hardy.udio.service.apiservice.schedulepianddispplotservice.SchedulePIAndDispPlotRequestRecordService;
 import ru.hardy.udio.service.apiservice.volumemedicalcareservice.VolumeMedicalCareDiagnosisService;
@@ -36,6 +38,9 @@ public class MedicalOrganizationGrid {
 
     @Autowired
     private VolumeMedicalCareDTOService volumeMedicalCareDTOService;
+
+    @Autowired
+    private NumberAvailableSeatsDTOService numberAvailableSeatsDTOService;
 
 
     public void getGrid(Grid<MedicalOrganization> grid, GridListDataView<MedicalOrganization> medicalOrganizationGridListDataView) {
@@ -79,7 +84,8 @@ public class MedicalOrganizationGrid {
                 .addColumn(new ComponentRenderer<>(Button::new, (button, medicalOrganization) -> {
                     button.setIcon(new Icon(VaadinIcon.BED));
                     button.addClickListener(event -> {
-                        //todo
+                        new DialogViewGen().getNumberAvailableSeatsDialog(
+                                numberAvailableSeatsDTOService.getAllByMO(medicalOrganization)).open();
                     });
                 }));
 

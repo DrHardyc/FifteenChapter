@@ -1,6 +1,7 @@
 package ru.hardy.udio.service.apiservice.padatapatientsservice;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatient;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
@@ -9,6 +10,7 @@ import ru.hardy.udio.repo.apirepo.padatapatientsrepo.PADataPatientRepo;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class PADataPatientService {
@@ -30,12 +32,19 @@ public class PADataPatientService {
         paDataPatientRepo.save(paDataPatient);
     }
 
-    public PADataPatient searchPatient(People people, String mainDiag, int codeType, Date dateInsurance) {
-        return paDataPatientRepo.findByPeopleAndRequestRecord_MainDiagnosisAndRequestRecord_CodeTypePreventiveActionsAndRequestRecord_DateInsuranceCase(
-                people, mainDiag, codeType, dateInsurance);
+    public PADataPatient searchPatient(People people, String mainDiag, int codeType, int status,  Date dateInsurance) {
+        return paDataPatientRepo.
+                findByPeopleAndRequestRecord_MainDiagnosisAndRequestRecord_CodeTypePreventiveActionsAndRequestRecord_StatusTypePreventiveActionsAndRequestRecord_DateInsuranceCase(
+                people, mainDiag, codeType, status, dateInsurance);
     }
 
     public PADataPatient searchPatient(People people){
         return paDataPatientRepo.findByPeople(people);
+    }
+
+
+
+    public List<PADataPatient> getAllByTypeAndStatus(int type, int status){
+        return paDataPatientRepo.findAllByRequestRecord_CodeTypePreventiveActionsAndRequestRecord_StatusTypePreventiveActions(type, status);
     }
 }

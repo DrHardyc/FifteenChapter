@@ -20,6 +20,8 @@ import ru.hardy.udio.domain.api.operatingschedule.OperatingScheduleRequest;
 import ru.hardy.udio.domain.api.operatingschedule.OperatingScheduleResponse;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequest;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientResponse;
+import ru.hardy.udio.domain.api.padatepatinetssmo.PADataPatientSMORequest;
+import ru.hardy.udio.domain.api.padatepatinetssmo.PADataPatientSMOResponse;
 import ru.hardy.udio.domain.api.recommendationspatient.RecommendationsPatientRequest;
 import ru.hardy.udio.domain.api.recommendationspatient.RecommendationsPatientResponse;
 import ru.hardy.udio.domain.api.schedulepianddispplot.SchedulePIAndDispPlotRequest;
@@ -38,6 +40,7 @@ import ru.hardy.udio.service.apiservice.individualinformingservice.IndividualInf
 import ru.hardy.udio.service.apiservice.numberavailableseatsservice.NumberAvailableSeatsRequestService;
 import ru.hardy.udio.service.apiservice.operatingscheduleservice.OperatingScheduleRequestService;
 import ru.hardy.udio.service.apiservice.padatapatientsservice.PADataPatientRequestService;
+import ru.hardy.udio.service.apiservice.padatepatinetssmoservice.PADataPatientSMORequestService;
 import ru.hardy.udio.service.apiservice.recommendationspatientservice.RecommendationsPatientRequestService;
 import ru.hardy.udio.service.apiservice.schedulepianddispplotservice.SchedulePIAndDispPlotRequestService;
 import ru.hardy.udio.service.apiservice.volumemedicalcareservice.VolumeMedicalCareRequestService;
@@ -86,7 +89,8 @@ public class APIRequestService implements APIRequestServiceInterface {
     private RecommendationsPatientRequestService recommendationsPatientRequestService;
     @Autowired
     private MedicalOrganizationService medicalOrganizationService;
-
+    @Autowired
+    private PADataPatientSMORequestService paDataPatientSMORequestService;
 
     @Override
     public void add(APIRequest apiRequest) {
@@ -112,35 +116,34 @@ public class APIRequestService implements APIRequestServiceInterface {
             hospitalizationRequestService.add(apiRequest);
         } else if (apiRequest instanceof RecommendationsPatientRequest) {
             recommendationsPatientRequestService.add(apiRequest);
+        } else if (apiRequest instanceof PADataPatientSMORequest) {
+            paDataPatientSMORequestService.add(apiRequest);
         }
     }
 
     @Override
     public boolean checkChild(APIRequest apiRequest) {
-        if (apiRequest instanceof ChoosingMORequest){
-            return choosingMORequestService.checkChild(apiRequest);
-        } else if (apiRequest instanceof IndividualHistoryInformingRequest){
-            return true;
-        } else if (apiRequest instanceof IndividualHistoryOnkoCaseRequest) {
-            return individualHistoryOnkoCaseRequestService.checkChild(apiRequest);
-        } else if (apiRequest instanceof IndividualInformingRequest) {
-            return individualInformingRequestService.checkChild(apiRequest);
-        } else if (apiRequest instanceof NumberAvailableSeatsRequest) {
-            return numberAvailableSeatsResponseService.checkChild(apiRequest);
-        } else if (apiRequest instanceof OperatingScheduleRequest) {
-            return operatingScheduleResponseService.checkChild(apiRequest);
-        } else if (apiRequest instanceof PADataPatientRequest) {
-            return paDataPatientResponseService.checkChild(apiRequest);
-        } else if (apiRequest instanceof SchedulePIAndDispPlotRequest) {
-            return schedulePIAndDispPlotResponseService.checkChild(apiRequest);
-        } else if (apiRequest instanceof VolumeMedicalCareRequest) {
-            return volumeMedicalCareResponseService.checkChild(apiRequest);
-        } else if (apiRequest instanceof HospitalizationRequest) {
-            return hospitalizationResponseService.checkChild(apiRequest);
-        } else if (apiRequest instanceof RecommendationsPatientRequest) {
-            return recommendationsPatientRequestService.checkChild(apiRequest);
-        }
-        return false;
+        return switch (apiRequest) {
+            case ChoosingMORequest choosingMORequest -> choosingMORequestService.checkChild(apiRequest);
+            case IndividualHistoryInformingRequest individualHistoryInformingRequest -> true;
+            case IndividualHistoryOnkoCaseRequest individualHistoryOnkoCaseRequest ->
+                    individualHistoryOnkoCaseRequestService.checkChild(apiRequest);
+            case IndividualInformingRequest individualInformingRequest ->
+                    individualInformingRequestService.checkChild(apiRequest);
+            case NumberAvailableSeatsRequest numberAvailableSeatsRequest ->
+                    numberAvailableSeatsResponseService.checkChild(apiRequest);
+            case OperatingScheduleRequest operatingScheduleRequest ->
+                    operatingScheduleResponseService.checkChild(apiRequest);
+            case PADataPatientRequest paDataPatientRequest -> paDataPatientResponseService.checkChild(apiRequest);
+            case SchedulePIAndDispPlotRequest schedulePIAndDispPlotRequest ->
+                    schedulePIAndDispPlotResponseService.checkChild(apiRequest);
+            case VolumeMedicalCareRequest volumeMedicalCareRequest ->
+                    volumeMedicalCareResponseService.checkChild(apiRequest);
+            case HospitalizationRequest hospitalizationRequest -> hospitalizationResponseService.checkChild(apiRequest);
+            case RecommendationsPatientRequest recommendationsPatientRequest ->
+                    recommendationsPatientRequestService.checkChild(apiRequest);
+            case null, default -> apiRequest instanceof PADataPatientSMORequest;
+        };
     }
 
     public APIResponse acceptance(String token, APIRequest apiRequest) {
@@ -292,6 +295,8 @@ public class APIRequestService implements APIRequestServiceInterface {
             return new HospitalizationResponse();
         } else if (apiRequest instanceof RecommendationsPatientRequest) {
             return new RecommendationsPatientResponse();
+        } else if (apiRequest instanceof PADataPatientSMORequest) {
+            return new PADataPatientSMOResponse();
         }
         return null;
     }

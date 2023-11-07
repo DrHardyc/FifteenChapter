@@ -11,17 +11,20 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(schema = "udio_tfoms")
-public class NumberAvailableSeats {
+public class DateNumberVacantPlacesActual {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private NumberAvailableSeatsRequestRecord requestRecord;
+    private Date dateVacant;
+    private int numberVacant;
+
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private NumberAvailableSeats numberAvailableSeats;
 
     @JsonIgnore
     private Date dateBeg;
     @JsonIgnore
     private Date dateEdit;
-
 }

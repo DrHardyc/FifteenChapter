@@ -11,12 +11,16 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class NumberAvailableSeatsService {
 
     @Autowired
     private NumberAvailableSeatsRepo numberAvailableSeatsRepo;
+
+    @Autowired
+    private DateNumberVacantPlacesActualService dateNumberVacantPlacesActualService;
 
     public void add(NumberAvailableSeatsRequestRecord departmentRequest, MedicalOrganization medicalOrganization){
         if (Integer.parseInt(new SimpleDateFormat("HH").format(Date.from(Instant.now()))) < 9) {
@@ -38,6 +42,7 @@ public class NumberAvailableSeatsService {
         department.setRequestRecord(departmentRequest);
         department.setDateEdit(Date.from(Instant.now()));
         numberAvailableSeatsRepo.save(department);
+        dateNumberVacantPlacesActualService.addAll(department);
     }
 
     private void addNew(NumberAvailableSeatsRequestRecord departmentRequest){
@@ -46,5 +51,10 @@ public class NumberAvailableSeatsService {
         department.setDateBeg(Date.from(Instant.now()));
         department.setDateEdit(Date.from(Instant.now()));
         numberAvailableSeatsRepo.save(department);
+        dateNumberVacantPlacesActualService.addAll(department);
+    }
+
+    public List<NumberAvailableSeats> getAllByMO(MedicalOrganization medicalOrganization) {
+        return numberAvailableSeatsRepo.findAllByMO(medicalOrganization);
     }
 }

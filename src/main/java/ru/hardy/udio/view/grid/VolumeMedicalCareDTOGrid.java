@@ -33,39 +33,4 @@ public class VolumeMedicalCareDTOGrid {
                         volumeMedicalCareDTO));
 
     }
-
-    private boolean checkCodeDiagIteration(List<String> diagnosisCodesIteration, String diagnosisCode) {
-        for (String diagnosisCodeIteration: diagnosisCodesIteration){
-            if (diagnosisCodeIteration.equals(diagnosisCode)) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-        return false;
-    }
-
-    private boolean checkDepartmentNameIteration(List<String> departmentNames, String departmentName){
-        for (String departmentNameIteration: departmentNames){
-            if (departmentNameIteration.equals(departmentName)) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-        return false;
-    }
-
-    private int getFilterDiagnosis(int beg, int end, List<VolumeMedicalCareDiagnosis> volumeMedicalCareDiagnosisList, String codeDiag){
-        List<VolumeMedicalCareDiagnosis> volumeMedicalCareDiagnoses = volumeMedicalCareDiagnosisList.stream().filter(
-                diagnosisDays ->
-                diagnosisDays.getRequestRecord().getDepartment().getDate_beg().after(UtilService.DateTo900Format(beg))
-                        && diagnosisDays.getRequestRecord().getDepartment().getDate_beg().before(UtilService.DateTo900Format(end))
-                        && diagnosisDays.getCodeDiagnosis().equals(codeDiag)).toList();
-
-        if (volumeMedicalCareDiagnoses.size() != 0){
-            return volumeMedicalCareDiagnoses.get(0).getQuantity();
-        }
-        return 0;
-    }
 }

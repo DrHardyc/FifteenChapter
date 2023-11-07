@@ -51,24 +51,37 @@ public class VolumeMedicalCareDTOService {
                 child.setDay1(volumeMedicalCareDiagnosisService.getAllByCodeMOAndCodeDepAndCodeDiagDateInterval(
                         medicalOrganization, parent.getName(), codeDiagnosis, UtilService.DateTo900Format(1),
                         UtilService.DateTo900Format(0)));
+                child.getParent().setDay1(child.getParent().getDay1() + child.getDay1());
+
                 child.setDay2(volumeMedicalCareDiagnosisService.getAllByCodeMOAndCodeDepAndCodeDiagDateInterval(
                         medicalOrganization, parent.getName(), codeDiagnosis, UtilService.DateTo900Format(2),
                         UtilService.DateTo900Format(1)));
+                child.getParent().setDay2(child.getParent().getDay2() + child.getDay2());
+
                 child.setDay3(volumeMedicalCareDiagnosisService.getAllByCodeMOAndCodeDepAndCodeDiagDateInterval(
                         medicalOrganization, parent.getName(), codeDiagnosis, UtilService.DateTo900Format(3),
                         UtilService.DateTo900Format(2)));
+                child.getParent().setDay3(child.getParent().getDay3() + child.getDay3());
+
                 child.setDay4(volumeMedicalCareDiagnosisService.getAllByCodeMOAndCodeDepAndCodeDiagDateInterval(
                         medicalOrganization, parent.getName(), codeDiagnosis, UtilService.DateTo900Format(4),
                         UtilService.DateTo900Format(3)));
+                child.getParent().setDay4(child.getParent().getDay4() + child.getDay4());
+
                 child.setDay5(volumeMedicalCareDiagnosisService.getAllByCodeMOAndCodeDepAndCodeDiagDateInterval(
                         medicalOrganization, parent.getName(), codeDiagnosis, UtilService.DateTo900Format(5),
                         UtilService.DateTo900Format(4)));
+                child.getParent().setDay5(child.getParent().getDay5() + child.getDay5());
+
                 child.setDay5(volumeMedicalCareDiagnosisService.getAllByCodeMOAndCodeDepAndCodeDiagDateInterval(
                         medicalOrganization, parent.getName(), codeDiagnosis, UtilService.DateTo900Format(6),
                         UtilService.DateTo900Format(5)));
+                child.getParent().setDay6(child.getParent().getDay6() + child.getDay6());
+
                 child.setDay7(volumeMedicalCareDiagnosisService.getAllByCodeMOAndCodeDepAndCodeDiagDateInterval(
                         medicalOrganization, parent.getName(), codeDiagnosis, UtilService.DateTo900Format(7),
                         UtilService.DateTo900Format(6)));
+                child.getParent().setDay7(child.getParent().getDay7() + child.getDay7());
             }
         }
 

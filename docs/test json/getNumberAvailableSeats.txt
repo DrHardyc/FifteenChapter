@@ -12,7 +12,6 @@ token: RnhKpdzagxwTI!Nwsozs34E8Ngf7j7N?wT1necDCVAjw848r/V9=3k-j-EkozJKjxKBQBqyfE
       "codeDep":78,
       "nameDep":"Терапефтическое",
       "numberPlacesCurrentDay":"3",
-      "numberPlacesNext10Days":"6",
       "dateNumberVacantPlaces":
       [
         {
@@ -49,7 +48,6 @@ token: RnhKpdzagxwTI!Nwsozs34E8Ngf7j7N?wT1necDCVAjw848r/V9=3k-j-EkozJKjxKBQBqyfE
       "codeDep":55,
       "nameDep":"Онкологическое",
       "numberPlacesCurrentDay":"8",
-      "numberPlacesNext10Days":"10",
       "dateNumberVacantPlaces":
       [
         {

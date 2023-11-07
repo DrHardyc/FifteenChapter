@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import ru.hardy.udio.config.DBJDBCConfig;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.InsuranceCase;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
+import ru.hardy.udio.domain.api.numberavailableseats.DTO.NumberAvailableSeatsDTO;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
 import ru.hardy.udio.domain.api.schedulepianddispplot.DTO.SchedulePIAndDispPlotDTO;
 import ru.hardy.udio.domain.api.volumemedicalcare.dto.VolumeMedicalCareDTO;
@@ -1165,5 +1166,56 @@ public class ExcelService {
         }
         return currDir;
 
+    }
+
+
+    public File getNumberAvailableSeatsDTO(Set<NumberAvailableSeatsDTO> numberAvailableSeatsDTOS) {
+        FileOutputStream outputStream;
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Общий отчет");
+        Row header = sheet.createRow(0);
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+
+        createHeaderCell(header, "Наименование", 0, workbook);
+        createHeaderCell(header, simpleDateFormat.format(java.sql.Date.from(Instant.now().plus(1, ChronoUnit.DAYS))), 1, workbook);
+        createHeaderCell(header, simpleDateFormat.format(java.sql.Date.from(Instant.now().plus(2, ChronoUnit.DAYS))), 2, workbook);
+        createHeaderCell(header, simpleDateFormat.format(java.sql.Date.from(Instant.now().plus(3, ChronoUnit.DAYS))), 3, workbook);
+        createHeaderCell(header, simpleDateFormat.format(java.sql.Date.from(Instant.now().plus(4, ChronoUnit.DAYS))), 4, workbook);
+        createHeaderCell(header, simpleDateFormat.format(java.sql.Date.from(Instant.now().plus(5, ChronoUnit.DAYS))), 5, workbook);
+        createHeaderCell(header, simpleDateFormat.format(java.sql.Date.from(Instant.now().plus(6, ChronoUnit.DAYS))), 6, workbook);
+        createHeaderCell(header, simpleDateFormat.format(java.sql.Date.from(Instant.now().plus(7, ChronoUnit.DAYS))), 7, workbook);
+        createHeaderCell(header, simpleDateFormat.format(java.sql.Date.from(Instant.now().plus(8, ChronoUnit.DAYS))), 8, workbook);
+        createHeaderCell(header, simpleDateFormat.format(java.sql.Date.from(Instant.now().plus(9, ChronoUnit.DAYS))), 9, workbook);
+        createHeaderCell(header, simpleDateFormat.format(java.sql.Date.from(Instant.now().plus(10, ChronoUnit.DAYS))), 10, workbook);
+
+        int indexCount = 1;
+        for (NumberAvailableSeatsDTO numberAvailableSeatsDTO : numberAvailableSeatsDTOS){
+            Row row = sheet.createRow(indexCount);
+            createValueCell(row, numberAvailableSeatsDTO.getName(), 0, workbook);
+            createValueCell(row, String.valueOf(numberAvailableSeatsDTO.getDay1()), 1, workbook);
+            createValueCell(row, String.valueOf(numberAvailableSeatsDTO.getDay2()), 2, workbook);
+            createValueCell(row, String.valueOf(numberAvailableSeatsDTO.getDay3()), 3, workbook);
+            createValueCell(row, String.valueOf(numberAvailableSeatsDTO.getDay4()), 4, workbook);
+            createValueCell(row, String.valueOf(numberAvailableSeatsDTO.getDay5()), 5, workbook);
+            createValueCell(row, String.valueOf(numberAvailableSeatsDTO.getDay6()), 6, workbook);
+            createValueCell(row, String.valueOf(numberAvailableSeatsDTO.getDay7()), 7, workbook);
+            createValueCell(row, String.valueOf(numberAvailableSeatsDTO.getDay8()), 8, workbook);
+            createValueCell(row, String.valueOf(numberAvailableSeatsDTO.getDay9()), 9, workbook);
+            createValueCell(row, String.valueOf(numberAvailableSeatsDTO.getDay10()), 10, workbook);
+            indexCount++;
+        }
+
+        File currDir = new File("C:\\udio\\reports\\" + UUID.randomUUID() + "_свободные_места.xlsx");
+        try {
+            outputStream = new FileOutputStream(currDir);
+            workbook.write(outputStream);
+            workbook.close();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+
+        }
+        return currDir;
     }
 }

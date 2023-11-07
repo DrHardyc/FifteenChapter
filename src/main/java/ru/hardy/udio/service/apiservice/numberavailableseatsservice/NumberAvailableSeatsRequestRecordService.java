@@ -20,8 +20,4 @@ public class NumberAvailableSeatsRequestRecordService {
     public void add(NumberAvailableSeatsRequestRecord departments){
         numberAvailableSeatsRequestRecordRepo.save(departments);
     }
-
-    public NumberAvailableSeatsRequestRecord getById(Long id) {
-        return numberAvailableSeatsRequestRecordRepo.getReferenceById(id);
-    }
 }

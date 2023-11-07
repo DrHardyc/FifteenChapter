@@ -20,6 +20,8 @@ import ru.hardy.udio.domain.api.operatingschedule.OperatingScheduleRequest;
 import ru.hardy.udio.domain.api.operatingschedule.OperatingScheduleResponse;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequest;
 import ru.hardy.udio.domain.api.padatapatients.PADataPatientResponse;
+import ru.hardy.udio.domain.api.padatepatinetssmo.PADataPatientSMORequest;
+import ru.hardy.udio.domain.api.padatepatinetssmo.PADataPatientSMOResponse;
 import ru.hardy.udio.domain.api.recommendationspatient.RecommendationsPatientRequest;
 import ru.hardy.udio.domain.api.recommendationspatient.RecommendationsPatientResponse;
 import ru.hardy.udio.domain.api.schedulepianddispplot.SchedulePIAndDispPlotRequest;
@@ -37,6 +39,7 @@ import ru.hardy.udio.service.apiservice.individualinformingservice.IndividualInf
 import ru.hardy.udio.service.apiservice.numberavailableseatsservice.NumberAvailableSeatsResponseService;
 import ru.hardy.udio.service.apiservice.operatingscheduleservice.OperatingScheduleResponseService;
 import ru.hardy.udio.service.apiservice.padatapatientsservice.PADataPatientResponseService;
+import ru.hardy.udio.service.apiservice.padatepatinetssmoservice.PADataPatientSMOResponseService;
 import ru.hardy.udio.service.apiservice.recommendationspatientservice.RecommendationsPatientResponseService;
 import ru.hardy.udio.service.apiservice.schedulepianddispplotservice.SchedulePIAndDispPlotResponseService;
 import ru.hardy.udio.service.apiservice.volumemedicalcareservice.VolumeMedicalCareResponseService;
@@ -67,6 +70,8 @@ public class APIResponseService implements APIResponseServiceInterface {
     private HospitalizationResponseService hospitalizationResponseService;
     @Autowired
     private RecommendationsPatientResponseService recommendationsPatientResponseService;
+    @Autowired
+    private PADataPatientSMOResponseService paDataPatientSMOResponseService;
 
 
     @Override
@@ -93,6 +98,8 @@ public class APIResponseService implements APIResponseServiceInterface {
             hospitalizationResponseService.add(apiResponse);
         } else if (apiResponse instanceof RecommendationsPatientResponse) {
             recommendationsPatientResponseService.add(apiResponse);
+        } else if (apiResponse instanceof PADataPatientSMOResponse) {
+            paDataPatientSMOResponseService.add(apiResponse);
         }
     }
 
@@ -145,6 +152,8 @@ public class APIResponseService implements APIResponseServiceInterface {
             return hospitalizationResponseService.processing(apiRequest, apiResponse, medicalOrganization);
         } else if (apiResponse instanceof RecommendationsPatientResponse) {
             return recommendationsPatientResponseService.processing(apiRequest, apiResponse, medicalOrganization);
+        } else if (apiResponse instanceof PADataPatientSMOResponse) {
+            return paDataPatientSMOResponseService.processing(apiRequest, apiResponse, medicalOrganization);
         }
         return null;
     }

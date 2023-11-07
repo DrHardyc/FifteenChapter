@@ -21,7 +21,6 @@ public class NumberAvailableSeatsRequestService implements APIRequestServiceInte
         numberAvailableSeatsRequest.setDateBeg(Date.from(Instant.now()));
         numberAvailableSeatsRequest.setDateEdit(Date.from(Instant.now()));
         numberAvailableSeatsRequest.getDepartments().forEach(department -> {
-            //department.getDepartment().setRequestRecord(department);
             department.setRequest(numberAvailableSeatsRequest);
             department.setDateBeg(Date.from(Instant.now()));
             department.setDateEdit(Date.from(Instant.now()));
