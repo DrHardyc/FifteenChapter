@@ -37,12 +37,6 @@ public class PADataPatientService {
                 people, mainDiag, codeType, status, dateInsurance);
     }
 
-    public PADataPatient searchPatient(People people){
-        return paDataPatientRepo.findByPeople(people);
-    }
-
-
-
     public List<PADataPatient> getAllByTypeAndStatus(int type, int status){
         return paDataPatientRepo.findAllByRequestRecord_CodeTypePreventiveActionsAndRequestRecord_StatusTypePreventiveActions(type, status);
     }

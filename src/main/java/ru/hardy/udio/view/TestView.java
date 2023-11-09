@@ -48,17 +48,10 @@ public class TestView extends VerticalLayout {
     private DataFilePatientService dataFilePatientService;
 
     @Autowired
-    private DNGetService dnGetService;
-
-    @Autowired
     private ExcelService excelService;
 
     @Autowired
     private PADataPatientRequestRecordService paDataPatientRequestRecordService;
-
-    @Autowired
-    private SchedulePIAndDispPlotGrid schedulePIAndDispPlotGrid;
-
 
     public TestView() {
 
@@ -78,20 +71,20 @@ public class TestView extends VerticalLayout {
         Span span = new Span(String.valueOf(22));
         Tooltip tooltip = Tooltip.forComponent(span);
         tooltip.setText(span.getText() + " выполненных новых задач");
-        Span caption = new Span("Выполненные");
-        //caption.getStyle().set("background", "#F5F5F5");
+//        Span caption = new Span("Выполненные");
+//        //caption.getStyle().set("background", "#F5F5F5");
+//
+//        Span span1 = createBadge(3);
 
-        Span span1 = createBadge(3);
-
-        TabSheet tabSheet = new TabSheet();
-        Tab tab = new Tab(caption, span);
-       // tab.getStyle().set("background", "#7CFC00");
-        Tab tab1 = new Tab(new Span("Выполняются"), span1);
-        HorizontalLayout horizontalLayout = new HorizontalLayout(avatar, span);
-        HorizontalLayout horizontalLayout1 = new HorizontalLayout();
-        //horizontalLayout.add(new TextField("asdf"));
-//        tabSheet.add(tab, horizontalLayout);
-//        tabSheet.add(tab1, horizontalLayout1);
+//        TabSheet tabSheet = new TabSheet();
+//        Tab tab = new Tab(caption, span);
+//       // tab.getStyle().set("background", "#7CFC00");
+//        Tab tab1 = new Tab(new Span("Выполняются"), span1);
+//        HorizontalLayout horizontalLayout = new HorizontalLayout(avatar, span);
+//        HorizontalLayout horizontalLayout1 = new HorizontalLayout();
+//        //horizontalLayout.add(new TextField("asdf"));
+////        tabSheet.add(tab, horizontalLayout);
+////        tabSheet.add(tab1, horizontalLayout1);
 
         span.getStyle().set("border-radius", "10px");
         span.getStyle().set("background", "#ffcccc");

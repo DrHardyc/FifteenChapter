@@ -1,18 +1,11 @@
 package ru.hardy.udio.view.grid;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.component.treegrid.TreeGrid;
-import com.vaadin.flow.data.value.ValueChangeMode;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.vaadin.olli.FileDownloadWrapper;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.InsuranceCase;
@@ -25,31 +18,9 @@ import ru.hardy.udio.service.ExcelService;
 
 import java.io.File;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 @Service
 public class GridUtils {
-    @Autowired
-    private SchedulePIAndDispPlotGrid schedulePIAndDispPlotGrid;
-
-    public static Component createFilterHeader(String labelText, Consumer<String> filterChangeConsumer) {
-        Span label = new Span(labelText);
-        TextField textField = new TextField();
-        label.getStyle().set("padding-top", "var(--lumo-space-m)")
-                .set("font-size", "var(--lumo-font-size-xs)");
-        textField.setValueChangeMode(ValueChangeMode.EAGER);
-        textField.setClearButtonVisible(true);
-        textField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
-        textField.setWidthFull();
-        textField.getStyle().set("max-width", "100%");
-        textField.addValueChangeListener(
-                e -> filterChangeConsumer.accept(e.getValue()));
-        VerticalLayout layout = new VerticalLayout(label, textField);
-        layout.getThemeList().clear();
-        layout.getThemeList().add("spacing-xs");
-        return layout;
-    }
-
     public static Grid createNewDialogGrid(HorizontalLayout horizontalLayout, Button btnExcel) {
         Grid grid = new Grid<>();
 

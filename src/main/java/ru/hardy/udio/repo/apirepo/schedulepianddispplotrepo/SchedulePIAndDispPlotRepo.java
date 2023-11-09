@@ -4,7 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.hardy.udio.domain.api.schedulepianddispplot.mo.SchedulePIAndDispPlot;
-import ru.hardy.udio.domain.nsi.MedicalOrganization;
 
 import java.util.List;
 

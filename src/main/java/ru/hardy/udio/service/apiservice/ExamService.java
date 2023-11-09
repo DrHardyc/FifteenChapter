@@ -3,8 +3,8 @@ package ru.hardy.udio.service.apiservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.config.DBJDBCConfig;
-import ru.hardy.udio.domain.api.ResultRequest;
 import ru.hardy.udio.domain.abstractclasses.InsuredPerson;
+import ru.hardy.udio.domain.api.ResultRequest;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.IndividualHistoryOnkoCaseRequestRecord;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
 import ru.hardy.udio.domain.api.padatapatients.mo.PADataPatient;
@@ -18,7 +18,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Instant;
-import java.util.*;
+import java.util.Date;
 
 @Service
 public class ExamService {
@@ -36,12 +36,12 @@ public class ExamService {
             ResultSet resultSet = statement.executeQuery("select count(*) from nsi_med.med_mkb10 mm where " +
                     "mkb_code = '" + mkb + "'");
             if (resultSet.next()){
-                return resultSet.getInt(1) > 0;
+                return resultSet.getInt(1) <= 0;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return false;
+        return true;
     }
 
     public ResultRequest checkInsuredPatient(PADataPatientRequestRecord paDataPatientRequestRecord){
@@ -49,14 +49,14 @@ public class ExamService {
         ResultRequest resultRequest = checkInsuredPatientMain(paDataPatientRequestRecord);
         int errCode = resultRequest.getResCode();
         String errMess = resultRequest.getResMess();
-        if (!checkMKB(paDataPatientRequestRecord.getMainDiagnosis())) {
+        if (checkMKB(paDataPatientRequestRecord.getMainDiagnosis())) {
             if (errCode == 500) errMess = "Ошибка распознавания поля 'mainDiagnosis : ";
             else errMess = errMess + "|Ошибка распознавания поля 'mainDiagnosis : ";
             errCode = 504;
             errMess = errMess + paDataPatientRequestRecord.getMainDiagnosis();
         }
         if (!paDataPatientRequestRecord.getConcomitantDiagnosis().isEmpty()){
-            if (!checkMKB(paDataPatientRequestRecord.getConcomitantDiagnosis())){
+            if (checkMKB(paDataPatientRequestRecord.getConcomitantDiagnosis())){
                 if (errCode == 500) errMess = "Ошибка распознавания поля 'concomitantDiagnosis' : ";
                 else errMess = errMess + "|Ошибка распознавания поля 'concomitantDiagnosis' : ";
                 errCode = 504;
@@ -64,7 +64,7 @@ public class ExamService {
             }
         }
         if (!paDataPatientRequestRecord.getDiagnosisComplications().isEmpty()){
-            if (!checkMKB(paDataPatientRequestRecord.getConcomitantDiagnosis())){
+            if (checkMKB(paDataPatientRequestRecord.getConcomitantDiagnosis())){
                 if (errCode == 500) errMess = "Ошибка распознавания поля 'diagnosisComplications' : ";
                 else errMess = errMess + "|Ошибка распознавания поля 'diagnosisComplications' : ";
                 errCode = 504;
@@ -154,32 +154,19 @@ public class ExamService {
         return enp.length() != 16;
     }
 
-    public boolean checkSpecialtyDoctorCode(int specialtyDoctorCode) {
-        if (specialtyDoctorCode != 0){
-            return true;
-        }
-        else return false;
-    }
-
-    public boolean checkResultDispensaryAppointment(int resultDispensaryAppointment) {
-        if (resultDispensaryAppointment != 0){
-            return true;
-        } else return false;
-    }
-
     public ResultRequest checkInsuredPatient(IndividualInformingRequestRecord individualInformingRequestRecord) {
 
         ResultRequest resultRequest = checkInsuredPatientMain(individualInformingRequestRecord);
         int errCode = resultRequest.getResCode();
         String errMess = resultRequest.getResMess();
-        if (!checkMKB(individualInformingRequestRecord.getMainDiagnosis())) {
+        if (checkMKB(individualInformingRequestRecord.getMainDiagnosis())) {
             if (errCode == 500) errMess = "Ошибка распознавания поля 'mainDiagnosis : ";
             else errMess = errMess + "|Ошибка распознавания поля 'mainDiagnosis : ";
             errCode = 504;
             errMess = errMess + individualInformingRequestRecord.getMainDiagnosis();
         }
         if (!individualInformingRequestRecord.getConcomitantDiagnosis().isEmpty()){
-            if (!checkMKB(individualInformingRequestRecord.getConcomitantDiagnosis())){
+            if (checkMKB(individualInformingRequestRecord.getConcomitantDiagnosis())){
                 if (errCode == 500) errMess = "Ошибка распознавания поля 'concomitantDiagnosis' : ";
                 else errMess = errMess + "|Ошибка распознавания поля 'concomitantDiagnosis' : ";
                 errCode = 504;

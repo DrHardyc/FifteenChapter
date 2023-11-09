@@ -4,7 +4,6 @@ package ru.hardy.udio.domain.api.numberavailableseats.mo;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import ru.hardy.udio.domain.struct.People;
 
 import java.util.Date;
 

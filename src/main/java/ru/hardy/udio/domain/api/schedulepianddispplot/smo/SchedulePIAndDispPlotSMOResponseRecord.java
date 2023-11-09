@@ -5,8 +5,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import ru.hardy.udio.domain.abstractclasses.APIDepartmentResponseRecord;
-import ru.hardy.udio.domain.api.schedulepianddispplot.mo.MonthEvent;
-import ru.hardy.udio.domain.api.schedulepianddispplot.mo.SchedulePIAndDispPlotRequest;
 import ru.hardy.udio.domain.api.schedulepianddispplot.mo.SchedulePIAndDispPlotRequestRecord;
 
 import java.time.Instant;
