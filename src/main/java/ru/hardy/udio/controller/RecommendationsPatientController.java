@@ -16,7 +16,7 @@ public class RecommendationsPatientController {
     @Autowired
     private APIRequestService apiRequestService;
 
-    @PostMapping("/api/1.1/getRecommendationsPatient")
+    @PostMapping("/api/1.1/setRecommendationsPatient")
     public ResponseEntity<RecommendationsPatientResponse> registerHospitalization(
             @RequestHeader(name = "token") String token,
             @RequestBody RecommendationsPatientRequest recommendationsPatientRequest) {
@@ -26,7 +26,7 @@ public class RecommendationsPatientController {
                         .acceptance(token, recommendationsPatientRequest));
     }
 
-    @PostMapping("/api/test/getRecommendationsPatient")
+    @PostMapping("/api/test/setRecommendationsPatient")
     public ResponseEntity<RecommendationsPatientResponse> registerHospitalizationTest(
             @RequestHeader(name = "token") String token,
             @RequestBody RecommendationsPatientRequest recommendationsPatientRequest) {

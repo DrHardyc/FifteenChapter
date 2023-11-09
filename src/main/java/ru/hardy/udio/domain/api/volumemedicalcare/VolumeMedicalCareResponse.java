@@ -5,10 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import ru.hardy.udio.domain.abstractclasses.APIResponse;
-import ru.hardy.udio.domain.api.schedulepianddispplot.SchedulePIAndDispPlotRequest;
-import ru.hardy.udio.domain.api.schedulepianddispplot.SchedulePIAndDispPlotResponseRecord;
 
-import java.util.Date;
 import java.util.List;
 
 @Getter

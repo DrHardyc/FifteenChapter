@@ -27,7 +27,7 @@ public class OperatingScheduleController {
     private APIRequestService apiRequestService;
 
 
-    @PostMapping("/api/1.1/getOperatingSchedule")
+    @PostMapping("/api/1.1/setOperatingSchedule")
     public ResponseEntity<OperatingScheduleResponse> registerOperatingSchedule(
             @RequestHeader(name = "token") String token,
             @RequestBody OperatingScheduleRequest operatingScheduleRequest){
@@ -36,7 +36,7 @@ public class OperatingScheduleController {
                         .acceptance(token, operatingScheduleRequest));
     }
 
-    @PostMapping("/api/test/getOperatingSchedule")
+    @PostMapping("/api/test/setOperatingSchedule")
     public ResponseEntity<OperatingScheduleResponse> registerOperatingScheduleTest(
             @RequestHeader(name = "token") String token,
             @RequestBody OperatingScheduleRequest operatingScheduleRequest)
@@ -67,7 +67,7 @@ public class OperatingScheduleController {
     }
 
     @GetMapping("/api/1.1/getOperatingSchedule/{reqID}")
-    public ResponseEntity<OperatingScheduleResponse> getgetOperatingSchedule(
+    public ResponseEntity<OperatingScheduleResponse> getOperatingSchedule(
             @RequestHeader(name = "token") String token,
             @PathVariable(name = "reqID") String reqID ){
 

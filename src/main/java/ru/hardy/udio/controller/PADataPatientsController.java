@@ -3,11 +3,13 @@ package ru.hardy.udio.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequest;
-import ru.hardy.udio.domain.api.padatapatients.PADataPatientResponse;
+import ru.hardy.udio.domain.api.padatapatients.mo.PADataPatientRequest;
+import ru.hardy.udio.domain.api.padatapatients.mo.PADataPatientResponse;
+import ru.hardy.udio.domain.api.padatapatients.smo.PADataPatientSMORequest;
+import ru.hardy.udio.domain.api.padatapatients.smo.PADataPatientSMOResponse;
 import ru.hardy.udio.service.TokenService;
 import ru.hardy.udio.service.apiservice.APIRequestService;
-import ru.hardy.udio.service.apiservice.padatapatientsservice.PADataPatientResponseService;
+import ru.hardy.udio.service.apiservice.padatapatientsservice.mo.PADataPatientResponseService;
 
 @RestController
 public class PADataPatientsController {
@@ -19,7 +21,7 @@ public class PADataPatientsController {
     @Autowired
     private APIRequestService apiRequestService;
 
-    @PostMapping("/api/1.1/getPADataPatient")
+    @PostMapping("/api/1.1/setPADataPatient")
     public ResponseEntity<PADataPatientResponse> registerPADataPatient(
             @RequestHeader(name = "token") String token,
             @RequestBody PADataPatientRequest paDataPatientRequest) {
@@ -29,7 +31,7 @@ public class PADataPatientsController {
                         .acceptance(token, paDataPatientRequest));
     }
 
-    @PostMapping("/api/test/getPADataPatient")
+    @PostMapping("/api/test/setPADataPatient")
     public ResponseEntity<PADataPatientResponse> registerPADataPatientTest(
             @RequestHeader(name = "token") String token,
             @RequestBody PADataPatientRequest paDataPatientRequest) {
@@ -60,5 +62,16 @@ public class PADataPatientsController {
             PADataPatientResponse.setResultResponseCode(403);
         }
         return ResponseEntity.ok(PADataPatientResponse);
+    }
+
+
+    @PostMapping("/api/1.1/getPADataPatient")
+    public ResponseEntity<PADataPatientSMOResponse> getPADataPatientSMO(
+            @RequestHeader(name = "token") String token,
+            @RequestBody PADataPatientSMORequest paDataPatientSMORequest) {
+
+        return ResponseEntity
+                .ok((PADataPatientSMOResponse) apiRequestService
+                        .acceptance(token, paDataPatientSMORequest));
     }
 }

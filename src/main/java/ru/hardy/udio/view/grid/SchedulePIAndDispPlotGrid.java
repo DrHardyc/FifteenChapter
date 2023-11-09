@@ -2,9 +2,9 @@ package ru.hardy.udio.view.grid;
 
 import com.vaadin.flow.component.treegrid.TreeGrid;
 import org.springframework.stereotype.Service;
-import ru.hardy.udio.domain.api.schedulepianddispplot.DTO.MonthEventDTO;
-import ru.hardy.udio.domain.api.schedulepianddispplot.DTO.SchedulePIAndDispPlotDTO;
-import ru.hardy.udio.domain.api.schedulepianddispplot.SchedulePIAndDispPlotRequestRecord;
+import ru.hardy.udio.domain.api.schedulepianddispplot.dto.MonthEventDTO;
+import ru.hardy.udio.domain.api.schedulepianddispplot.dto.SchedulePIAndDispPlotDTO;
+import ru.hardy.udio.domain.api.schedulepianddispplot.mo.SchedulePIAndDispPlotRequestRecord;
 
 import java.util.ArrayList;
 import java.util.List;

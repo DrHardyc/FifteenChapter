@@ -2,8 +2,8 @@ package ru.hardy.udio.repo.apirepo.numberavailableseatsrepo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import ru.hardy.udio.domain.api.numberavailableseats.DateNumberVacantPlacesActual;
-import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeats;
+import ru.hardy.udio.domain.api.numberavailableseats.mo.DateNumberVacantPlacesActual;
+import ru.hardy.udio.domain.api.numberavailableseats.mo.NumberAvailableSeats;
 
 import java.util.Date;
 import java.util.List;

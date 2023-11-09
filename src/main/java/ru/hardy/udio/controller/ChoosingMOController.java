@@ -24,7 +24,7 @@ public class ChoosingMOController {
     @Autowired
     private APIRequestService apiRequestService;
 
-    @PostMapping("/api/1.1/getChoosingMO")
+    @PostMapping("/api/1.1/setChoosingMO")
     public ResponseEntity<ChoosingMOResponse> registerChoosingMO(
             @RequestHeader(name = "token") String token,
             @RequestBody ChoosingMORequest choosingMORequest) {
@@ -33,7 +33,7 @@ public class ChoosingMOController {
                         .acceptance(token, choosingMORequest));
     }
 
-    @PostMapping("/api/test/getChoosingMO")
+    @PostMapping("/api/test/setChoosingMO")
     public ResponseEntity<ChoosingMOResponse> registerChoosingMOTest(
             @RequestHeader(name = "token") String token,
             @RequestBody ChoosingMORequest choosingMORequest) {
@@ -46,7 +46,7 @@ public class ChoosingMOController {
         if (token.equals("e/SGvhPZm?usABQ9RT-gf9lyeVvYpztQG779xYQZhPyaDZolE=QNldo3ka/chYxrV4Z4mhBMCwtOLouOXihizs0XLEA0RVcLaUmI79L6ZetOl7x8=dDi4ntQ?WRMbI/?")) {
             for (ChoosingMORequestRecord choosingMOResponseRecord : choosingMORequest.getPatients()){
                 if (choosingMOResponseRecord.getSurname().equals("Премудрая") &&
-                        choosingMOResponseRecord.getName().equals("Василиса")  &&
+                        choosingMOResponseRecord.getName().equals("Василиса") &&
                         choosingMOResponseRecord.getPatronymic().equals("Ивановна")) {
                     choosingMOResponseRecords.add(new ChoosingMOResponseRecord(choosingMOResponseRecord,
                             choosingMOResponse, 500, "Успешное выполнение обработки записи"));

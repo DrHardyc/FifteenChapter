@@ -4,13 +4,15 @@ package ru.hardy.udio.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsRequest;
-import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsRequestRecord;
-import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsResponse;
-import ru.hardy.udio.domain.api.numberavailableseats.NumberAvailableSeatsResponseRecord;
+import ru.hardy.udio.domain.api.numberavailableseats.mo.NumberAvailableSeatsRequest;
+import ru.hardy.udio.domain.api.numberavailableseats.mo.NumberAvailableSeatsRequestRecord;
+import ru.hardy.udio.domain.api.numberavailableseats.mo.NumberAvailableSeatsResponse;
+import ru.hardy.udio.domain.api.numberavailableseats.mo.NumberAvailableSeatsResponseRecord;
+import ru.hardy.udio.domain.api.numberavailableseats.smo.NumberAvailableSeatsSMORequest;
+import ru.hardy.udio.domain.api.numberavailableseats.smo.NumberAvailableSeatsSMOResponse;
 import ru.hardy.udio.service.TokenService;
 import ru.hardy.udio.service.apiservice.APIRequestService;
-import ru.hardy.udio.service.apiservice.numberavailableseatsservice.NumberAvailableSeatsResponseService;
+import ru.hardy.udio.service.apiservice.numberavailableseatsservice.mo.NumberAvailableSeatsResponseService;
 import ru.hardy.udio.service.nsiservice.MedicalOrganizationService;
 
 import java.time.Instant;
@@ -33,7 +35,7 @@ public class NumberAvailableSeatsController {
     @Autowired
     private MedicalOrganizationService medicalOrganizationService;
 
-    @PostMapping("/api/1.1/getNumberAvailableSeats")
+    @PostMapping("/api/1.1/setNumberAvailableSeats")
     public ResponseEntity<NumberAvailableSeatsResponse> registerNumberAvailableSeats(
             @RequestHeader(name = "token") String token,
             @RequestBody NumberAvailableSeatsRequest numberAvailableSeatsRequest) {
@@ -43,7 +45,17 @@ public class NumberAvailableSeatsController {
                         .acceptance(token, numberAvailableSeatsRequest));
     }
 
-    @PostMapping("/api/test/getNumberAvailableSeats")
+    @PostMapping("/api/1.1/getNumberAvailableSeats")
+    public ResponseEntity<NumberAvailableSeatsSMOResponse> getNumberAvailableSeats(
+            @RequestHeader(name = "token") String token,
+            @RequestBody NumberAvailableSeatsSMORequest numberAvailableSeatsSMORequest) {
+
+        return ResponseEntity
+                .ok((NumberAvailableSeatsSMOResponse) apiRequestService
+                        .acceptance(token, numberAvailableSeatsSMORequest));
+    }
+
+    @PostMapping("/api/test/setNumberAvailableSeats")
     public ResponseEntity<NumberAvailableSeatsResponse> registerNumberAvailableSeatsTest(
             @RequestHeader(name = "token") String token,
             @RequestBody NumberAvailableSeatsRequest numberAvailableSeatsRequest) {

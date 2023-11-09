@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.abstractclasses.APIRequest;
 import ru.hardy.udio.domain.abstractclasses.APIResponse;
 import ru.hardy.udio.domain.api.individualhistoryinforming.*;
-import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
+import ru.hardy.udio.domain.api.padatapatients.mo.PADataPatientRequestRecord;
 import ru.hardy.udio.domain.generic.ResultProcessingClass;
 import ru.hardy.udio.domain.nsi.MedicalOrganization;
 import ru.hardy.udio.domain.struct.People;
@@ -13,7 +13,7 @@ import ru.hardy.udio.repo.apirepo.individualhistoryinformingresponserepo.Individ
 import ru.hardy.udio.service.PeopleService;
 import ru.hardy.udio.service.apiservice.ExamService;
 import ru.hardy.udio.service.apiservice.individualinformingservice.IndividualInformingRequestRecordService;
-import ru.hardy.udio.service.apiservice.padatapatientsservice.PADataPatientRequestRecordService;
+import ru.hardy.udio.service.apiservice.padatapatientsservice.mo.PADataPatientRequestRecordService;
 import ru.hardy.udio.service.apiservice.apiinterface.APIResponseServiceInterface;
 
 import java.time.Instant;

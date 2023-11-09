@@ -1,7 +1,7 @@
 package ru.hardy.udio.view.grid;
 
 import com.vaadin.flow.component.grid.Grid;
-import ru.hardy.udio.domain.api.numberavailableseats.DTO.NumberAvailableSeatsDTO;
+import ru.hardy.udio.domain.api.numberavailableseats.dto.NumberAvailableSeatsDTO;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;

@@ -17,7 +17,7 @@ public class HospitalizationController {
     private APIRequestService apiRequestService;
 
 
-    @PostMapping("/api/1.1/getHospitalization")
+    @PostMapping("/api/1.1/setHospitalization")
     public ResponseEntity<HospitalizationResponse> registerHospitalization(
             @RequestHeader(name = "token") String token,
             @RequestBody HospitalizationRequest hospitalizationRequest) {
@@ -28,7 +28,7 @@ public class HospitalizationController {
     }
 
 
-    @PostMapping("/api/test/getHospitalization")
+    @PostMapping("/api/test/setHospitalization")
     public ResponseEntity<HospitalizationResponse> registerHospitalizationTest(
             @RequestHeader(name = "token") String token,
             @RequestBody HospitalizationRequest hospitalizationRequest) {

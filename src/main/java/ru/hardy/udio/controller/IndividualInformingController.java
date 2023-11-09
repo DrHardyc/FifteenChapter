@@ -26,7 +26,7 @@ public class IndividualInformingController {
 
     @Autowired
     private APIRequestService apiRequestService;
-    @PostMapping("/api/1.1/getIndividualInforming")
+    @PostMapping("/api/1.1/setIndividualInforming")
     public ResponseEntity<IndividualInformingResponse> registerIndividualInforming(
             @RequestHeader(name = "token") String token,
             @RequestBody IndividualInformingRequest individualInformingRequest) {
@@ -35,7 +35,7 @@ public class IndividualInformingController {
                         .acceptance(token, individualInformingRequest));
     }
 
-    @PostMapping("/api/test/getIndividualInforming")
+    @PostMapping("/api/test/setIndividualInforming")
     public ResponseEntity<IndividualInformingResponse> registerIndividualInformingTest(
             @RequestHeader(name = "token") String token,
             @RequestBody IndividualInformingRequest individualInformingRequest) {

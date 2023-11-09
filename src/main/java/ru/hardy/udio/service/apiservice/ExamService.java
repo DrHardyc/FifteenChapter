@@ -1,6 +1,5 @@
 package ru.hardy.udio.service.apiservice;
 
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.config.DBJDBCConfig;
@@ -8,13 +7,12 @@ import ru.hardy.udio.domain.api.ResultRequest;
 import ru.hardy.udio.domain.abstractclasses.InsuredPerson;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.IndividualHistoryOnkoCaseRequestRecord;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
-import ru.hardy.udio.domain.api.padatapatients.PADataPatient;
-import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
+import ru.hardy.udio.domain.api.padatapatients.mo.PADataPatient;
+import ru.hardy.udio.domain.api.padatapatients.mo.PADataPatientRequestRecord;
 import ru.hardy.udio.domain.generic.ResultProcessingClass;
 import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.service.PeopleService;
-import ru.hardy.udio.service.apiservice.individualinformingservice.IndividualInformingService;
-import ru.hardy.udio.service.apiservice.padatapatientsservice.PADataPatientService;
+import ru.hardy.udio.service.apiservice.padatapatientsservice.mo.PADataPatientService;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

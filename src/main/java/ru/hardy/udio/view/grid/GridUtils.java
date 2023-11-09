@@ -17,9 +17,9 @@ import org.springframework.stereotype.Service;
 import org.vaadin.olli.FileDownloadWrapper;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.InsuranceCase;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
-import ru.hardy.udio.domain.api.numberavailableseats.DTO.NumberAvailableSeatsDTO;
-import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
-import ru.hardy.udio.domain.api.schedulepianddispplot.DTO.SchedulePIAndDispPlotDTO;
+import ru.hardy.udio.domain.api.numberavailableseats.dto.NumberAvailableSeatsDTO;
+import ru.hardy.udio.domain.api.padatapatients.mo.PADataPatientRequestRecord;
+import ru.hardy.udio.domain.api.schedulepianddispplot.dto.SchedulePIAndDispPlotDTO;
 import ru.hardy.udio.domain.api.volumemedicalcare.dto.VolumeMedicalCareDTO;
 import ru.hardy.udio.service.ExcelService;
 

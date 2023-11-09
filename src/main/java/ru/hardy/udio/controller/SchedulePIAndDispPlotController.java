@@ -4,12 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import ru.hardy.udio.domain.api.schedulepianddispplot.SchedulePIAndDispPlotRequest;
-import ru.hardy.udio.domain.api.schedulepianddispplot.SchedulePIAndDispPlotResponse;
-import ru.hardy.udio.domain.api.schedulepianddispplot.SchedulePIAndDispPlotResponseRecord;
+import ru.hardy.udio.domain.api.schedulepianddispplot.mo.SchedulePIAndDispPlotRequest;
+import ru.hardy.udio.domain.api.schedulepianddispplot.mo.SchedulePIAndDispPlotResponse;
+import ru.hardy.udio.domain.api.schedulepianddispplot.mo.SchedulePIAndDispPlotResponseRecord;
+import ru.hardy.udio.domain.api.schedulepianddispplot.smo.SchedulePIAndDispPlotSMORequest;
+import ru.hardy.udio.domain.api.schedulepianddispplot.smo.SchedulePIAndDispPlotSMOResponse;
 import ru.hardy.udio.service.TokenService;
 import ru.hardy.udio.service.apiservice.APIRequestService;
-import ru.hardy.udio.service.apiservice.schedulepianddispplotservice.SchedulePIAndDispPlotResponseService;
+import ru.hardy.udio.service.apiservice.schedulepianddispplotservice.mo.SchedulePIAndDispPlotResponseService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +28,7 @@ public class SchedulePIAndDispPlotController {
     @Autowired
     private APIRequestService apiRequestService;
 
-    @PostMapping("/api/1.1/getSchedulePIAndDispPlot")
+    @PostMapping("/api/1.1/setSchedulePIAndDispPlot")
     public ResponseEntity<SchedulePIAndDispPlotResponse> registerSchedulePIAndDispPlot(
             @RequestHeader(name = "token") String token,
             @RequestBody SchedulePIAndDispPlotRequest schedulePIAndDispPlotRequest) {
@@ -36,7 +38,17 @@ public class SchedulePIAndDispPlotController {
                         .acceptance(token, schedulePIAndDispPlotRequest));
     }
 
-    @PostMapping("/api/test/getSchedulePIAndDispPlot")
+    @PostMapping("/api/1.1/getSchedulePIAndDispPlot")
+    public ResponseEntity<SchedulePIAndDispPlotSMOResponse> getSchedulePIAndDispPlot(
+            @RequestHeader(name = "token") String token,
+            @RequestBody SchedulePIAndDispPlotSMORequest schedulePIAndDispPlotSMORequest) {
+
+        return ResponseEntity
+                .ok((SchedulePIAndDispPlotSMOResponse) apiRequestService
+                        .acceptance(token, schedulePIAndDispPlotSMORequest));
+    }
+
+    @PostMapping("/api/test/setSchedulePIAndDispPlot")
     public ResponseEntity<SchedulePIAndDispPlotResponse> registerSchedulePIAndDispPlotTest(
             @RequestHeader(name = "token") String token,
             @RequestBody SchedulePIAndDispPlotRequest schedulePIAndDispPlotRequest) {

@@ -15,7 +15,7 @@ import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.service.PeopleService;
 import ru.hardy.udio.service.apiservice.individualhistoryonkocaseservice.IndividualHistoryOnkoCaseResponseRecordService;
 import ru.hardy.udio.service.apiservice.individualinformingservice.IndividualInformingRequestRecordService;
-import ru.hardy.udio.service.apiservice.padatapatientsservice.PADataPatientRequestRecordService;
+import ru.hardy.udio.service.apiservice.padatapatientsservice.mo.PADataPatientRequestRecordService;
 import ru.hardy.udio.view.dialog.DialogViewGen;
 
 

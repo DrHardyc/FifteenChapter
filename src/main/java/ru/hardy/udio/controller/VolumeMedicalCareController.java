@@ -25,7 +25,7 @@ public class VolumeMedicalCareController {
     @Autowired
     private APIRequestService apiRequestService;
 
-    @PostMapping("/api/1.1/getVolumeMedicalCare")
+    @PostMapping("/api/1.1/setVolumeMedicalCare")
     public ResponseEntity<VolumeMedicalCareResponse> registerVolumeMedicalCare(
             @RequestHeader(name = "token") String token,
             @RequestBody VolumeMedicalCareRequest volumeMedicalCareRequest) {
@@ -35,7 +35,7 @@ public class VolumeMedicalCareController {
                         .acceptance(token, volumeMedicalCareRequest));
     }
 
-    @PostMapping("/api/test/getVolumeMedicalCare")
+    @PostMapping("/api/test/setVolumeMedicalCare")
     public ResponseEntity<VolumeMedicalCareResponse> registerVolumeMedicalCareTest(
             @RequestHeader(name = "token") String token,
             @RequestBody VolumeMedicalCareRequest volumeMedicalCareRequest) {

@@ -1,20 +1,13 @@
 package ru.hardy.udio.view.grid;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.dataview.GridListDataView;
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
-import com.vaadin.flow.data.value.ValueChangeMode;
-import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
+import ru.hardy.udio.domain.api.padatapatients.mo.PADataPatientRequestRecord;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.function.Consumer;
 
 public class PADataPatientRequestRecordGrid {
     public void getGrid(Grid<PADataPatientRequestRecord> grid, GridListDataView<PADataPatientRequestRecord> paDataPatientRequestRecordGridListDataView) {

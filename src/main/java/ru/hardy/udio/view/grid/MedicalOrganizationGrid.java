@@ -10,16 +10,10 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.hardy.udio.domain.api.numberavailableseats.DTO.NumberAvailableSeatsDTO;
-import ru.hardy.udio.domain.api.volumemedicalcare.VolumeMedicalCareDiagnosis;
-import ru.hardy.udio.domain.api.volumemedicalcare.dto.VolumeMedicalCareDTO;
 import ru.hardy.udio.domain.nsi.MedicalOrganization;
-import ru.hardy.udio.service.UtilService;
-import ru.hardy.udio.service.apiservice.numberavailableseatsservice.DTO.NumberAvailableSeatsDTOService;
+import ru.hardy.udio.service.apiservice.numberavailableseatsservice.dto.NumberAvailableSeatsDTOService;
 import ru.hardy.udio.service.apiservice.operatingscheduleservice.OperatingScheduleRequestRecordService;
-import ru.hardy.udio.service.apiservice.schedulepianddispplotservice.SchedulePIAndDispPlotRequestRecordService;
-import ru.hardy.udio.service.apiservice.volumemedicalcareservice.VolumeMedicalCareDiagnosisService;
-import ru.hardy.udio.service.apiservice.volumemedicalcareservice.VolumeMedicalCareRequestRecordService;
+import ru.hardy.udio.service.apiservice.schedulepianddispplotservice.mo.SchedulePIAndDispPlotRequestRecordService;
 import ru.hardy.udio.service.apiservice.volumemedicalcareservice.dto.VolumeMedicalCareDTOService;
 import ru.hardy.udio.service.nsiservice.MedicalOrganizationService;
 import ru.hardy.udio.view.dialog.DialogViewGen;
@@ -85,7 +79,7 @@ public class MedicalOrganizationGrid {
                     button.setIcon(new Icon(VaadinIcon.BED));
                     button.addClickListener(event -> {
                         new DialogViewGen().getNumberAvailableSeatsDialog(
-                                numberAvailableSeatsDTOService.getAllByMO(medicalOrganization)).open();
+                                numberAvailableSeatsDTOService.getAllByMO(medicalOrganization.getCodeMO())).open();
                     });
                 }));
 

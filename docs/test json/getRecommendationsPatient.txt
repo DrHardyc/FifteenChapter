@@ -1,4 +1,4 @@
-http://localhost:8080/api/1.1/getRecommendationsPatient
+http://localhost:8080/api/1.1/setRecommendationsPatient
 
 
 token: e/SGvhPZm?usABQ9RT-gf9lyeVvYpztQG779xYQZhPyaDZolE=QNldo3ka/chYxrV4Z4mhBMCwtOLouOXihizs0XLEA0RVcLaUmI79L6ZetOl7x8=dDi4ntQ?WRMbI/?

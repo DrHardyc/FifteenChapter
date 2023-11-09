@@ -5,8 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import ru.hardy.udio.domain.abstractclasses.APIInsuredPersonResponseRecord;
-import ru.hardy.udio.domain.abstractclasses.InsuredPerson;
-import ru.hardy.udio.domain.api.padatapatients.PADataPatientRequestRecord;
+import ru.hardy.udio.domain.api.padatapatients.mo.PADataPatientRequestRecord;
 
 import java.time.Instant;
 import java.util.Date;
