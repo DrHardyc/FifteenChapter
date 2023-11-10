@@ -16,7 +16,7 @@ public class SchedulePIAndDispPlotService {
     @Autowired
     private SchedulePIAndDispPlotRepo schedulePIAndDispPlotRepo;
 
-    public void add(SchedulePIAndDispPlotRequestRecord schedulePIAndDispPlotRequestRecord, int codeMO){
+    public void add(SchedulePIAndDispPlotRequestRecord schedulePIAndDispPlotRequestRecord){
         SchedulePIAndDispPlot schedulePIAndDispPlot = new SchedulePIAndDispPlot();
         schedulePIAndDispPlot.setDate_beg(Date.from(Instant.now()));
         schedulePIAndDispPlot.setDate_edit(Date.from(Instant.now()));

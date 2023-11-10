@@ -16,11 +16,14 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import org.springframework.stereotype.Service;
+import ru.hardy.udio.domain.api.hospitalization.dto.HospitalizationPatientDTO;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.InsuranceCase;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
 import ru.hardy.udio.domain.api.numberavailableseats.dto.NumberAvailableSeatsDTO;
 import ru.hardy.udio.domain.api.operatingschedule.OperatingScheduleRequestRecord;
 import ru.hardy.udio.domain.api.padatapatients.mo.PADataPatientRequestRecord;
+import ru.hardy.udio.domain.api.recommendationspatient.mo.RecommendationsPatient;
+import ru.hardy.udio.domain.api.recommendationspatient.mo.RecommendationsPatientRequestRecord;
 import ru.hardy.udio.domain.api.schedulepianddispplot.dto.SchedulePIAndDispPlotDTO;
 import ru.hardy.udio.domain.api.schedulepianddispplot.mo.SchedulePIAndDispPlotRequestRecord;
 import ru.hardy.udio.domain.api.volumemedicalcare.dto.VolumeMedicalCareDTO;
@@ -138,7 +141,8 @@ public class DialogViewGen {
     }
     public Dialog getPeopleInfo(List<IndividualInformingRequestRecord> individualInformingRequestRecordList,
                                 List<PADataPatientRequestRecord> paDataPatientRequestRecordList,
-                                List<InsuranceCase> insuranceCaseList) {
+                                List<InsuranceCase> insuranceCaseList, List<HospitalizationPatientDTO> hospitalizationPatientDTOS
+            /*,List<RecommendationsPatientRequestRecord> recommendationsPatientRequestRecords*/) {
         Dialog dialog1 = new Dialog();
         Button closeButton = new Button(new Icon(VaadinIcon.CLOSE_SMALL),
                 (event) -> dialog1.close());
@@ -169,7 +173,15 @@ public class DialogViewGen {
         });
         hlOnko.add(btnOnko, spanOnko);
 
-        dialog1.add(hlII, hlPA, hlOnko);
+        HorizontalLayout hlHospitalization = new HorizontalLayout();
+        Span spanHospitalization = new CMSpan(String.valueOf(hospitalizationPatientDTOS.size()));
+        Button btnHospitalization = new Button("Госпитализация");
+        btnHospitalization.addClickListener(e -> {
+            new DialogViewGen().getHospitalization(hospitalizationPatientDTOS).open();
+        });
+        hlHospitalization.add(btnHospitalization, spanHospitalization);
+
+        dialog1.add(hlII, hlPA, hlOnko, hlHospitalization);
         dialog1.setHeight("25vh");
         dialog1.setWidth("20vw");
         Span badge = new Span("Общая информация");
@@ -181,6 +193,18 @@ public class DialogViewGen {
         dialog1.setResizable(true);
         dialog1.setModal(false);
         return dialog1;
+    }
+
+    private Dialog getHospitalization(List<HospitalizationPatientDTO> hospitalizationPatientDTOS) {
+        initFooter();
+        Grid grid = GridUtils.createNewDialogGrid(horizontalLayout, btnExcel);
+        grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+        HospitalizationGrid hospitalizationGrid = new HospitalizationGrid();
+
+        hospitalizationGrid.getGrid(grid, hospitalizationPatientDTOS);
+        dialog.add(grid);
+
+        return dialog;
     }
 
     public Dialog getDieReportDialog(List<DNOutDto> dnOutDtos){

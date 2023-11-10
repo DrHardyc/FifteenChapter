@@ -16,4 +16,6 @@ public interface PADataPatientRepo extends JpaRepository<PADataPatient, Long> {
     PADataPatient findByPeople(People people);
 
     List<PADataPatient> findAllByRequestRecord_CodeTypePreventiveActionsAndRequestRecord_StatusTypePreventiveActions(int type, int status);
+
+    PADataPatient findByPeopleAndRequestRecord_CodeTypePreventiveActionsAndRequestRecord_StatusTypePreventiveActions(People people, int par1, int par2);
 }

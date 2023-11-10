@@ -144,7 +144,6 @@ public interface PeopleRepo extends JpaRepository<People, Long> {
 
     List<People> findAllByNameAndDateBirth(String name, @DateTimeFormat(pattern = "dd.MM.yyyy") Date dateBirth);
 
-
 }
 
 

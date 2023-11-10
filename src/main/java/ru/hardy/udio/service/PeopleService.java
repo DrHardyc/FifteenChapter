@@ -19,6 +19,7 @@ import ru.hardy.udio.repo.PeopleRepo;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -97,6 +98,16 @@ public class PeopleService {
                     return new ResultProcessingClass<>(1, people);
                 else return new ResultProcessingClass<>(2, people);
             } return new ResultProcessingClass<>(2, people);
+        }
+    }
+
+    public People getByInsuredPerson(InsuredPerson insuredPerson) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        try {
+            return peopleRepo.findPeopleBySurnameIgnoreCaseAndNameIgnoreCaseAndPatronymicIgnoreCaseAndDateBirthAndEnp(insuredPerson.getSurname(),
+                    insuredPerson.getName(), insuredPerson.getPatronymic(), simpleDateFormat.parse(simpleDateFormat.format(insuredPerson.getDateBirth())), insuredPerson.getEnp());
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
         }
     }
 

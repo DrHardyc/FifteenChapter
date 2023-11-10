@@ -2,6 +2,7 @@ package ru.hardy.udio.service.apiservice.padatapatientsservice.mo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.hardy.udio.domain.abstractclasses.InsuredPerson;
 import ru.hardy.udio.domain.api.padatapatients.mo.PADataPatient;
 import ru.hardy.udio.domain.api.padatapatients.mo.PADataPatientRequestRecord;
 import ru.hardy.udio.domain.struct.People;
@@ -39,5 +40,16 @@ public class PADataPatientService {
 
     public List<PADataPatient> getAllByTypeAndStatus(int type, int status){
         return paDataPatientRepo.findAllByRequestRecord_CodeTypePreventiveActionsAndRequestRecord_StatusTypePreventiveActions(type, status);
+    }
+
+    /**
+     * @param par1: код типа меропроятия codeTypePreventiveActions
+     * @param par2: статус statusTypePreventiveActions
+     * **/
+    public People getByPeopleListAndFilterParam(People people, int par1, int par2) {
+        PADataPatient paDataPatient = paDataPatientRepo.findByPeopleAndRequestRecord_CodeTypePreventiveActionsAndRequestRecord_StatusTypePreventiveActions(people, par1, par2);
+        if (paDataPatient != null)
+            return paDataPatient.getPeople();
+        return null;
     }
 }

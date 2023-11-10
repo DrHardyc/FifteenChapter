@@ -6,8 +6,10 @@ import ru.hardy.udio.domain.abstractclasses.APIRequest;
 import ru.hardy.udio.domain.abstractclasses.APIResponse;
 import ru.hardy.udio.domain.api.choosingmo.ChoosingMORequest;
 import ru.hardy.udio.domain.api.choosingmo.ChoosingMOResponse;
-import ru.hardy.udio.domain.api.hospitalization.HospitalizationRequest;
-import ru.hardy.udio.domain.api.hospitalization.HospitalizationResponse;
+import ru.hardy.udio.domain.api.hospitalization.mo.HospitalizationRequest;
+import ru.hardy.udio.domain.api.hospitalization.mo.HospitalizationResponse;
+import ru.hardy.udio.domain.api.hospitalization.smo.HospitalizationSMORequest;
+import ru.hardy.udio.domain.api.hospitalization.smo.HospitalizationSMOResponse;
 import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInformingRequest;
 import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInformingResponse;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.IndividualHistoryOnkoCaseRequest;
@@ -24,8 +26,10 @@ import ru.hardy.udio.domain.api.padatapatients.mo.PADataPatientRequest;
 import ru.hardy.udio.domain.api.padatapatients.mo.PADataPatientResponse;
 import ru.hardy.udio.domain.api.padatapatients.smo.PADataPatientSMORequest;
 import ru.hardy.udio.domain.api.padatapatients.smo.PADataPatientSMOResponse;
-import ru.hardy.udio.domain.api.recommendationspatient.RecommendationsPatientRequest;
-import ru.hardy.udio.domain.api.recommendationspatient.RecommendationsPatientResponse;
+import ru.hardy.udio.domain.api.recommendationspatient.mo.RecommendationsPatientRequest;
+import ru.hardy.udio.domain.api.recommendationspatient.mo.RecommendationsPatientResponse;
+import ru.hardy.udio.domain.api.recommendationspatient.smo.RecommendationsPatientSMORequest;
+import ru.hardy.udio.domain.api.recommendationspatient.smo.RecommendationsPatientSMOResponse;
 import ru.hardy.udio.domain.api.schedulepianddispplot.mo.SchedulePIAndDispPlotRequest;
 import ru.hardy.udio.domain.api.schedulepianddispplot.mo.SchedulePIAndDispPlotResponse;
 import ru.hardy.udio.domain.api.schedulepianddispplot.smo.SchedulePIAndDispPlotSMORequest;
@@ -36,8 +40,9 @@ import ru.hardy.udio.domain.nsi.MedicalOrganization;
 import ru.hardy.udio.service.TokenService;
 import ru.hardy.udio.service.apiservice.apiinterface.APIRequestServiceInterface;
 import ru.hardy.udio.service.apiservice.choosingmoservice.ChoosingMORequestService;
-import ru.hardy.udio.service.apiservice.hospitalizationservice.HospitalizationRequestService;
-import ru.hardy.udio.service.apiservice.hospitalizationservice.HospitalizationResponseService;
+import ru.hardy.udio.service.apiservice.hospitalizationservice.mo.HospitalizationRequestService;
+import ru.hardy.udio.service.apiservice.hospitalizationservice.mo.HospitalizationResponseService;
+import ru.hardy.udio.service.apiservice.hospitalizationservice.smo.HospitalizationSMORequestService;
 import ru.hardy.udio.service.apiservice.individualhistoryinformingservice.IndividualHistoryInformingRequestService;
 import ru.hardy.udio.service.apiservice.individualhistoryonkocaseservice.IndividualHistoryOnkoCaseRequestService;
 import ru.hardy.udio.service.apiservice.individualinformingservice.IndividualInformingRequestService;
@@ -46,11 +51,15 @@ import ru.hardy.udio.service.apiservice.numberavailableseatsservice.smo.NumberAv
 import ru.hardy.udio.service.apiservice.operatingscheduleservice.OperatingScheduleRequestService;
 import ru.hardy.udio.service.apiservice.padatapatientsservice.mo.PADataPatientRequestService;
 import ru.hardy.udio.service.apiservice.padatapatientsservice.smo.PADataPatientSMORequestService;
-import ru.hardy.udio.service.apiservice.recommendationspatientservice.RecommendationsPatientRequestService;
+import ru.hardy.udio.service.apiservice.recommendationspatientservice.smo.RecommendationsPatientSMORequestService;
+import ru.hardy.udio.service.apiservice.recommendationspatientservice.so.RecommendationsPatientRequestService;
 import ru.hardy.udio.service.apiservice.schedulepianddispplotservice.mo.SchedulePIAndDispPlotRequestService;
 import ru.hardy.udio.service.apiservice.schedulepianddispplotservice.smo.SchedulePIAndDispPlotSMORequestService;
 import ru.hardy.udio.service.apiservice.volumemedicalcareservice.VolumeMedicalCareRequestService;
 import ru.hardy.udio.service.nsiservice.MedicalOrganizationService;
+
+import java.time.Instant;
+import java.util.Date;
 
 @Service
 public class APIRequestService implements APIRequestServiceInterface {
@@ -101,37 +110,45 @@ public class APIRequestService implements APIRequestServiceInterface {
     private SchedulePIAndDispPlotSMORequestService schedulePIAndDispPlotSMORequestService;
     @Autowired
     private NumberAvailableSeatsSMORequestService numberAvailableSeatsSMORequestService;
+    @Autowired
+    private HospitalizationSMORequestService hospitalizationSMORequestService;
+    @Autowired
+    private RecommendationsPatientSMORequestService recommendationsPatientSMORequestService;
+
 
     @Override
     public void add(APIRequest apiRequest) {
-        if (apiRequest instanceof ChoosingMORequest){
-            choosingMORequestService.add(apiRequest);
-        } else if (apiRequest instanceof IndividualHistoryInformingRequest){
-            individualHistoryInformingRequestService.add(apiRequest);
-        } else if (apiRequest instanceof IndividualHistoryOnkoCaseRequest) {
-            individualHistoryOnkoCaseRequestService.add(apiRequest);
-        } else if (apiRequest instanceof IndividualInformingRequest) {
-            individualInformingRequestService.add(apiRequest);
-        } else if (apiRequest instanceof NumberAvailableSeatsRequest) {
-            numberAvailableSeatsRequestService.add(apiRequest);
-        } else if (apiRequest instanceof OperatingScheduleRequest) {
-            operatingScheduleRequestService.add(apiRequest);
-        } else if (apiRequest instanceof PADataPatientRequest) {
-            paDataPatientRequestService.add(apiRequest);
-        } else if (apiRequest instanceof SchedulePIAndDispPlotRequest) {
-            schedulePIAndDispPlotRequestService.add(apiRequest);
-        } else if (apiRequest instanceof VolumeMedicalCareRequest) {
-            volumeMedicalCareRequestService.add(apiRequest);
-        } else if (apiRequest instanceof HospitalizationRequest) {
-            hospitalizationRequestService.add(apiRequest);
-        } else if (apiRequest instanceof RecommendationsPatientRequest) {
-            recommendationsPatientRequestService.add(apiRequest);
-        } else if (apiRequest instanceof PADataPatientSMORequest) {
-            paDataPatientSMORequestService.add(apiRequest);
-        } else if (apiRequest instanceof SchedulePIAndDispPlotSMORequest) {
-            schedulePIAndDispPlotSMORequestService.add(apiRequest);
-        } else if (apiRequest instanceof NumberAvailableSeatsSMORequest) {
-            numberAvailableSeatsSMORequestService.add(apiRequest);
+        apiRequest.setDateBeg(Date.from(Instant.now()));
+        apiRequest.setDateEdit(Date.from(Instant.now()));
+        switch (apiRequest) {
+            case ChoosingMORequest choosingMORequest -> choosingMORequestService.add(apiRequest);
+            case IndividualHistoryInformingRequest individualHistoryInformingRequest ->
+                    individualHistoryInformingRequestService.add(apiRequest);
+            case IndividualHistoryOnkoCaseRequest individualHistoryOnkoCaseRequest ->
+                    individualHistoryOnkoCaseRequestService.add(apiRequest);
+            case IndividualInformingRequest individualInformingRequest ->
+                    individualInformingRequestService.add(apiRequest);
+            case NumberAvailableSeatsRequest numberAvailableSeatsRequest ->
+                    numberAvailableSeatsRequestService.add(apiRequest);
+            case OperatingScheduleRequest operatingScheduleRequest -> operatingScheduleRequestService.add(apiRequest);
+            case PADataPatientRequest paDataPatientRequest -> paDataPatientRequestService.add(apiRequest);
+            case SchedulePIAndDispPlotRequest schedulePIAndDispPlotRequest ->
+                    schedulePIAndDispPlotRequestService.add(apiRequest);
+            case VolumeMedicalCareRequest volumeMedicalCareRequest -> volumeMedicalCareRequestService.add(apiRequest);
+            case HospitalizationRequest hospitalizationRequest -> hospitalizationRequestService.add(apiRequest);
+            case RecommendationsPatientRequest recommendationsPatientRequest ->
+                    recommendationsPatientRequestService.add(apiRequest);
+            case PADataPatientSMORequest paDataPatientSMORequest -> paDataPatientSMORequestService.add(apiRequest);
+            case SchedulePIAndDispPlotSMORequest schedulePIAndDispPlotSMORequest ->
+                    schedulePIAndDispPlotSMORequestService.add(apiRequest);
+            case NumberAvailableSeatsSMORequest numberAvailableSeatsSMORequest ->
+                    numberAvailableSeatsSMORequestService.add(apiRequest);
+            case HospitalizationSMORequest hospitalizationSMORequest ->
+                    hospitalizationSMORequestService.add(apiRequest);
+            case RecommendationsPatientSMORequest recommendationsPatientSMORequest ->
+                    recommendationsPatientSMORequestService.add(apiRequest);
+            default -> {
+            }
         }
     }
 
@@ -160,6 +177,10 @@ public class APIRequestService implements APIRequestServiceInterface {
                     schedulePIAndDispPlotSMORequestService.checkChild(apiRequest);
             case NumberAvailableSeatsSMORequest numberAvailableSeatsSMORequest ->
                     numberAvailableSeatsSMORequestService.checkChild(apiRequest);
+            case HospitalizationSMORequest hospitalizationSMORequest ->
+                    hospitalizationSMORequestService.checkChild(apiRequest);
+            case RecommendationsPatientSMORequest recommendationsPatientSMORequest ->
+                    recommendationsPatientSMORequestService.checkChild(apiRequest);
             case null, default -> apiRequest instanceof PADataPatientSMORequest;
         };
     }
@@ -293,6 +314,10 @@ public class APIRequestService implements APIRequestServiceInterface {
             ((SchedulePIAndDispPlotSMOResponse) apiResponse).setRequest((SchedulePIAndDispPlotSMORequest) apiRequest);
         } else if (apiRequest instanceof NumberAvailableSeatsSMORequest) {
             ((NumberAvailableSeatsSMOResponse) apiResponse).setRequest((NumberAvailableSeatsSMORequest) apiRequest);
+        } else if (apiRequest instanceof HospitalizationSMORequest) {
+            ((HospitalizationSMOResponse) apiResponse).setRequest((HospitalizationSMORequest) apiRequest);
+        } else if (apiRequest instanceof RecommendationsPatientSMORequest) {
+            ((RecommendationsPatientSMOResponse) apiResponse).setRequest((RecommendationsPatientSMORequest) apiRequest);
         }
     }
 
@@ -325,6 +350,10 @@ public class APIRequestService implements APIRequestServiceInterface {
             return new SchedulePIAndDispPlotSMOResponse();
         } else if (apiRequest instanceof NumberAvailableSeatsSMORequest) {
             return new NumberAvailableSeatsSMOResponse();
+        } else if (apiRequest instanceof HospitalizationSMORequest) {
+            return new HospitalizationSMOResponse();
+        } else if (apiRequest instanceof RecommendationsPatientSMORequest) {
+            return new RecommendationsPatientSMOResponse();
         }
         return null;
     }

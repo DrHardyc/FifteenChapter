@@ -1,0 +1,64 @@
+//http://localhost:8080/api/1.1/setRecommendationsPatient
+//
+//token: e/SGvhPZm?usABQ9RT-gf9lyeVvYpztQG779xYQZhPyaDZolE=QNldo3ka/chYxrV4Z4mhBMCwtOLouOXihizs0XLEA0RVcLaUmI79L6ZetOl7x8=dDi4ntQ?WRMbI/?
+//token: RnhKpdzagxwTI!Nwsozs34E8Ngf7j7N?wT1necDCVAjw848r/V9=3k-j-EkozJKjxKBQBqyfELJkG75hfp4bXCg3=6FA2K05QSbqHOqh3TVCVLRecwOe-s82D=aZfmWZ
+
+
+{
+  "reqID":"asdf-adfg-asdqer-adfqeh-erg",
+  "patients":
+  [
+    {
+      "surname":"Премудрая",
+      "name":"Василиса",
+      "patronymic":"Ивановна",
+      "dateBirth":"1111-02-12",
+      "enp":"1235486925412365",
+      "dateRecommendation":"1155-07-18",
+      "recommendation":"Какая то рекомендация",
+      "possibilityHolding": "сетевые камеры",
+      "mainDiagnosis": "Z01.2",
+      "participants":
+      [
+        {
+            "surname":"Иванов",
+            "name":"Иван",
+            "patronymic":"Иванович",
+            "jobTitle":"лечащий врач, врач-терапефт"
+        },
+        {
+            "surname":"Сидоров",
+            "name":"Александ",
+            "patronymic":"Заурович",
+            "jobTitle":"старший консультан, доктор всех возможных и невозможных наук"
+        }
+      ]
+    },
+    {
+      "surname":"Durak",
+      "name":"Иван",
+      "patronymic":"Васильевич",
+      "dateBirth":"1131-07-23",
+      "enp":"1235486925412367",
+      "dateRecommendation":"1168-12-31",
+      "recommendation":"Какая то рекомендация",
+      "possibilityHolding": "волшебное зеркало",
+      "mainDiagnosis": "C33.2",
+      "participants":
+      [
+        {
+          "surname":"сын Федора",
+          "name":"Фома",
+          "patronymic":"",
+          "jobTitle":"местный лекарь"
+        },
+        {
+          "surname":"дочь Яги старшей",
+          "name":"Яга",
+          "patronymic":"",
+          "jobTitle":"алхимик, профессор зельеварения"
+        }
+      ]
+    }
+  ]
+}

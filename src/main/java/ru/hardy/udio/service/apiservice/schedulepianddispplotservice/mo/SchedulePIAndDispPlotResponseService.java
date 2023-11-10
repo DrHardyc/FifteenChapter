@@ -59,7 +59,7 @@ public class SchedulePIAndDispPlotResponseService implements APIResponseServiceI
                 schedulePIAndDispPlotService.update(schedulePIAndDispPlot, departmentRequest);
                 errMess = "Запись успешно обновлена";
             } else {
-                schedulePIAndDispPlotService.add(departmentRequest, medicalOrganization.getCodeMO());
+                schedulePIAndDispPlotService.add(departmentRequest);
             }
             schedulePIAndDispPlotResponse.setResultResponseCode(200);
             schedulePIAndDispPlotResponse.setNumberRecordsProcessed(count);

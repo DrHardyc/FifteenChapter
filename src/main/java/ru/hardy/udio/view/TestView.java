@@ -7,11 +7,8 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
-import com.vaadin.flow.component.tabs.Tab;
-import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.component.upload.Upload;
@@ -28,13 +25,19 @@ import ru.hardy.udio.domain.combobox.UdioCombobox;
 import ru.hardy.udio.domain.struct.DataFile;
 import ru.hardy.udio.domain.struct.F003;
 import ru.hardy.udio.domain.struct.People;
-import ru.hardy.udio.service.*;
+import ru.hardy.udio.repo.PeopleRepo;
+import ru.hardy.udio.repo.apirepo.recommendationspatientrepo.RecommendationsPatientRepo;
+import ru.hardy.udio.service.DataFilePatientService;
+import ru.hardy.udio.service.ExcelService;
+import ru.hardy.udio.service.F003Service;
+import ru.hardy.udio.service.PeopleService;
 import ru.hardy.udio.service.SRZ.DBFSearchService;
 import ru.hardy.udio.service.apiservice.padatapatientsservice.mo.PADataPatientRequestRecordService;
-import ru.hardy.udio.view.grid.SchedulePIAndDispPlotGrid;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Route(layout = MainView.class)
@@ -43,6 +46,11 @@ public class TestView extends VerticalLayout {
 
     @Autowired
     private PeopleService peopleService;
+    @Autowired
+    private PeopleRepo peopleRepo;
+
+    @Autowired
+    private RecommendationsPatientRepo recommendationsPatientRepo;
 
     @Autowired
     private DataFilePatientService dataFilePatientService;
@@ -215,8 +223,14 @@ public class TestView extends VerticalLayout {
         });
 
         Button button = new Button("test");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
         button.addClickListener(e -> {
-
+            try {
+                Notification.show(peopleRepo.findPeopleBySurnameIgnoreCaseAndNameIgnoreCaseAndPatronymicIgnoreCaseAndDateBirthAndEnp("Премудрая",
+                        "Василиса","Ивановна", simpleDateFormat.parse("12.02.1111"), "1235486925412365").getFIO());
+            } catch (ParseException ex) {
+                throw new RuntimeException(ex);
+            }
         });
 
         add(button, btnTestOneToOne, btnTestF003, buttonGen, btnSearchInSRZ, btnTestDNGetAll,

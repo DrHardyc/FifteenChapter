@@ -6,8 +6,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
-import ru.hardy.udio.domain.api.recommendationspatient.RecommendationsPatientRequest;
-import ru.hardy.udio.domain.api.recommendationspatient.RecommendationsPatientResponse;
+import ru.hardy.udio.domain.api.recommendationspatient.mo.RecommendationsPatientRequest;
+import ru.hardy.udio.domain.api.recommendationspatient.mo.RecommendationsPatientResponse;
+import ru.hardy.udio.domain.api.recommendationspatient.smo.RecommendationsPatientSMORequest;
+import ru.hardy.udio.domain.api.recommendationspatient.smo.RecommendationsPatientSMOResponse;
 import ru.hardy.udio.service.apiservice.APIRequestService;
 
 @Controller
@@ -24,6 +26,16 @@ public class RecommendationsPatientController {
         return ResponseEntity
                 .ok((RecommendationsPatientResponse) apiRequestService
                         .acceptance(token, recommendationsPatientRequest));
+    }
+
+    @PostMapping("/api/1.1/getRecommendationsPatient")
+    public ResponseEntity<RecommendationsPatientSMOResponse> getHospitalization(
+            @RequestHeader(name = "token") String token,
+            @RequestBody RecommendationsPatientSMORequest recommendationsPatientSMORequest) {
+
+        return ResponseEntity
+                .ok((RecommendationsPatientSMOResponse) apiRequestService
+                        .acceptance(token, recommendationsPatientSMORequest));
     }
 
     @PostMapping("/api/test/setRecommendationsPatient")

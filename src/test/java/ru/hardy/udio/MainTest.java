@@ -10,11 +10,14 @@ import ru.hardy.udio.domain.api.volumemedicalcare.VolumeMedicalCareRequestRecord
 import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.repo.PeopleRepo;
 import ru.hardy.udio.repo.apirepo.numberavailableseatsrepo.NumberAvailableSeatsRepo;
+import ru.hardy.udio.repo.apirepo.recommendationspatientrepo.RecommendationsPatientRepo;
 import ru.hardy.udio.repo.apirepo.volumemedicalcarerepo.VolumeMedicalCareRequestRecordRepo;
 import ru.hardy.udio.repo.nsirepo.MedicalOrganizationRepo;
+import ru.hardy.udio.service.PeopleService;
 import ru.hardy.udio.service.nsiservice.MedicalOrganizationService;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -38,34 +41,16 @@ public class MainTest {
 
     @Autowired
     private MedicalOrganizationRepo medicalOrganizationRepo;
+    @Autowired
+    private RecommendationsPatientRepo recommendationsPatientRepo;
 
     @Test
     public void test() throws ParseException {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 9);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-
-//        calendar.setTime();
-        List<People> peopleList = peopleRepo.findAll();
-
-//        peopleList.forEach(people -> {
-//            if (Integer.parseInt(new SimpleDateFormat("HH").format(people.getDateBeg())) < 9
-//                    && Integer.parseInt(new SimpleDateFormat("HH").format(newDate)) > 9){
-//                System.out.println(people.getFIO());
-//            }
-//        });
-        List<VolumeMedicalCareRequestRecord> volumeMedicalCareRequestRecords =
-                volumeMedicalCareRequestRecordRepo.findAllByMOLast7Days(medicalOrganizationRepo.findByCodeMO(1),
-                        DateTo900Format(7), DateTo900Format(0));
-
-//        List<VolumeMedicalCareRequestRecord> volumeMedicalCareRequestRecords =
-//                volumeMedicalCareRequestRecordRepo.findAll();
-
-        System.out.println(volumeMedicalCareRequestRecords);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
 
+
+        System.out.println(peopleRepo.findPeopleBySurnameIgnoreCaseAndNameIgnoreCaseAndPatronymicIgnoreCaseAndDateBirthAndEnp(
+                "Премудрая", "Василиса","Ивановна", simpleDateFormat.parse("12.02.1111"), "1235486925412365").getFIO());
     }
-
-
 }

@@ -6,8 +6,10 @@ import ru.hardy.udio.domain.abstractclasses.APIRequest;
 import ru.hardy.udio.domain.abstractclasses.APIResponse;
 import ru.hardy.udio.domain.api.choosingmo.ChoosingMORequest;
 import ru.hardy.udio.domain.api.choosingmo.ChoosingMOResponse;
-import ru.hardy.udio.domain.api.hospitalization.HospitalizationRequest;
-import ru.hardy.udio.domain.api.hospitalization.HospitalizationResponse;
+import ru.hardy.udio.domain.api.hospitalization.mo.HospitalizationRequest;
+import ru.hardy.udio.domain.api.hospitalization.mo.HospitalizationResponse;
+import ru.hardy.udio.domain.api.hospitalization.smo.HospitalizationSMORequest;
+import ru.hardy.udio.domain.api.hospitalization.smo.HospitalizationSMOResponse;
 import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInformingRequest;
 import ru.hardy.udio.domain.api.individualhistoryinforming.IndividualHistoryInformingResponse;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.IndividualHistoryOnkoCaseRequest;
@@ -24,8 +26,10 @@ import ru.hardy.udio.domain.api.padatapatients.mo.PADataPatientRequest;
 import ru.hardy.udio.domain.api.padatapatients.mo.PADataPatientResponse;
 import ru.hardy.udio.domain.api.padatapatients.smo.PADataPatientSMORequest;
 import ru.hardy.udio.domain.api.padatapatients.smo.PADataPatientSMOResponse;
-import ru.hardy.udio.domain.api.recommendationspatient.RecommendationsPatientRequest;
-import ru.hardy.udio.domain.api.recommendationspatient.RecommendationsPatientResponse;
+import ru.hardy.udio.domain.api.recommendationspatient.mo.RecommendationsPatientRequest;
+import ru.hardy.udio.domain.api.recommendationspatient.mo.RecommendationsPatientResponse;
+import ru.hardy.udio.domain.api.recommendationspatient.smo.RecommendationsPatientSMORequest;
+import ru.hardy.udio.domain.api.recommendationspatient.smo.RecommendationsPatientSMOResponse;
 import ru.hardy.udio.domain.api.schedulepianddispplot.mo.SchedulePIAndDispPlotRequest;
 import ru.hardy.udio.domain.api.schedulepianddispplot.mo.SchedulePIAndDispPlotResponse;
 import ru.hardy.udio.domain.api.schedulepianddispplot.smo.SchedulePIAndDispPlotSMORequest;
@@ -35,7 +39,8 @@ import ru.hardy.udio.domain.api.volumemedicalcare.VolumeMedicalCareResponse;
 import ru.hardy.udio.domain.nsi.MedicalOrganization;
 import ru.hardy.udio.service.apiservice.apiinterface.APIResponseServiceInterface;
 import ru.hardy.udio.service.apiservice.choosingmoservice.ChoosingMOResponseService;
-import ru.hardy.udio.service.apiservice.hospitalizationservice.HospitalizationResponseService;
+import ru.hardy.udio.service.apiservice.hospitalizationservice.mo.HospitalizationResponseService;
+import ru.hardy.udio.service.apiservice.hospitalizationservice.smo.HospitalizationSMOResponseService;
 import ru.hardy.udio.service.apiservice.individualhistoryinformingservice.IndividualHistoryInformingResponseService;
 import ru.hardy.udio.service.apiservice.individualhistoryonkocaseservice.IndividualHistoryOnkoCaseResponseService;
 import ru.hardy.udio.service.apiservice.individualinformingservice.IndividualInformingResponseService;
@@ -44,7 +49,8 @@ import ru.hardy.udio.service.apiservice.numberavailableseatsservice.smo.NumberAv
 import ru.hardy.udio.service.apiservice.operatingscheduleservice.OperatingScheduleResponseService;
 import ru.hardy.udio.service.apiservice.padatapatientsservice.mo.PADataPatientResponseService;
 import ru.hardy.udio.service.apiservice.padatapatientsservice.smo.PADataPatientSMOResponseService;
-import ru.hardy.udio.service.apiservice.recommendationspatientservice.RecommendationsPatientResponseService;
+import ru.hardy.udio.service.apiservice.recommendationspatientservice.smo.RecommendationsPatientSMOResponseService;
+import ru.hardy.udio.service.apiservice.recommendationspatientservice.so.RecommendationsPatientResponseService;
 import ru.hardy.udio.service.apiservice.schedulepianddispplotservice.mo.SchedulePIAndDispPlotResponseService;
 import ru.hardy.udio.service.apiservice.schedulepianddispplotservice.smo.SchedulePIAndDispPlotSMOResponseService;
 import ru.hardy.udio.service.apiservice.volumemedicalcareservice.VolumeMedicalCareResponseService;
@@ -81,6 +87,10 @@ public class APIResponseService implements APIResponseServiceInterface {
     private SchedulePIAndDispPlotSMOResponseService schedulePIAndDispPlotSMOResponseService;
     @Autowired
     private NumberAvailableSeatsSMOResponseService numberAvailableSeatsSMOResponseService;
+    @Autowired
+    private HospitalizationSMOResponseService hospitalizationSMOResponseService;
+    @Autowired
+    private RecommendationsPatientSMOResponseService recommendationsPatientSMOResponseService;
 
 
 
@@ -113,6 +123,10 @@ public class APIResponseService implements APIResponseServiceInterface {
             paDataPatientSMOResponseService.add(apiResponse);
         } else if (apiResponse instanceof NumberAvailableSeatsSMOResponse) {
             numberAvailableSeatsSMOResponseService.add(apiResponse);
+        } else if (apiResponse instanceof HospitalizationSMOResponse) {
+            hospitalizationSMOResponseService.add(apiResponse);
+        } else if (apiResponse instanceof RecommendationsPatientSMOResponse) {
+            recommendationsPatientSMOResponseService.add(apiResponse);
         }
     }
 
@@ -171,6 +185,10 @@ public class APIResponseService implements APIResponseServiceInterface {
             return schedulePIAndDispPlotSMOResponseService.processing(apiRequest, apiResponse, medicalOrganization);
         } else if (apiResponse instanceof NumberAvailableSeatsSMOResponse) {
             return numberAvailableSeatsSMOResponseService.processing(apiRequest, apiResponse, medicalOrganization);
+        } else if (apiResponse instanceof HospitalizationSMOResponse) {
+            return hospitalizationSMOResponseService.processing(apiRequest, apiResponse, medicalOrganization);
+        } else if (apiResponse instanceof RecommendationsPatientSMOResponse) {
+            return recommendationsPatientSMOResponseService.processing(apiRequest, apiResponse, medicalOrganization);
         }
         return null;
     }
@@ -202,10 +220,12 @@ public class APIResponseService implements APIResponseServiceInterface {
             return paDataPatientSMOResponseService.getWithReqId(apiRequest.getReqID(), codeMO);
         } else if (apiRequest instanceof SchedulePIAndDispPlotSMORequest) {
             return schedulePIAndDispPlotSMOResponseService.getWithReqId(apiRequest.getReqID(), codeMO);
-        }
-
-        else if (apiRequest instanceof NumberAvailableSeatsSMORequest) {
+        } else if (apiRequest instanceof NumberAvailableSeatsSMORequest) {
             return numberAvailableSeatsSMOResponseService.getWithReqId(apiRequest.getReqID(), codeMO);
+        } else if (apiRequest instanceof HospitalizationSMORequest) {
+            return hospitalizationSMOResponseService.getWithReqId(apiRequest.getReqID(), codeMO);
+        } else if (apiRequest instanceof RecommendationsPatientSMORequest) {
+            return recommendationsPatientSMOResponseService.getWithReqId(apiRequest.getReqID(), codeMO);
         }
         return null;
     }
