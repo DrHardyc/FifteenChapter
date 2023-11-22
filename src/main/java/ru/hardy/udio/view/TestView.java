@@ -1,14 +1,18 @@
 package ru.hardy.udio.view;
 
+import com.github.appreciated.apexcharts.ApexCharts;
 import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
+import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.component.upload.Upload;
@@ -27,17 +31,20 @@ import ru.hardy.udio.domain.struct.F003;
 import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.repo.PeopleRepo;
 import ru.hardy.udio.repo.apirepo.recommendationspatientrepo.RecommendationsPatientRepo;
-import ru.hardy.udio.service.DataFilePatientService;
-import ru.hardy.udio.service.ExcelService;
-import ru.hardy.udio.service.F003Service;
-import ru.hardy.udio.service.PeopleService;
+import ru.hardy.udio.service.*;
 import ru.hardy.udio.service.SRZ.DBFSearchService;
 import ru.hardy.udio.service.apiservice.padatapatientsservice.mo.PADataPatientRequestRecordService;
+import ru.hardy.udio.test.OneParent;
+import ru.hardy.udio.test.TestPeople;
+import ru.hardy.udio.test.testService.OneParentService;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Route(layout = MainView.class)
@@ -47,19 +54,14 @@ public class TestView extends VerticalLayout {
     @Autowired
     private PeopleService peopleService;
     @Autowired
-    private PeopleRepo peopleRepo;
-
-    @Autowired
-    private RecommendationsPatientRepo recommendationsPatientRepo;
-
-    @Autowired
     private DataFilePatientService dataFilePatientService;
-
     @Autowired
     private ExcelService excelService;
-
     @Autowired
     private PADataPatientRequestRecordService paDataPatientRequestRecordService;
+
+    private List<DataFile> dataFile = new ArrayList<>();
+
 
     public TestView() {
 
@@ -103,19 +105,16 @@ public class TestView extends VerticalLayout {
 
         MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
         Upload upload = new Upload(buffer);
-
-//        TextField textField = new TextField("Код МО");
-//        upload.addSucceededListener(event -> {
-//            ExcelService excelService = new ExcelService();
-//            System.out.println(event.getFileName().substring(0, 6));
-//            try {
-//                peopleService.processingFromExcel(excelService.loadFromExcelFromBarsMO(
-//                        new DataFile(event.getFileName(), Date.from(Instant.now()), Integer.parseInt(event.getFileName().substring(0, 6)), 123123L),
-//                        buffer.getInputStream(event.getFileName())));
-//            } catch (ParseException e) {
-//                throw new RuntimeException(e);
-//            }
-//        });
+        upload.addSucceededListener(event -> {
+            System.out.println(event.getFileName().substring(0, 6));
+            try {
+                dataFile.add(excelService.loadFromExcelFromBarsMO(
+                        new DataFile(event.getFileName(), Date.from(Instant.now()), Integer.parseInt(event.getFileName().substring(0, 6)), 11111L),
+                        buffer.getInputStream(event.getFileName())));
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+        });
 //
 //        Upload uploadChild = new Upload(buffer);
 //        uploadChild.addSucceededListener(event -> {
@@ -221,19 +220,17 @@ public class TestView extends VerticalLayout {
             patients.forEach(requestRecord -> System.out.println(requestRecord.getPatient().getPeople().getFIO() + "|"
                     + requestRecord.getMainDiagnosis()));
         });
-
-        Button button = new Button("test");
+        Span span = new Span();
+        Button button = new Button("Загрузка");
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        button.addClickListener(e -> {
-            try {
-                Notification.show(peopleRepo.findPeopleBySurnameIgnoreCaseAndNameIgnoreCaseAndPatronymicIgnoreCaseAndDateBirthAndEnp("Премудрая",
-                        "Василиса","Ивановна", simpleDateFormat.parse("12.02.1111"), "1235486925412365").getFIO());
-            } catch (ParseException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
+        button.addClickListener(e ->
+            Thread.ofVirtual().start(() -> {
+                dataFile.forEach(dataFile1 -> {
+                    peopleService.processingFromExcel(dataFile1, span, this.getUI().get());
+            });
+        }));
 
-        add(button, btnTestOneToOne, btnTestF003, buttonGen, btnSearchInSRZ, btnTestDNGetAll,
+        add(span, button, btnTestOneToOne, btnTestF003, buttonGen, btnSearchInSRZ, btnTestDNGetAll,
                 btnEfficiency, monthBeg, monthEnd, yearBeg, yearEnd);
 
     }

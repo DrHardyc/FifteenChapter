@@ -11,7 +11,6 @@ import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.RolesAllowed;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import ru.hardy.udio.domain.api.hospitalization.dto.HospitalizationPatientDTO;
 import ru.hardy.udio.domain.api.recommendationspatient.mo.RecommendationsPatient;
 import ru.hardy.udio.domain.button.BtnVariant;
 import ru.hardy.udio.domain.button.UdioButton;
@@ -24,7 +23,7 @@ import ru.hardy.udio.service.apiservice.individualinformingservice.IndividualInf
 import ru.hardy.udio.service.apiservice.padatapatientsservice.mo.PADataPatientRequestRecordService;
 import ru.hardy.udio.service.apiservice.padatapatientsservice.mo.PADataPatientService;
 import ru.hardy.udio.service.apiservice.recommendationspatientservice.so.RecommendationsPatientService;
-import ru.hardy.udio.view.dialog.DialogViewGen;
+import ru.hardy.udio.view.dialog.DialogGridGen;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -92,7 +91,10 @@ public class PeopleView extends VerticalLayout {
         grid.addColumn(People::getEnp).setHeader("ЕНП");
 
         ubtnSearch.addClickListener(e -> {
-            if (cbOtherFilter.getValue().equals("Подлежащие")){
+            if (cbOtherFilter.getValue() == null) {
+                grid.setItems(peopleService.getAllPeopleByNotEmptyField(tfSurname.getValue(), tfName.getValue(),
+                        tfPatronymic.getValue(), dpDateBirth, tfENP.getValue()));
+            } else if (cbOtherFilter.getValue().equals("Подлежащие")){
                 grid.setItems(getAllByCodePAPatient(tfSurname.getValue(), tfName.getValue(), tfPatronymic.getValue(), dpDateBirth, tfENP.getValue(),
                         0, 0));
             } else if (cbOtherFilter.getValue().equals("Начавшие прохождение диспансеризации")){
@@ -117,16 +119,13 @@ public class PeopleView extends VerticalLayout {
                 grid.setItems(getAllByCodeHospitalization(tfSurname.getValue(), tfName.getValue(), tfPatronymic.getValue(), dpDateBirth, tfENP.getValue()));
             } else if (cbOtherFilter.getValue().equals("Телемедицина")){
                 grid.setItems(getAllByRecommendationPatient(tfSurname.getValue(), tfName.getValue(), tfPatronymic.getValue(), dpDateBirth, tfENP.getValue()));
-            } else {
-                grid.setItems(peopleService.getAllPeopleByNotEmptyField(tfSurname.getValue(), tfName.getValue(),
-                        tfPatronymic.getValue(), dpDateBirth, tfENP.getValue()));
             }
 
         });
 
         grid.addItemDoubleClickListener(ev -> {
-            DialogViewGen dialogViewGen = new DialogViewGen();
-            dialogViewGen.getPeopleInfo(individualInformingRequestRecordService.getAllByPeople(ev.getItem()),
+            DialogGridGen dialogGridGen = new DialogGridGen();
+            dialogGridGen.getPeopleInfo(individualInformingRequestRecordService.getAllByPeople(ev.getItem()),
                     paDataPatientRequestRecordService.getAllByPeople(ev.getItem()),
                     individualHistoryOnkoCaseResponseRecordService.getInsuredCases(ev.getItem()),
                     hospitalizationPatientDTOService.getAllByPeople(ev.getItem())).open();

@@ -31,6 +31,8 @@ public class DataFilePatient {
     private String enp; //номер полиса, енп и тд
     private Integer mo_attach; //мо прикрепления
     private Integer inv; //инвалидность
+    private Date ds;
+    private Integer onko;//количество онкослучаев в барсе;
     @OneToOne
     @JoinColumn(name = "sex_id", nullable = false)
     private Sex sex;
@@ -38,6 +40,10 @@ public class DataFilePatient {
     @ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
     @JoinColumn(name = "datafile_id")
     private DataFile datafile;
+
+    @OneToOne
+    @JoinColumn(name = "people_id")
+    private People people;
 
     //DNGet
     private String nhistory; // номер истории
@@ -83,6 +89,7 @@ public class DataFilePatient {
             case 4 -> srz_status = "найден по енп";
             case 5 -> srz_status = "дубль";
             case 6 -> srz_status = "ошибка поиска срз";
+            default -> srz_status = "неопределен";
         }
     }
 

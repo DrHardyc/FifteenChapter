@@ -15,7 +15,7 @@ import ru.hardy.udio.domain.generic.ResultProcessingClass;
 import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.service.PeopleService;
 import ru.hardy.udio.service.apiservice.padatapatientsservice.mo.PADataPatientRequestRecordService;
-import ru.hardy.udio.view.dialog.DialogViewGen;
+import ru.hardy.udio.view.dialog.DialogGridGen;
 
 import java.util.List;
 
@@ -69,8 +69,8 @@ public class CasesView extends VerticalLayout {
             List<PADataPatientRequestRecord> paDataPatientRequestRecords =
                     paDataPatientRequestRecordService.getAllByPeople(peopleResultProcessingClass.getProcessingClass());
             if (peopleResultProcessingClass.getProcessingClass() != null) {
-                DialogViewGen dialogViewGen = new DialogViewGen();
-                Dialog dialog = dialogViewGen.getPADataPatientRequestRecordDialog(paDataPatientRequestRecords);
+                DialogGridGen dialogGridGen = new DialogGridGen();
+                Dialog dialog = dialogGridGen.getPADataPatientRequestRecordDialog(paDataPatientRequestRecords);
                 dialog.open();
             } else {
                 Notification.show("Пациент не найден");

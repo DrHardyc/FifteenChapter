@@ -1,8 +1,12 @@
 package ru.hardy.udio.service;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.html.Span;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,10 +14,12 @@ import ru.hardy.udio.config.DBJDBCConfig;
 import ru.hardy.udio.domain.generic.ResultProcessingClass;
 import ru.hardy.udio.domain.abstractclasses.InsuredPerson;
 import ru.hardy.udio.domain.api.choosingmo.ChoosingMORequestRecord;
+import ru.hardy.udio.domain.mapper.PeopleSRZMapper;
 import ru.hardy.udio.domain.report.DateInterval;
+import ru.hardy.udio.domain.struct.DataFile;
 import ru.hardy.udio.domain.struct.DataFilePatient;
 import ru.hardy.udio.domain.struct.People;
-import ru.hardy.udio.domain.struct.dto.PeopleDTO;
+import ru.hardy.udio.domain.mapper.PeopleUDIOMapper;
 import ru.hardy.udio.repo.PeopleRepo;
 
 import java.sql.ResultSet;
@@ -26,6 +32,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Component
@@ -34,24 +41,27 @@ public class PeopleService {
     @Autowired
     private PeopleRepo peopleRepo;
 
+    @Autowired
+    private DataFilePatientService dataFilePatientService;
+
     private final UtilService utilService = new UtilService();
 
     public List<People> getAll() {
         return peopleRepo.findAll();
     }
 
-    public ResultProcessingClass<People> search(InsuredPerson insuredPerson) {
+    public ResultProcessingClass<People> search(Object o) {
+       InstanceObjectParam instantObject = getInstantObject(o);
         People people;
         people = peopleRepo.findPeopleBySurnameIgnoreCaseAndNameIgnoreCaseAndPatronymicIgnoreCaseAndDateBirthAndEnp(
-                insuredPerson.getSurname().toUpperCase(),
-                insuredPerson.getName().toUpperCase(), insuredPerson.getPatronymic().toUpperCase(),
-                insuredPerson.getDateBirth(), insuredPerson.getEnp());
+                instantObject.surname().toUpperCase(),
+                instantObject.name().toUpperCase(), instantObject.patronymic().toUpperCase(),
+                instantObject.dateBirth(), instantObject.enp());
         if (people == null) {
-            people = peopleRepo.findPeopleByEnp(insuredPerson.getEnp());
+            if (!instantObject.enp.isEmpty())
+                people = peopleRepo.findPeopleByEnp(instantObject.enp());
             if (people == null) {
-                People peopleFromSRZWithInsuredPerson = searchFromSRZWithInsuredPerson(insuredPerson);
-//                System.out.println("Поиск cрз : тестовый режим");
-//                int sex = 1;
+                People peopleFromSRZWithInsuredPerson = searchFromSRZWithInsuredPerson(instantObject);
                 if (peopleFromSRZWithInsuredPerson != null) {
                     people = new People(peopleFromSRZWithInsuredPerson.getSurname(), peopleFromSRZWithInsuredPerson.getName(),
                             peopleFromSRZWithInsuredPerson.getPatronymic(), peopleFromSRZWithInsuredPerson.getDateBirth(),
@@ -65,7 +75,7 @@ public class PeopleService {
                         return new ResultProcessingClass<>(2, people);
                     }
                 } else{
-                    People peopleFromDBWithENP = searchFromSRZWithENP(insuredPerson.getEnp());
+                    People peopleFromDBWithENP = searchFromSRZWithENP(instantObject.enp());
                     if (peopleFromDBWithENP != null) {
                         people = new People(peopleFromDBWithENP);
                         peopleRepo.save(people);
@@ -75,14 +85,14 @@ public class PeopleService {
                     } else return null;
                 }
             } else {
-                People peopleFromDBWithInsurePerson = searchFromSRZWithInsuredPerson(insuredPerson);
+                People peopleFromDBWithInsurePerson = searchFromSRZWithInsuredPerson(instantObject);
                 if (peopleFromDBWithInsurePerson != null) {
                     updateWithPeopleSRZ(people, peopleFromDBWithInsurePerson);
                     if (peopleFromDBWithInsurePerson.getDs() == null)
                         return new ResultProcessingClass<>(1, people);
                     else return new ResultProcessingClass<>(2, people);
                 } else {
-                    People peopleFromDBWithENP = searchFromSRZWithENP(insuredPerson.getEnp());
+                    People peopleFromDBWithENP = searchFromSRZWithENP(instantObject.enp());
                     if (peopleFromDBWithENP != null){
                         updateWithPeopleSRZ(people, peopleFromDBWithENP);
                         if (peopleFromDBWithENP.getDs() == null)
@@ -92,7 +102,7 @@ public class PeopleService {
                 }
             }
         } else {
-            People peopleFromDBWithInsurePerson = searchFromSRZWithInsuredPerson(insuredPerson);
+            People peopleFromDBWithInsurePerson = searchFromSRZWithInsuredPerson(instantObject);
             if (peopleFromDBWithInsurePerson != null) {
                 if (people.getDs() == null && peopleFromDBWithInsurePerson.getDs() == null)
                     return new ResultProcessingClass<>(1, people);
@@ -105,53 +115,79 @@ public class PeopleService {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
         try {
             return peopleRepo.findPeopleBySurnameIgnoreCaseAndNameIgnoreCaseAndPatronymicIgnoreCaseAndDateBirthAndEnp(insuredPerson.getSurname(),
-                    insuredPerson.getName(), insuredPerson.getPatronymic(), simpleDateFormat.parse(simpleDateFormat.format(insuredPerson.getDateBirth())), insuredPerson.getEnp());
+                    insuredPerson.getName(), insuredPerson.getPatronymic(), simpleDateFormat.parse(
+                            simpleDateFormat.format(insuredPerson.getDateBirth())), insuredPerson.getEnp());
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
     }
 
     private People searchFromSRZWithENP(String enp) {
+        if (enp.isEmpty()) return null;
         DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
-        Statement statement = dbjdbcConfig.getSRZ();
-
-        try {
-            ResultSet resultSet = statement.executeQuery(
+        JdbcTemplate jdbcTemplate = new JdbcTemplate();
+        jdbcTemplate.setDataSource(dbjdbcConfig.getSRZDataSource());
+        RowMapper<People> peopleMapper = new PeopleSRZMapper();
+        List<People> peopleList =  jdbcTemplate.query(
                     "select p.fam, p.im, p.ot, p.dr, p.enp, p.w, p.id, p.ds, p.lpu from people p where p.enp = '"
-                            + enp + "'");
-            if (resultSet.next()) {
-                return new People(resultSet.getString(1), resultSet.getString(2),
-                        resultSet.getString(3), resultSet.getDate(4), resultSet.getString(5),
-                        resultSet.getInt(6), resultSet.getLong(7), resultSet.getDate(8),
-                        resultSet.getInt(9));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+                            + enp + "'", peopleMapper);
+        if (!peopleList.isEmpty()){
+            return peopleList.get(0);
         }
         return null;
     }
 
-    private People searchFromSRZWithInsuredPerson(InsuredPerson insuredPerson) {
+    private People searchFromSRZWithInsuredPerson(Object o) {
+        InstanceObjectParam instanceObjectParam = getInstantObject(o);
+        String surname = instanceObjectParam.surname;
+        String enp = "";
+        if (instanceObjectParam.enp.isEmpty())
+            enp = "";
+        else enp = "and p.enp = '" + instanceObjectParam.enp() + "'";
+
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
-        Statement statement = dbjdbcConfig.getSRZ();
+        JdbcTemplate jdbcTemplate = new JdbcTemplate();
+        jdbcTemplate.setDataSource(dbjdbcConfig.getSRZDataSource());
+        RowMapper<People> peopleMapper = new PeopleSRZMapper();
+        List<People> peopleList =  jdbcTemplate.query("select p.fam, p.im, p.ot, p.dr, p.enp, p.w, p.id, p.ds, p.lpu " +
+                "from people p where p.fam = '" + instanceObjectParam.surname() +
+                "' and p.im = '" + instanceObjectParam.name() + "' and p.ot = '" + instanceObjectParam.patronymic() +
+                "' and p.dr = PARSE('" + dateFormat.format(instanceObjectParam.dateBirth()) + "' as date) " + enp, peopleMapper);
 
-        try {
-            ResultSet resultSet = statement.executeQuery(
-                    "select p.fam, p.im, p.ot, p.dr, p.enp, p.w, p.id, p.ds, p.lpu from people p where p.fam = '" + insuredPerson.getSurname() +
-                            "' and p.im = '" + insuredPerson.getName() + "' and p.ot = '" + insuredPerson.getPatronymic() +
-                            "' and p.dr = PARSE('" + dateFormat.format(insuredPerson.getDateBirth()) + "' as date) and p.enp = '"
-                            + insuredPerson.getEnp() + "'");
-            if (resultSet.next()) {
-                return new People(resultSet.getString(1), resultSet.getString(2),
-                        resultSet.getString(3), resultSet.getDate(4), resultSet.getString(5),
-                        resultSet.getInt(6), resultSet.getLong(7), resultSet.getDate(8),
-                        resultSet.getInt(9));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        if (!peopleList.isEmpty()){
+            return peopleList.get(0);
         }
         return null;
+    }
+
+    @NotNull
+    private static InstanceObjectParam getInstantObject(Object o) {
+        String surname = "";
+        String name = "";
+        String patronymic = "";
+        Date dateBirth = null;
+        String enp = "";
+
+        if (o instanceof InsuredPerson){
+            surname = ((InsuredPerson) o).getSurname();
+            name = ((InsuredPerson) o).getName();
+            patronymic = ((InsuredPerson) o).getPatronymic();
+            dateBirth = ((InsuredPerson) o).getDateBirth();
+            enp = ((InsuredPerson) o).getEnp();
+        } else if (o instanceof DataFilePatient){
+            surname = ((DataFilePatient) o).getFam();
+            name = ((DataFilePatient) o).getIm();
+            patronymic = ((DataFilePatient) o).getOt();
+            dateBirth = ((DataFilePatient) o).getDr();
+            enp = ((DataFilePatient) o).getEnp();
+        } else {
+            return (InstanceObjectParam) o;
+        }
+        return new InstanceObjectParam(surname, name, patronymic, dateBirth, enp);
+    }
+
+    private record InstanceObjectParam(String surname, String name, String patronymic, Date dateBirth, String enp) {
     }
 
     @Transactional
@@ -177,28 +213,48 @@ public class PeopleService {
 //                        searchFromSRZ(dataFile))));
 //    }
 
-//    public void processingFromExcel(DataFile dataFile) {
-//        dataFileService.save(dataFile);
-//        search(dataFile);
-//    }
+    public void processingFromExcel(DataFile dataFile, Span span, UI ui) {
+        AtomicInteger count = new AtomicInteger();
+        dataFile.getDataFilePatient().forEach(dataFilePatient -> {
+            count.getAndIncrement();
+            ui.access(() -> span.setText(dataFile.getName() + " | " + count + "/" + dataFile.getDataFilePatient().size() + " | " + dataFilePatient.getFam()
+                    + " " + dataFilePatient.getIm() + " " + dataFilePatient.getOt()));
 
-//    public void processingFromBars(List<DataFile> dataFileList){
-//        ExecutorService executor = Executors.newFixedThreadPool(3);
-//        for (DataFile dataFile : dataFileList) {
-//            Runnable worker = new Thread(() -> {
-//                try {
-//                    dataUdioRespService.getListDataUdioFromPeoples(search(searchFromSRZ(dataFile)));
-//                } catch (Exception e) {
-//                    throw new RuntimeException(e);
-//                }
-//            });
-//            executor.execute(worker);
-//        }
-//        executor.shutdown();
-//        while (!executor.isTerminated()) {
-//        }
-//        System.out.println("Processing complete!");
-//    }
+            ResultProcessingClass<People> resultProcessingClass = search(dataFilePatient);
+            if (resultProcessingClass != null) {
+                if (resultProcessingClass.getProcessingClass().getDs() != null) {
+                    dataFilePatient.setDs(resultProcessingClass.getProcessingClass().getDs());
+                }
+                dataFilePatientService.updateStatus(dataFilePatient, 1);
+                dataFilePatient.setPeople(resultProcessingClass.getProcessingClass());
+                dataFilePatient.setOnko(searchFromBars(resultProcessingClass.getProcessingClass()));
+                dataFilePatient.setEnp(resultProcessingClass.getProcessingClass().getEnp());
+                dataFilePatientService.add(dataFilePatient);
+
+            } else {
+                dataFilePatientService.updateStatus(dataFilePatient, 6);
+                dataFilePatientService.add(dataFilePatient);
+            }
+        });
+
+    }
+
+    private int searchFromBars(People people) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
+        JdbcTemplate jdbcTemplate = new JdbcTemplate();
+        jdbcTemplate.setDataSource(dbjdbcConfig.getBarsDataSource());
+
+        return jdbcTemplate.queryForObject("select count(*) from tf_proc.tp_casebill cb " +
+                "inner join tf_proc.tp_casebill_patient cbp on cb.pid = cbp.id " +
+                "left join nsi_med.med_mkb10 mkb10 on mkb10.id = cb.ds1 " +
+                "where (substr(mkb10.mkb_code, 1, 1) = 'C' or substr(mkb10.mkb_code, 1, 3) between 'D00' and 'D09') " +
+                "and cbp.pac_fam = '" + people.getSurname().toUpperCase() +
+                "' and cbp.pac_im = '" + people.getName().toUpperCase() +
+                "' and cbp.pac_ot = '" + people.getPatronymic().toUpperCase() +
+                "' and cbp.pac_dr = to_date('" + dateFormat.format(people.getDateBirth()) + "', 'dd.mm.yyyy')" +
+                " and cb.enp = '" + people.getEnp() + "'", Integer.class);
+    }
 
     public List<People> getAlivePeople() {
         return peopleRepo.findAlivePeople();
@@ -359,7 +415,7 @@ public class PeopleService {
             ResultSet resultSet = statement.executeQuery("select * from udio_tfoms.people p where p.surname = 'Премудрая'");
             int rowNum = 1;
             while (resultSet.next()){
-                peopleList.add(new PeopleDTO().mapRow(resultSet, rowNum));
+                peopleList.add(new PeopleUDIOMapper().mapRow(resultSet, rowNum));
                 rowNum++;
             }
         } catch (SQLException e) {

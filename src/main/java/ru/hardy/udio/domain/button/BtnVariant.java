@@ -4,6 +4,7 @@ public enum BtnVariant {
     OK,
     CANCEL,
     SEARCH,
-    XLS
+    XLS,
+    CHART
 
 }

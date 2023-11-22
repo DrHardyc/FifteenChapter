@@ -1,10 +1,13 @@
 package ru.hardy.udio.view.grid;
 
+import com.github.appreciated.apexcharts.ApexCharts;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -21,9 +24,15 @@ import ru.hardy.udio.domain.api.numberavailableseats.dto.NumberAvailableSeatsDTO
 import ru.hardy.udio.domain.api.padatapatients.mo.PADataPatientRequestRecord;
 import ru.hardy.udio.domain.api.schedulepianddispplot.dto.SchedulePIAndDispPlotDTO;
 import ru.hardy.udio.domain.api.volumemedicalcare.dto.VolumeMedicalCareDTO;
+import ru.hardy.udio.domain.struct.People;
+import ru.hardy.udio.service.AChartService;
 import ru.hardy.udio.service.ExcelService;
 
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -61,7 +70,6 @@ public class GridUtils {
             btnExcel.setEnabled(selectionEvent.getAllSelectedItems().size() > 0);
         });
         btnExcel.setEnabled(false);
-        btnExcel.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         btnExcel.addClickListener(ev -> {
             horizontalLayout.removeAll();
             File file = null;
@@ -98,9 +106,8 @@ public class GridUtils {
         return grid;
     }
 
-    public static TreeGrid<SchedulePIAndDispPlotDTO> createNewDialogSchedulePIAndDispPlotDTOGrid(HorizontalLayout horizontalLayout, Button btnExcel) {
+    public static TreeGrid<SchedulePIAndDispPlotDTO> createNewDialogTreeGrid(HorizontalLayout horizontalLayout, Button btnExcel) {
         TreeGrid<SchedulePIAndDispPlotDTO> grid = new TreeGrid<>();
-        btnExcel.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         btnExcel.addClickListener(ev -> {
             horizontalLayout.removeAll();
             //File file = null;
@@ -127,9 +134,10 @@ public class GridUtils {
         return grid;
     }
 
-    public static TreeGrid<VolumeMedicalCareDTO> createNewDialogVolumeMedicalCareDTOGrid(HorizontalLayout horizontalLayout, Button btnExcel) {
+    public TreeGrid<VolumeMedicalCareDTO> createNewDialogVolumeMedicalCareDTOGrid(List<VolumeMedicalCareDTO> volumeMedicalCareDTOList,
+                                                                                         HorizontalLayout horizontalLayout,
+                                                                                         Button btnExcel) {
         TreeGrid<VolumeMedicalCareDTO> grid = new TreeGrid<>();
-        btnExcel.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         btnExcel.addClickListener(ev -> {
             horizontalLayout.removeAll();
             //File file = null;
@@ -155,5 +163,4 @@ public class GridUtils {
         grid.setSizeFull();
         return grid;
     }
-
 }

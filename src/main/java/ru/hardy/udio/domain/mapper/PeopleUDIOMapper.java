@@ -1,4 +1,4 @@
-package ru.hardy.udio.domain.struct.dto;
+package ru.hardy.udio.domain.mapper;
 
 import org.springframework.jdbc.core.RowMapper;
 import ru.hardy.udio.domain.struct.People;
@@ -6,10 +6,9 @@ import ru.hardy.udio.domain.struct.People;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class PeopleDTO implements RowMapper<People> {
+public class PeopleUDIOMapper implements RowMapper<People> {
 
 
-    @Override
     public People mapRow(ResultSet rs, int rowNum) throws SQLException {
         People people = new People();
 

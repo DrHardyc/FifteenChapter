@@ -1,5 +1,7 @@
 package ru.hardy.udio.view;
 
+import com.github.appreciated.apexcharts.ApexCharts;
+import com.github.appreciated.apexcharts.config.builder.TitleSubtitleBuilder;
 import com.linuxense.javadbf.DBFReader;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.button.Button;
@@ -27,7 +29,11 @@ import ru.hardy.udio.service.*;
 import ru.hardy.udio.service.deamonservice.DeamonService;
 import ru.hardy.udio.service.deamonservice.SearchDead;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 @Route(layout = MainView.class)
 @RolesAllowed("ROLE_ADMIN")
@@ -38,8 +44,6 @@ public class AdminView extends VerticalLayout{
     private UserService userService;
     @Autowired
     private PeopleService peopleService;
-    @Autowired
-    private DataFileService dataFileService;
     @Autowired
     private DeamonService deamonService;
     @Autowired
@@ -115,6 +119,12 @@ public class AdminView extends VerticalLayout{
         grid.addColumn(People::getDateBirth);
 
         VerticalLayout vlTestChart = new VerticalLayout();
+        Button btnApexChart = new Button("Создать");
+        vlTestChart.add(btnApexChart);
+        btnApexChart.addClickListener(buttonClickEvent -> {
+            new Dialog(new AChartService().getTest()).open();
+        });
+
 
         tabSheet.add("Графики", vlTestChart);
 
@@ -162,11 +172,4 @@ public class AdminView extends VerticalLayout{
             }
         });
     }
-
-
-//    private ApexCharts createApexChart(){
-//        AChartService aChartService = new AChartService();
-//        return aChartService.getAC(aChartService.getFromFilePatient(dataFilePatientService.getAll(), "age"));
-//
-//    }
 }

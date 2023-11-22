@@ -18,7 +18,7 @@ public class VolumeMedicalCareService {
     private VolumeMedicalCareRepo volumeMedicalCareRepo;
 
 
-    public void add(VolumeMedicalCareRequestRecord departmentRequest, int codeMO) {
+    public void add(VolumeMedicalCareRequestRecord departmentRequest) {
         VolumeMedicalCare volumeMedicalCare = new VolumeMedicalCare();
         volumeMedicalCare.setDate_beg(Date.from(Instant.now()));
         volumeMedicalCare.setDate_edit(Date.from(Instant.now()));

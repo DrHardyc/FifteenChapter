@@ -20,8 +20,6 @@ public class ChoosingMO {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private int codeMO;
-
     @ManyToOne
     @JoinColumn(name = "people_id", nullable = false)
     @JsonIgnore

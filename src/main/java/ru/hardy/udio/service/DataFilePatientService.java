@@ -46,4 +46,8 @@ public class DataFilePatientService {
     public List<DataFilePatient> getAllLoadSuccess(int srz_status_code) {
         return dataFilePatientRepo.findBySrz_status_code(srz_status_code);
     }
+
+    public void add(DataFilePatient dataFilePatient) {
+        dataFilePatientRepo.save(dataFilePatient);
+    }
 }

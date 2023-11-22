@@ -3,6 +3,8 @@ package ru.hardy.udio.domain.button;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.server.StreamResource;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,6 +21,9 @@ public class UdioButton extends Button {
                 this.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
             }
             case CANCEL -> {}
+            case CHART -> {
+                this.setIcon(new Icon(VaadinIcon.CHART_LINE));
+            }
             case XLS -> {
                 StreamResource src = new StreamResource("icons8-excel-20.png",
                         () -> getClass()

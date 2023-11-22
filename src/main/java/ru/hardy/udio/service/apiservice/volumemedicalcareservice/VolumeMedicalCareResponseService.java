@@ -1,5 +1,6 @@
 package ru.hardy.udio.service.apiservice.volumemedicalcareservice;
 
+import com.github.appreciated.apexcharts.ApexCharts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.abstractclasses.APIRequest;
@@ -7,6 +8,7 @@ import ru.hardy.udio.domain.abstractclasses.APIResponse;
 import ru.hardy.udio.domain.api.volumemedicalcare.*;
 import ru.hardy.udio.domain.nsi.MedicalOrganization;
 import ru.hardy.udio.repo.apirepo.volumemedicalcarerepo.VolumeMedicalCareResponseRepo;
+import ru.hardy.udio.service.AChartService;
 import ru.hardy.udio.service.apiservice.apiinterface.APIResponseServiceInterface;
 
 import java.text.SimpleDateFormat;
@@ -65,7 +67,7 @@ public class VolumeMedicalCareResponseService implements APIResponseServiceInter
                 if (volumeMedicalCareBef9 != null) {
                     volumeMedicalCareService.update(volumeMedicalCareBef9, departmentRequest);
                     errMess = "Запись успешно обновлена";
-                } else volumeMedicalCareService.add(departmentRequest, medicalOrganization.getCodeMO());
+                } else volumeMedicalCareService.add(departmentRequest);
             } else {
                 VolumeMedicalCare volumeMedicalCareAft9 = volumeMedicalCareService.
                         getAllByCodeDepAndCodeMOAft9(departmentRequest
@@ -73,7 +75,7 @@ public class VolumeMedicalCareResponseService implements APIResponseServiceInter
                 if (volumeMedicalCareAft9 != null) {
                     volumeMedicalCareService.update(volumeMedicalCareAft9, departmentRequest);
                     errMess = "Запись успешно обновлена";
-                } else volumeMedicalCareService.add(departmentRequest, medicalOrganization.getCodeMO());
+                } else volumeMedicalCareService.add(departmentRequest);
             }
 
             volumeMedicalCareResponse.setNumberRecordsProcessed(count);
@@ -95,4 +97,5 @@ public class VolumeMedicalCareResponseService implements APIResponseServiceInter
 
         return volumeMedicalCareResponse;
     }
+
 }

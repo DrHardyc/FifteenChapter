@@ -22,8 +22,6 @@ import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRe
 import ru.hardy.udio.domain.api.numberavailableseats.dto.NumberAvailableSeatsDTO;
 import ru.hardy.udio.domain.api.operatingschedule.OperatingScheduleRequestRecord;
 import ru.hardy.udio.domain.api.padatapatients.mo.PADataPatientRequestRecord;
-import ru.hardy.udio.domain.api.recommendationspatient.mo.RecommendationsPatient;
-import ru.hardy.udio.domain.api.recommendationspatient.mo.RecommendationsPatientRequestRecord;
 import ru.hardy.udio.domain.api.schedulepianddispplot.dto.SchedulePIAndDispPlotDTO;
 import ru.hardy.udio.domain.api.schedulepianddispplot.mo.SchedulePIAndDispPlotRequestRecord;
 import ru.hardy.udio.domain.api.volumemedicalcare.dto.VolumeMedicalCareDTO;
@@ -31,21 +29,23 @@ import ru.hardy.udio.domain.button.BtnVariant;
 import ru.hardy.udio.domain.button.UdioButton;
 import ru.hardy.udio.domain.struct.DNGet;
 import ru.hardy.udio.domain.struct.dto.DNOutDto;
+import ru.hardy.udio.service.AChartService;
 import ru.hardy.udio.view.grid.*;
 import ru.hardy.udio.view.span.CMSpan;
 
 import java.util.List;
 
 @Service
-public class DialogViewGen {
+public class DialogGridGen {
 
     private final Dialog dialog = new Dialog();
     private final HorizontalLayout horizontalLayout = new HorizontalLayout();//Костыль Excel
-
     private final Span label = new Span();
     private UdioButton btnExcel;
+    private UdioButton btnChart;
 
-    public DialogViewGen(){
+
+    public DialogGridGen(){
         Button closeButton = new Button(new Icon(VaadinIcon.CLOSE_SMALL),
                 (event) -> dialog.close());
         label.getStyle().set("margin-right", "auto");
@@ -63,12 +63,15 @@ public class DialogViewGen {
 
     private void initFooter(){
         btnExcel = new UdioButton(".xlsx", BtnVariant.XLS);
-        dialog.getFooter().add(label, btnExcel);
+        btnExcel.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        btnChart = new UdioButton("график", BtnVariant.CHART);
+        btnChart.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        dialog.getFooter().add(label, btnChart, btnExcel);
     }
 
     public Dialog getSchedulePIAndDispPlotResponseRecordDialog(List<SchedulePIAndDispPlotRequestRecord> schedulePIAndDispPlotRequestRecords) {
         initFooter();
-        TreeGrid<SchedulePIAndDispPlotDTO> grid = GridUtils.createNewDialogSchedulePIAndDispPlotDTOGrid(horizontalLayout, btnExcel);
+        TreeGrid<SchedulePIAndDispPlotDTO> grid = GridUtils.createNewDialogTreeGrid(horizontalLayout, btnExcel);
         grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         SchedulePIAndDispPlotGrid schedulePIAndDispPlotGrid = new SchedulePIAndDispPlotGrid();
 
@@ -152,7 +155,7 @@ public class DialogViewGen {
         HorizontalLayout hlII = new HorizontalLayout();
         Button btnII = new Button("Информирование");
         btnII.addClickListener(e -> {
-            new DialogViewGen().getIndividualInformingRequestRecordDialog(individualInformingRequestRecordList).open();
+            new DialogGridGen().getIndividualInformingRequestRecordDialog(individualInformingRequestRecordList).open();
         });
         Span spanII = new CMSpan(String.valueOf(individualInformingRequestRecordList.size()));
         hlII.add(btnII, spanII);
@@ -161,7 +164,7 @@ public class DialogViewGen {
         Span spanPA = new CMSpan(String.valueOf(paDataPatientRequestRecordList.size()));
         Button btnPa = new Button("Посещения/Обращения");
         btnPa.addClickListener(e -> {
-            new DialogViewGen().getPADataPatientRequestRecordDialog(paDataPatientRequestRecordList).open();
+            new DialogGridGen().getPADataPatientRequestRecordDialog(paDataPatientRequestRecordList).open();
         });
         hlPA.add(btnPa, spanPA);
 
@@ -169,7 +172,7 @@ public class DialogViewGen {
         Span spanOnko = new CMSpan(String.valueOf(insuranceCaseList.size()));
         Button btnOnko = new Button("История онко-случаев");
         btnOnko.addClickListener(e -> {
-            new DialogViewGen().getInsuranceCases(insuranceCaseList).open();
+            new DialogGridGen().getInsuranceCases(insuranceCaseList).open();
         });
         hlOnko.add(btnOnko, spanOnko);
 
@@ -177,7 +180,7 @@ public class DialogViewGen {
         Span spanHospitalization = new CMSpan(String.valueOf(hospitalizationPatientDTOS.size()));
         Button btnHospitalization = new Button("Госпитализация");
         btnHospitalization.addClickListener(e -> {
-            new DialogViewGen().getHospitalization(hospitalizationPatientDTOS).open();
+            new DialogGridGen().getHospitalization(hospitalizationPatientDTOS).open();
         });
         hlHospitalization.add(btnHospitalization, spanHospitalization);
 
@@ -285,11 +288,15 @@ public class DialogViewGen {
         return icon;
     }
 
-    public Dialog getVolumeMedicalCareResponseRecordDialog(List<VolumeMedicalCareDTO> volumeMedicalCareDTOS) {
+    public Dialog getVolumeMedicalCareDialog(List<VolumeMedicalCareDTO> volumeMedicalCareDTOS) {
         initFooter();
-        TreeGrid<VolumeMedicalCareDTO> grid = GridUtils.createNewDialogVolumeMedicalCareDTOGrid(horizontalLayout, btnExcel);
+        TreeGrid<VolumeMedicalCareDTO> grid = new GridUtils().createNewDialogVolumeMedicalCareDTOGrid(volumeMedicalCareDTOS, horizontalLayout, btnExcel);
         grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         VolumeMedicalCareDTOGrid volumeMedicalCareDTOGrid = new VolumeMedicalCareDTOGrid();
+
+        btnChart.addClickListener(buttonClickEvent -> {
+            new Dialog(new AChartService().getRangedVerticalBarChartExample(volumeMedicalCareDTOS)).open();
+        });
 
         volumeMedicalCareDTOGrid.getGrid(grid, volumeMedicalCareDTOS);
         dialog.add(grid);

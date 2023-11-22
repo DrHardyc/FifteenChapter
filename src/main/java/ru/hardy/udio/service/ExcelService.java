@@ -42,19 +42,16 @@ public class ExcelService {
     @Autowired
     private SexService sexService;
     @Autowired
-    DNOnkoTherapiReportService dnOnkoTherapiReportService;
+    private DNOnkoTherapiReportService dnOnkoTherapiReportService;
     @Autowired
     private KARDIOReportService kardioReportService;
     @Autowired
-    ONKOReportService onkoReportService;
+    private ONKOReportService onkoReportService;
+    @Autowired
+    private DataFileService dataFileService;
 
     private final UtilService utilService = new UtilService();
     private InputStream excelFile;
-
-    public ExcelService(){
-
-
-    }
 
     public File getDNOutDto(Collection<DNOutDto> dnOutList){
         FileOutputStream outputStream;
@@ -587,65 +584,38 @@ public class ExcelService {
     public DataFile loadFromExcelFromBarsMO(DataFile dataFile, InputStream inputStream ) throws ParseException {
         XSSFWorkbook workbook;
         List<DataFilePatient> dataFilePatientList = new ArrayList<>();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         try {
             workbook = new XSSFWorkbook(inputStream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         Sheet sheet = workbook.getSheetAt(0);
-        DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
-        Statement statement = dbjdbcConfig.getSRZ();
 
         String fio;
         Date dr;
         Sex w;
         Date date_1;
         String diag;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
-        for (int count = 2; count < sheet.getLastRowNum(); count++) {
-            if (sheet.getRow(count).getCell(6).getDateCellValue() != null
-                    && sheet.getRow(count).getCell(3).getDateCellValue() != null) {
+        for (int count = sheet.getFirstRowNum(); count < sheet.getLastRowNum() + 1; count++) {
+            if (!sheet.getRow(count).getCell(2).getStringCellValue().isEmpty()
+                    && !sheet.getRow(count).getCell(4).getStringCellValue().isEmpty()
+                    && !sheet.getRow(count).getCell(1).getStringCellValue().isEmpty()) {
                 fio = sheet.getRow(count).getCell(1).getStringCellValue();
-                dr = sheet.getRow(count).getCell(3).getDateCellValue();
-                w = sexService.getByName(sheet.getRow(count).getCell(2).getStringCellValue());
-                date_1 = sheet.getRow(count).getCell(6).getDateCellValue();
-                diag = sheet.getRow(count).getCell(0).getStringCellValue();
+                dr = simpleDateFormat.parse(sheet.getRow(count).getCell(2).getStringCellValue());
+                w = sexService.getByName(sheet.getRow(count).getCell(3).getStringCellValue());
+                date_1 = simpleDateFormat.parse(sheet.getRow(count).getCell(4).getStringCellValue());
+                diag = sheet.getRow(count).getCell(6).getStringCellValue();
                 System.out.println(fio);
-                try {
-                    ResultSet resultSet = statement.executeQuery("select p.enp, p.lpu, p.id from PEOPLE p join HISTFDR h on h.pid = p.id " +
-                            "where (concat(p.FAM, ' ', p.IM, ' ', p.OT) = '" + fio + "' " +
-                            " or concat(h.FAM, ' ', h.IM, ' ', h.OT) = '" + fio + "') " +
-                            "and p.DR  = PARSE('" + dateFormat.format(dr) + "' as date)");
-                    if (resultSet.next()) {
-                        int mo_attach = 0;
-                        if (resultSet.getString(2) != null && !resultSet.getString(2).isEmpty()) {
-                            mo_attach = resultSet.getInt(2);
-                        }
-                        if (resultSet.getString(1) == null || resultSet.getString(1).isEmpty()){
-                            dataFilePatientList.add(new DataFilePatient(
-                                    parseFIO(fio)[0], parseFIO(fio)[1], parseFIO(fio)[2], dr, resultSet.getString(1),
-                                    mo_attach, w, 0, "", diag, null, 76, date_1, null,
-                                    6, resultSet.getLong(3), dataFile));
-                        } else {
-                            dataFilePatientList.add(new DataFilePatient(
-                                    parseFIO(fio)[0], parseFIO(fio)[1], parseFIO(fio)[2], dr, resultSet.getString(1),
-                                    mo_attach, w, 0, "", diag, null, 76, date_1, null,
-                                    1, resultSet.getLong(3), dataFile));
-                        }
-                    } else {
-                        dataFilePatientList.add(new DataFilePatient(
-                                parseFIO(fio)[0], parseFIO(fio)[1], parseFIO(fio)[2], dr, "", 0,
-                                w, 0, "", diag, null, 76, date_1, null,
-                                2, 0L, dataFile));
-
-                    }
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
+                dataFilePatientList.add(new DataFilePatient(
+                        parseFIO(fio)[0], parseFIO(fio)[1], parseFIO(fio)[2], dr, "",
+                        0, w, 0, "", diag, null, 76, date_1, null,
+                        0, 0L, dataFile));
             }
         }
         dataFile.setDataFilePatient(dataFilePatientList);
+        dataFileService.add(dataFile);
         return dataFile;
     }
 

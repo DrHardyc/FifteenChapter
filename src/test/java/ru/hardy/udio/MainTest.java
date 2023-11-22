@@ -47,10 +47,5 @@ public class MainTest {
     @Test
     public void test() throws ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
-
-
-
-        System.out.println(peopleRepo.findPeopleBySurnameIgnoreCaseAndNameIgnoreCaseAndPatronymicIgnoreCaseAndDateBirthAndEnp(
-                "Премудрая", "Василиса","Ивановна", simpleDateFormat.parse("12.02.1111"), "1235486925412365").getFIO());
     }
 }
