@@ -59,6 +59,7 @@ public class UtilService {
             sniXVChapter.addItem(new SideNavItem("Мед. организации", MOView.class, VaadinIcon.HOSPITAL.create()));
             sniXVChapter.addItem(new SideNavItem("Отчеты", ReportView.class, VaadinIcon.FILE_TABLE.create()));
             sniXVChapter.addItem(new SideNavItem("Задачи", TaskView.class, VaadinIcon.TASKS.create()));
+            //sniXVChapter.addItem(new SideNavItem("Задачи", MainRView.class, VaadinIcon.TASKS.create()));
             nav.addItem(sniXVChapter);
         }
         return nav;

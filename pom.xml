@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>ru.hardy</groupId>
-    <artifactId>udio</artifactId>
+    <artifactId>FifteenChapter</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>FifteenChapter</name>
     <description>FifteenChapter</description>
