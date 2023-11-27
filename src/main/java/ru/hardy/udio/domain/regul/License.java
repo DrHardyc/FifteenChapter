@@ -27,7 +27,7 @@ public class License {
 
     /**
      * @param ОгрДосСв {@link OgrDoc#license}
-     * @param ГРНДата {@link }
-     * @param ГРНДатаИспр
+     * @param ГРНДата {@link GRNDate#license}
+     * @param ГРНДатаИспр {@link GRNDate#licenseIspr}
      */
 }
