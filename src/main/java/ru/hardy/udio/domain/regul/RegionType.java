@@ -1,5 +1,7 @@
 package ru.hardy.udio.domain.regul;
 
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -11,6 +13,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "region_type")
+@XmlRootElement(name = "РегионТип")
 public class RegionType {
     @Id
     private Long id;
@@ -18,8 +21,12 @@ public class RegionType {
     private String typeRegion;
     private String nameRegion;
 
-    @MappedCollection(idColumn = "regiontype_id")
-    private AdrRF adrRF;
-    @MappedCollection(idColumn = "regiontype_id")
-    private ReshIzmMN reshIzmMN;
+    @XmlAttribute(name = "ТипРегион")
+    public void setTypeRegion(String typeRegion) {
+        this.typeRegion = typeRegion;
+    }
+    @XmlAttribute(name = "НаимРегион")
+    public void setNameRegion(String nameRegion) {
+        this.nameRegion = nameRegion;
+    }
 }

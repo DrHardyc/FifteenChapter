@@ -1,5 +1,7 @@
 package ru.hardy.udio.domain.regul;
 
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -10,6 +12,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "type_name_p_type")
+@XmlRootElement(name = "ТипНаимПТип")
 public class TypeNamePType {
     @Id
     private Long id;
@@ -17,9 +20,12 @@ public class TypeNamePType {
     private String typeElement;
     private String nameElement;
 
-    @MappedCollection(idColumn = "typenameptype_id")
-    private AdrULFIAS adrULFIASStruct;
-    @MappedCollection(idColumn = "typenameptype_id")
-    private AdrULFIAS adrULFIASSeti;
-
+    @XmlAttribute(name = "Тип")
+    public void setTypeElement(String typeElement) {
+        this.typeElement = typeElement;
+    }
+    @XmlAttribute(name = "Наим")
+    public void setNameElement(String nameElement) {
+        this.nameElement = nameElement;
+    }
 }

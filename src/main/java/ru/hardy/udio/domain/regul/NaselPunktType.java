@@ -1,5 +1,7 @@
 package ru.hardy.udio.domain.regul;
 
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -10,6 +12,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "nasel_punkt_type")
+@XmlRootElement(name = "ТипНаселПункт")
 public class NaselPunktType {
     @Id
     private Long id;
@@ -17,8 +20,12 @@ public class NaselPunktType {
     private String type;
     private String name;
 
-    @MappedCollection(idColumn = "naselpunkttype_id")
-    private AdrRF adrRF;
-    @MappedCollection(idColumn = "naselpunkttype_id")
-    private ReshIzmMN reshIzmMN;
+    @XmlAttribute(name = "ТипНаселПункт")
+    public void setType(String type) {
+        this.type = type;
+    }
+    @XmlAttribute(name = "НаимНаселПункт")
+    public void setName(String name) {
+        this.name = name;
+    }
 }

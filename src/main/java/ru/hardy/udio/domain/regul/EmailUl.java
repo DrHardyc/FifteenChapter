@@ -1,8 +1,12 @@
 package ru.hardy.udio.domain.regul;
 
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 
 
@@ -10,13 +14,14 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "email_ul")
+@XmlRootElement(name = "СвАдрЭлПочты")
 public class EmailUl {
     @Id
     private Long id;
     private String email;
 
-    /**
-     * @param ГРНДата {@link GRNDate#emailUl}
-     * @param ГРНДатаИспр {@link GRNDate#emailUlIspr}
-     */
+    @XmlAttribute(name = "E-mail")
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }

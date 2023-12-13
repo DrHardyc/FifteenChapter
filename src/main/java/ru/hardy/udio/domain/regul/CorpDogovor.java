@@ -1,5 +1,8 @@
 package ru.hardy.udio.domain.regul;
 
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -11,14 +14,15 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "corp_dogovor")
+@XmlRootElement(name = "СвКорпДог")
 public class CorpDogovor {
     @Id
     private Long id;
     @MappedCollection(idColumn = "corpdogovor_id")
-    private VidSvedKorpDog vidSvedKorpDog;
+    private String vidSvedKorpDog;
 
-    /**
-     * @param ГРНДата {@link GRNDate#corpDogovor}
-     * @param ГРНДатаИспр {@link GRNDate#corpDogovorIspr}
-     */
+    @XmlAttribute(name = "ВидСведКорпДог")
+    public void setVidSvedKorpDog(String vidSvedKorpDog) {
+        this.vidSvedKorpDog = vidSvedKorpDog;
+    }
 }

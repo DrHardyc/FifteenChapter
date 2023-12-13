@@ -1,6 +1,9 @@
 package ru.hardy.udio.domain.regul;
 
 
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -11,19 +14,27 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "status_ul")
+@XmlRootElement(name = "СвСтатус")
 public class StatusUl {
     @Id
     private Long id;
-
+    @MappedCollection(idColumn = "statusul_id")
+    private OgrDoc ogrDoc;
     @MappedCollection(idColumn = "statusul_id")
     private Status status;
     @MappedCollection(idColumn = "statusul_id")
     private ReshIsklUl reshIsklUl;
 
-    /**
-     * @param ОгрДосСв {@link OgrDoc#statusUl}
-     * @param ГРНДата {@link GRNDate#statusUl}
-     * @param ГРНДатаИспр {@link GRNDate#statusUlIspr}
-     */
-
+    @XmlElement(name = "ОгрДосСв")
+    public void setOgrDoc(OgrDoc ogrDoc) {
+        this.ogrDoc = ogrDoc;
+    }
+    @XmlElement(name = "СвСтатус")
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+    @XmlElement(name = "СвРешИсклЮЛ")
+    public void setReshIsklUl(ReshIsklUl reshIsklUl) {
+        this.reshIsklUl = reshIsklUl;
+    }
 }

@@ -62,6 +62,14 @@ public class UtilService {
             //sniXVChapter.addItem(new SideNavItem("Задачи", MainRView.class, VaadinIcon.TASKS.create()));
             nav.addItem(sniXVChapter);
         }
+        if (authentication.getAuthorities().stream()
+                .anyMatch(r -> r.getAuthority().equals("ROLE_REGUL"))) {
+            SideNavItem sniRegUL = new SideNavItem("Регистрация ЮЛ");
+            sniRegUL.addItem(new SideNavItem("Организации", ULView.class, VaadinIcon.WORKPLACE.create()));
+            sniRegUL.addItem(new SideNavItem("ИП", IPView.class, VaadinIcon.BRIEFCASE.create()));
+            nav.addItem(sniRegUL);
+        }
+
         return nav;
     }
     public BufferedReader getHBBufferedReader(String strURL) throws IOException {

@@ -1,5 +1,7 @@
 package ru.hardy.udio.domain.regul;
 
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -10,19 +12,23 @@ import org.springframework.data.relational.core.mapping.Table;
 
 @Getter
 @Setter
-@Table(schema = "regul")
+@Table(schema = "regul", name = "derj_reestr_ao")
+@XmlRootElement(name = "СвДержРеестрАО")
 public class DerjReestAO {
     @Id
     private Long id;
 
-    @MappedCollection(idColumn = "derjreestao_id")
+    @MappedCollection(idColumn = "derjreestrao_id")
     private OgrDoc ogrDos;
-    @MappedCollection(idColumn = "derjreestao_id")
-    private NameDerjReestrAO nameDerjReestrAO;
+    @MappedCollection(idColumn = "derjreestrao_id")
+    private ULEGRULType nameDerjReestrAO;
 
-    /**
-     * @param ОгрДосСв {@link OgrDoc#derjReestAO}
-     * @param ГРНДатаПерв {@link GRNDate#derjReestAOPerv}
-     */
-
+    @XmlElement(name = "ОгрДосСв")
+    public void setOgrDos(OgrDoc ogrDos) {
+        this.ogrDos = ogrDos;
+    }
+    @XmlElement(name = "ДержРеестрАО")
+    public void setNameDerjReestrAO(ULEGRULType nameDerjReestrAO) {
+        this.nameDerjReestrAO = nameDerjReestrAO;
+    }
 }

@@ -28,9 +28,9 @@ public class MainRView extends VerticalLayout {
     @Override
     public void onAttach(AttachEvent attachEvent) {
         FileUL fileUL = new FileUL();
-        fileUL.setId_file("sdfsdfgsdfg");
+        //fileUL.setId_file("sdfsdfgsdfg");
         fileUL.setFormatVersion("4.07");
-        fileUL.setInfoType(InfoType.ЕГРЮЛ_ЗАКР_СВЕД);
+       // fileUL.setInfoType(InfoType.ЕГРЮЛ_ЗАКР_СВЕД);
         fileUL.setQuantityDoc("2");
         fileUL.setTransmissionProgramVersion("1.0.0.1");
 
@@ -40,7 +40,7 @@ public class MainRView extends VerticalLayout {
         senderPeople.setEmail("asdfasdf@adsfasdf.ry");
         senderPeople.setPhone("92844556644");
         senderPeople.setPosition("hz");
-        fileUL.setSenderPeople(senderPeople);
+        //fileUL.setSenderPeople(senderPeople);
         Button button = new Button("Сохранить");
         button.addClickListener(ev -> {
             fileUlService.add(fileUL);

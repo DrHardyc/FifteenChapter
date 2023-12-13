@@ -1,10 +1,15 @@
 package ru.hardy.udio.domain.regul;
 
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
+
+import java.util.Set;
 
 
 /** @version  таблице 4.5 */
@@ -12,21 +17,38 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "name_ul")
+@XmlRootElement(name = "СвНаимЮЛ")
 public class NameUL {
     @Id
     private Long id;
     private String fullName;
     @MappedCollection(idColumn = "nameul_id")
-    private ShortNameUl shortName;
+    private ShortNameUlType shortName;
     @MappedCollection(idColumn = "nameul_id")
-    private NameUlKodOKIN nameUlKodOKIN;
+    private Set<NameUlKodOKIN> nameUlKodOKIN;
     @MappedCollection(idColumn = "nameul_id")
-    private FullNameUlIn fullNameUlIn;
+    private NamePolnType namePoLnType;
     @MappedCollection(idColumn = "nameul_id")
-    private ShortNameUlIn shortNameUlIn;
+    private NameSokrType nameSokrType;
 
-    /**
-     @param ГРНДата {@link GRNDate#nameUL}
-     @param ГРНДатаИспр {@link GRNDate#nameULIspr}
-     */
+    @XmlAttribute(name = "НаимЮЛПолн")
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+    @XmlElement(name = "СвНаимЮЛСокр")
+    public void setShortName(ShortNameUlType shortName) {
+        this.shortName = shortName;
+    }
+    @XmlElement(name = "СвНаимЮЛКодОКИН")
+    public void setNameUlKodOKIN(Set<NameUlKodOKIN> nameUlKodOKIN) {
+        this.nameUlKodOKIN = nameUlKodOKIN;
+    }
+    @XmlElement(name = "СвНаимЮЛПолнИн")
+    public void setNamePoLnType(NamePolnType namePoLnType) {
+        this.namePoLnType = namePoLnType;
+    }
+    @XmlElement(name = "СвНаимЮЛСокрИн")
+    public void setNameSokrType(NameSokrType nameSokrType) {
+        this.nameSokrType = nameSokrType;
+    }
 }

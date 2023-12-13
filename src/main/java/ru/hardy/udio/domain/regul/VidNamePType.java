@@ -1,5 +1,7 @@
 package ru.hardy.udio.domain.regul;
 
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -9,7 +11,8 @@ import org.springframework.data.relational.core.mapping.Table;
 /** @version  таблица 4.92 */
 @Getter
 @Setter
-@Table(schema = "regul", name = "naselen_punkt")
+@Table(schema = "regul", name = "vid_name_p_type")
+@XmlRootElement(name = "ВидНаимПТип")
 public class VidNamePType {
     @Id
     private Long id;
@@ -17,9 +20,12 @@ public class VidNamePType {
     private String vid;
     private String name;
 
-    @MappedCollection(idColumn = "vidnameptype_id")
-    private MNUL mnulNasPunkt;
-
-    @MappedCollection(idColumn = "vidnameptype_id")
-    private AdrULFIAS adrULFIAS;
+    @XmlAttribute(name = "Вид")
+    public void setVid(String vid) {
+        this.vid = vid;
+    }
+    @XmlAttribute(name = "Наим")
+    public void setName(String name) {
+        this.name = name;
+    }
 }
