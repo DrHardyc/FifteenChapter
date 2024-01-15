@@ -70,6 +70,7 @@ public class UtilService {
             sniRegUL.addItem(new SideNavItem("Загрузка", RegULUploadView.class, VaadinIcon.UPLOAD.create()));
             nav.addItem(sniRegUL);
         }
+        nav.addItem(new SideNavItem("Выход", LogoutView.class));
         return nav;
     }
     public BufferedReader getHBBufferedReader(String strURL) throws IOException {

@@ -23,17 +23,20 @@ public class UserService implements UserDetailsService {
     @Autowired
     private UserRepo userRepo;
 
-    private final PasswordEncoder passwordEncoder = new PasswordEncoder() {
-        @Override
-        public String encode(CharSequence rawPassword) {
-            return encode(rawPassword);
-        }
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-        @Override
-        public boolean matches(CharSequence rawPassword, String encodedPassword) {
-            return false;
-        }
-    };
+//    private final PasswordEncoder passwordEncoder = new PasswordEncoder() {
+//        @Override
+//        public String encode(CharSequence rawPassword) {
+//            return encode(rawPassword);
+//        }
+//
+//        @Override
+//        public boolean matches(CharSequence rawPassword, String encodedPassword) {
+//            return false;
+//        }
+//    };
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepo.findByUsername(username);

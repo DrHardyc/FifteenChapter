@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Set;
 
 @Route(layout = MainView.class)
-@RolesAllowed("ROLE_TFOMS")
+@RolesAllowed("ROLE_REGUL")
 public class RegULView extends VerticalLayout {
 
     public RegULView(){

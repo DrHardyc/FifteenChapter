@@ -17,7 +17,7 @@ import java.io.UnsupportedEncodingException;
 
 
 @Route(layout = MainView.class)
-@RolesAllowed("ROLE_TFOMS")
+@RolesAllowed("ROLE_REGUL")
 public class RegULUploadView extends VerticalLayout {
 
     @Autowired
