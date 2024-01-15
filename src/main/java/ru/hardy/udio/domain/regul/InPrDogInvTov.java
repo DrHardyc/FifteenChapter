@@ -13,7 +13,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "in_pr_dog_inv_tov")
-@XmlRootElement(name = "ИнПрДогИнвТов")
+@XmlRootElement
 public class InPrDogInvTov {
     @Id
     private Long id;
@@ -23,7 +23,7 @@ public class InPrDogInvTov {
     private String date;
 
     @MappedCollection(idColumn = "inprdoginvtov_id")
-    private FIOType fioType;
+    private FIOIP fioType;
 
     @XmlAttribute(name = "НаимДог")
     public void setName(String name) {
@@ -38,7 +38,7 @@ public class InPrDogInvTov {
         this.date = date;
     }
     @XmlElement(name = "ФИОНотариус")
-    public void setFioType(FIOType fioType) {
+    public void setFioType(FIOIP fioType) {
         this.fioType = fioType;
     }
 }

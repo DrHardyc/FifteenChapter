@@ -8,7 +8,6 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
-import ru.hardy.udio.domain.regul.enumul.InfoType;
 
 import java.util.Set;
 /** @version таблица 4.1 */

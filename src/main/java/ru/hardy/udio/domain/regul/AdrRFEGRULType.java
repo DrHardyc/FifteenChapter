@@ -13,7 +13,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "adr_rf_egrul_type")
-@XmlRootElement(name = "АдрРФЕГРЮЛТип")
+@XmlRootElement
 public class AdrRFEGRULType {
     @Id
     private Long id;
@@ -78,5 +78,20 @@ public class AdrRFEGRULType {
     @XmlElement(name = "Улица")
     public void setUlicaType(UlicaType ulicaType) {
         this.ulicaType = ulicaType;
+    }
+
+    public AdrRFEGRULType(){}
+
+    public AdrRFEGRULType(String index, RegionType regionType, RaionType raionType, GorodType gorodType,
+                          NaselPunktType naselPunktType, UlicaType ulicaType, String dom, String korpus, String kvart){
+        this.index = index;
+        this.regionType = regionType;
+        this.raionType = raionType;
+        this.gorodType = gorodType;
+        this.naselPunktType = naselPunktType;
+        this.ulicaType = ulicaType;
+        this.dom = dom;
+        this.korpus = korpus;
+        this.kvart = kvart;
     }
 }

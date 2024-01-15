@@ -6,18 +6,19 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.Set;
 /** @version таблица 4.4 */
 @Getter
 @Setter
 @Table(schema = "regul", name = "person_ul")
-@XmlRootElement(name = "СвЮЛ")
-public class PersonUL {
+@XmlRootElement
+public class
+PersonUL {
     @Id
     private Long id;
     private String dateVipl;
@@ -28,6 +29,7 @@ public class PersonUL {
     private String opf;
     private String kodOpf;
     private String fullNameOpf;
+    private String regNFoms;
     @MappedCollection(idColumn = "personul_id")
     private NameUL nameUl;
     @MappedCollection(idColumn = "personul_id")
@@ -87,6 +89,9 @@ public class PersonUL {
     @MappedCollection(idColumn = "personul_id")
     private Set<ZapEGRUL> zapEGRUL;
 
+    private Date dateBeg;
+    private Date dateEdit;
+
     @XmlAttribute(name = "ДатаВып")
     public void setDateVipl(String dateVipl) {
         this.dateVipl = dateVipl;
@@ -124,7 +129,7 @@ public class PersonUL {
         this.nameUl = nameUl;
     }
     @XmlElement(name = "СвАдресЮЛ")
-    public void setAddressUl(AddressUL addressUl) {
+    public void setAddressUL(AddressUL addressUl) {
         this.addressUl = addressUl;
     }
     @XmlElement(name = "СвАдрЭлПочты")
@@ -200,7 +205,7 @@ public class PersonUL {
         this.derjreestAO = derjreestAO;
     }
     @XmlElement(name = "СвОКВЭД")
-    public void setOKVEDEGRULType(ru.hardy.udio.domain.regul.OKVEDEGRULType OKVEDEGRULType) {
+    public void setOKVEDEGRULType(OKVEDEGRULType OKVEDEGRULType) {
         this.OKVEDEGRULType = OKVEDEGRULType;
     }
     @XmlElement(name = "СвЛицензия")
@@ -234,5 +239,10 @@ public class PersonUL {
     @XmlElement(name = "СвЗапЕГРЮЛ")
     public void setZapEGRUL(Set<ZapEGRUL> zapEGRUL) {
         this.zapEGRUL = zapEGRUL;
+    }
+
+    public PersonUL(){
+        this.setDateBeg(Date.from(Instant.now()));
+        this.setDateEdit(Date.from(Instant.now()));
     }
 }

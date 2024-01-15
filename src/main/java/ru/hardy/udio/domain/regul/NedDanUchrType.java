@@ -9,13 +9,11 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.util.Set;
-
 /** @version таблица 4.112 */
 @Getter
 @Setter
 @Table(schema = "regul", name = "ned_dan_uchr_type")
-@XmlRootElement(name = "СвНедДанУчрТип")
+@XmlRootElement
 public class NedDanUchrType {
     @Id
     private Long id;

@@ -32,4 +32,10 @@ public class Status {
     public void setSrokLikv(String srokLikv) {
         this.srokLikv = srokLikv;
     }
+
+    public Status(){}
+
+    public Status(String name){
+        this.name = name;
+    }
 }

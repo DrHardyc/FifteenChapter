@@ -15,7 +15,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Table(schema = "regul", name = "reg_org")
-@XmlRootElement(name = "СвРегОрг")
+@XmlRootElement
 public class RegOrg {
     @Id
     private Long id;
@@ -35,5 +35,11 @@ public class RegOrg {
     @XmlAttribute(name = "АдрРО")
     public void setAdrRO(String adrRO) {
         this.adrRO = adrRO;
+    }
+
+    public RegOrg(){}
+
+    public RegOrg(String nameNO){
+        this.nameNO = nameNO;
     }
 }

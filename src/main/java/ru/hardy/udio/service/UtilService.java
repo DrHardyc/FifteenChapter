@@ -3,12 +3,12 @@ package ru.hardy.udio.service;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
+import com.vaadin.flow.component.upload.UploadI18N;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.hardy.udio.domain.report.DateInterval;
 import ru.hardy.udio.view.*;
-import ru.hardy.udio.view.MOView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -65,11 +66,10 @@ public class UtilService {
         if (authentication.getAuthorities().stream()
                 .anyMatch(r -> r.getAuthority().equals("ROLE_REGUL"))) {
             SideNavItem sniRegUL = new SideNavItem("Регистрация ЮЛ");
-            sniRegUL.addItem(new SideNavItem("Организации", ULView.class, VaadinIcon.WORKPLACE.create()));
-            sniRegUL.addItem(new SideNavItem("ИП", IPView.class, VaadinIcon.BRIEFCASE.create()));
+            sniRegUL.addItem(new SideNavItem("ЮЛ/ИП", RegULView.class, VaadinIcon.BRIEFCASE.create()));
+            sniRegUL.addItem(new SideNavItem("Загрузка", RegULUploadView.class, VaadinIcon.UPLOAD.create()));
             nav.addItem(sniRegUL);
         }
-
         return nav;
     }
     public BufferedReader getHBBufferedReader(String strURL) throws IOException {
@@ -195,5 +195,45 @@ public class UtilService {
                     .toLocalDate();
         }
         return null;
+    }
+
+    public static UploadI18N uploadI18N(){
+
+        UploadI18N uploadI18N = new UploadI18N();
+        uploadI18N.setError(new UploadI18N.Error());
+        uploadI18N.getError().setFileIsTooBig("Размер файла превышает 2 Мб");
+        uploadI18N.getError().setIncorrectFileType("Расширение должно соответствовать .xml");
+        uploadI18N.getError().setTooManyFiles("Нужно прикрепить не более 1 файла");
+
+        //add files
+        uploadI18N.setAddFiles(new UploadI18N.AddFiles());
+        uploadI18N.getAddFiles().setOne("Загрузить файл");
+        uploadI18N.getAddFiles().setMany("Загрузить файлы");
+
+        //uploading
+        uploadI18N.setUploading(new UploadI18N.Uploading());
+        //uploading errors
+        uploadI18N.getUploading().setError(new UploadI18N.Uploading.Error());
+        uploadI18N.getUploading().getError().setForbidden("В доступе отказано!");
+        uploadI18N.getUploading().getError().setServerUnavailable("Сервер недоступен!");
+        uploadI18N.getUploading().getError().setUnexpectedServerError("Внезапная ошибка сервера!");
+        //uploading status
+        uploadI18N.getUploading().setStatus(new UploadI18N.Uploading.Status());
+        uploadI18N.getUploading().getStatus().setConnecting("Подключение...");
+        uploadI18N.getUploading().getStatus().setHeld("Ожидание...");
+        uploadI18N.getUploading().getStatus().setProcessing("Обработка...");
+        uploadI18N.getUploading().getStatus().setStalled("Ожидание...");
+        //uploading remaining time
+        uploadI18N.getUploading().setRemainingTime(new UploadI18N.Uploading.RemainingTime());
+        uploadI18N.getUploading().getRemainingTime().setPrefix("Осталось");
+        uploadI18N.getUploading().getRemainingTime().setUnknown("Неизвестно");
+        uploadI18N.setDropFiles(new UploadI18N.DropFiles());
+        uploadI18N.getDropFiles().setOne("перетащите файл");
+        uploadI18N.getDropFiles().setMany("перетащите файлы");
+
+        uploadI18N.setUnits( new UploadI18N.Units() );
+        uploadI18N.getUnits().setSize( new ArrayList<>(Arrays.asList("б", "кБ", "Мб", "Гб", "Тб", "Пб")));
+
+        return uploadI18N;
     }
 }

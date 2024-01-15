@@ -16,7 +16,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(schema = "regul", name = "dolj_fl")
-@XmlRootElement(name = "СведДолжнФЛ")
+@XmlRootElement
 public class DoljFL {
     @Id
     private Long id;

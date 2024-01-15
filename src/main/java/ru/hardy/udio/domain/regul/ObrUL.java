@@ -13,7 +13,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "obr_ul")
-@XmlRootElement(name = "СвОбрЮЛ")
+@XmlRootElement
 public class ObrUL {
     @Id
     private Long id;
@@ -65,5 +65,12 @@ public class ObrUL {
     @XmlElement(name = "СвРегИнЮЛ")
     public void setRegInUl(RegInUl regInUl) {
         this.regInUl = regInUl;
+    }
+
+    public ObrUL(){}
+
+    public ObrUL(SpObrUl obrUl, String dateReg){
+        this.obrUl = obrUl;
+        this.dateReg = dateReg;
     }
 }

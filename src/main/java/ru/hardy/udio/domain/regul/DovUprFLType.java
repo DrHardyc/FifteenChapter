@@ -13,7 +13,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "dov_upr_gl_type")
-@XmlRootElement(name = "СвДовУпрФЛТип")
+@XmlRootElement
 public class DovUprFLType {
     @Id
     private Long id;
@@ -22,7 +22,7 @@ public class DovUprFLType {
     @MappedCollection(idColumn = "dovupfltype_id")
     private FLEGRULType flegrulType;
     @MappedCollection(idColumn = "dovupfltype_id")
-    private FLEGRULType flegrulTypePol;
+    private PolFLType flegrulTypePol;
     @MappedCollection(idColumn = "dovupfltype_id")
     private RojdEGRULType rojdEGRULType;
     @MappedCollection(idColumn = "dovupfltype_id")
@@ -30,7 +30,7 @@ public class DovUprFLType {
     @MappedCollection(idColumn = "dovupfltype_id")
     private UdLichEGRULType udLichEGRULType;
 
-    @XmlElement(name = "ОГРНИП")
+    @XmlAttribute(name = "ОГРНИП")
     public void setOgrnip(String ogrnip) {
         this.ogrnip = ogrnip;
     }
@@ -39,7 +39,7 @@ public class DovUprFLType {
         this.flegrulType = flegrulType;
     }
     @XmlElement(name = "СвПолФЛ")
-    public void setFlegrulTypePol(FLEGRULType flegrulTypePol) {
+    public void setFlegrulTypePol(PolFLType flegrulTypePol) {
         this.flegrulTypePol = flegrulTypePol;
     }
     @XmlElement(name = "СвРождФЛ")

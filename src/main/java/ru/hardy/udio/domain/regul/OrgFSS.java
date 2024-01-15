@@ -11,13 +11,20 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "org_fss")
-@XmlRootElement(name = "СвОргФСС")
+@XmlRootElement
 public class OrgFSS {
     @Id
     private Long id;
 
     private String code;
     private String name;
+
+    public OrgFSS() {
+    }
+
+    public OrgFSS(String name) {
+        this.name = name;
+    }
 
     @XmlAttribute(name = "КодФСС")
     public void setCode(String code) {

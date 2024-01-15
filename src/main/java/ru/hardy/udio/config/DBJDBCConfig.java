@@ -82,7 +82,7 @@ public class DBJDBCConfig{
         return dataSource;
     }
 
-    public DataSource getUDIODataSource() {
+    public static DataSource getUDIODataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
         dataSource.setUrl("jdbc:postgresql://192.168.2.157/udio");
@@ -99,4 +99,14 @@ public class DBJDBCConfig{
         dataSource.setPassword("123");
         return dataSource;
     }
+
+    public DataSource getFMSDataSource() {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        dataSource.setUrl("jdbc:sqlserver://srz\\srz;databaseName=fms");
+        dataSource.setUsername("expert");
+        dataSource.setPassword("123");
+        return dataSource;
+    }
+
 }

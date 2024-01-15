@@ -11,7 +11,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "org_pf")
-@XmlRootElement(name = "СвОргПФ")
+@XmlRootElement
 public class OrgPF {
     @Id
     private Long id;
@@ -25,6 +25,11 @@ public class OrgPF {
     }
     @XmlAttribute(name = "НаимПФ")
     public void setName(String name) {
+        this.name = name;
+    }
+
+    public OrgPF(){}
+    public OrgPF(String name){
         this.name = name;
     }
 }

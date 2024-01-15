@@ -11,7 +11,6 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
-import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import ru.hardy.udio.domain.User;
 import ru.hardy.udio.service.UserService;
 import ru.hardy.udio.service.UtilService;
+import ru.hardy.udio.service.regulservice.FileUlService;
 
 @Route("")
 @PermitAll
@@ -30,7 +30,6 @@ public class MainView extends AppLayout{
     private final H3 avatar = new H3();
 
     public MainView() {
-
         DrawerToggle toggle = new DrawerToggle();
         H5 titleVersion = new H5("Разработчик Cherminel IT. Whatsapp 918-742-28-78");
         addToDrawer(UtilService.getTabs());
@@ -46,9 +45,10 @@ public class MainView extends AppLayout{
         hlVersion.setAlignSelf(FlexComponent.Alignment.END, titleVersion);
         hlVersion.setSizeFull();
         hlVersion.add(titleVersion);
+
         addToDrawer(hlVersion);
 
-        Footer footer = new Footer(new Span("ИР ТФОМС РСО-А v1.4.4"));
+        Footer footer = new Footer(new Span("ИР ТФОМС РСО-А v1.4.5"));
         addToNavbar(footer);
     }
 

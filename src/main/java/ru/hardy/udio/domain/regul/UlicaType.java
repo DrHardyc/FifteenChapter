@@ -13,7 +13,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "ulica_type")
-@XmlRootElement(name = "УлицаТип")
+@XmlRootElement
 public class UlicaType {
     @Id
     private Long id;
@@ -27,6 +27,12 @@ public class UlicaType {
     }
     @XmlAttribute(name = "НаимУлица")
     public void setName(String name) {
+        this.name = name;
+    }
+
+    public UlicaType(){}
+
+    public UlicaType(String name){
         this.name = name;
     }
 }

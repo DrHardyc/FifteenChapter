@@ -11,7 +11,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "resh_sud_type")
-@XmlRootElement(name = "РешСудТип")
+@XmlRootElement
 public class ReshSudType {
     @Id
     private Long id;

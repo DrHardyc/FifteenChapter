@@ -1,6 +1,5 @@
 package ru.hardy.udio.domain.regul;
 
-import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.Getter;
@@ -13,7 +12,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "up_tov_in_ul")
-@XmlRootElement(name = "СвУпТовИнЮЛ")
+@XmlRootElement
 public class UpTovInUL {
     @Id
     private Long id;

@@ -14,7 +14,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(schema = "regul", name = "zap_egrul")
-@XmlRootElement(name = "СвЗапЕГРЮЛ")
+@XmlRootElement
 public class ZapEGRUL {
     @Id
     private Long id;
@@ -36,10 +36,6 @@ public class ZapEGRUL {
     private Set<Svid> svid;
     @MappedCollection(idColumn = "zapegrul_id")
     private StatusZap statusZap;
-    @MappedCollection(idColumn = "zapegrul_id")
-    private IdGRNDateType idGRNDateTypeIspr;
-    @MappedCollection(idColumn = "zapegrul_id")
-    private IdGRNDateType idGRNDateTypeNed;
 
     @XmlAttribute(name = "ИдЗап")
     public void setIdZap(String idZap) {
@@ -81,12 +77,10 @@ public class ZapEGRUL {
     public void setStatusZap(StatusZap statusZap) {
         this.statusZap = statusZap;
     }
-    @XmlElement(name = "ГРНДатаНедПред")
-    public void setIdGRNDateTypeIspr(IdGRNDateType idGRNDateTypeIspr) {
-        this.idGRNDateTypeIspr = idGRNDateTypeIspr;
-    }
-    @XmlElement(name = "СвСтатусЗап")
-    public void setIdGRNDateTypeNed(IdGRNDateType idGRNDateTypeNed) {
-        this.idGRNDateTypeNed = idGRNDateTypeNed;
+
+    public ZapEGRUL(){}
+
+    public ZapEGRUL(String dateZap){
+        this.dateZap = dateZap;
     }
 }

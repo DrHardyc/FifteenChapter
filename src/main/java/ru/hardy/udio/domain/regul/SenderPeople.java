@@ -12,7 +12,7 @@ import org.springframework.data.annotation.Id;
 @Getter
 @Setter
 @Table(schema = "regul", name = "sender_people")
-@XmlRootElement(name = "")
+@XmlRootElement(name = "ИдОтпр")
 public class SenderPeople {
     @Id
     private Long id;
@@ -22,6 +22,7 @@ public class SenderPeople {
     private String email;
     @MappedCollection(idColumn = "senderpeople_id")
     private FIOType snpSenderPeople;
+
 
     @XmlAttribute(name = "ДолжОтв")
     public void setPosition(String position) {

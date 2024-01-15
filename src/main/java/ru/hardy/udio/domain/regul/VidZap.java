@@ -11,7 +11,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "vid_zap")
-@XmlRootElement(name = "ВидЗапТип")
+@XmlRootElement
 public class VidZap {
     @Id
     private Long id;

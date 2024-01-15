@@ -13,7 +13,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "reg_pf")
-@XmlRootElement(name = "СвРегПФ")
+@XmlRootElement
 public class RegPF {
     @Id
     private Long id;
@@ -38,6 +38,13 @@ public class RegPF {
     }
     @XmlElement(name = "СвОргПФ")
     public void setOrgPF(OrgPF orgPF) {
+        this.orgPF = orgPF;
+    }
+
+    public RegPF(){}
+
+    public RegPF(String regNomPF, OrgPF orgPF){
+        this.regNomPF = regNomPF;
         this.orgPF = orgPF;
     }
 }

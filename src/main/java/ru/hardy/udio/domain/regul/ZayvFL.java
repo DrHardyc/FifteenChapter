@@ -12,7 +12,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "zayv_fl")
-@XmlRootElement(name = "СвЗаявФЛ")
+@XmlRootElement
 public class ZayvFL {
     @Id
     private Long id;

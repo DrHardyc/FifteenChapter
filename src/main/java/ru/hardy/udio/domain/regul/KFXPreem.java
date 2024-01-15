@@ -13,14 +13,13 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "kfx_preem")
-@XmlRootElement(name = "СвКФХПреем")
+@XmlRootElement
 public class KFXPreem {
     @Id
     private Long id;
     private String ogrnip;
     @MappedCollection(idColumn = "kfxpreem")
     private FLEGRULType flegrulType;
-
     @XmlAttribute(name = "ОГРНИП")
     public void setOgrnip(String ogrnip) {
         this.ogrnip = ogrnip;

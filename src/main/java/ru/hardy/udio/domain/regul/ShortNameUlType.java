@@ -13,7 +13,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "short_name_ul_type")
-@XmlRootElement(name = "СвНаимСокрТип")
+@XmlRootElement
 public class ShortNameUlType {
     @Id
     private Long id;
@@ -22,5 +22,11 @@ public class ShortNameUlType {
     @XmlAttribute(name = "НаимСокр")
     public void setNameSokr(String nameSokr) {
         this.nameSokr = nameSokr;
+    }
+
+    public ShortNameUlType(){}
+    public ShortNameUlType(String shortName){
+        this.nameSokr = shortName;
+
     }
 }

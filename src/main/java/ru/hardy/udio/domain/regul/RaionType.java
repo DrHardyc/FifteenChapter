@@ -12,13 +12,21 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "raion_type")
-@XmlRootElement(name = "РайонТип")
+@XmlRootElement
 public class RaionType {
     @Id
     private Long id;
 
     private String type;
     private String name;
+
+    public RaionType() {
+    }
+
+    public RaionType(String raion) {
+        this.name = raion;
+
+    }
 
     @XmlAttribute(name = "ТипРайон")
     public void setType(String type) {

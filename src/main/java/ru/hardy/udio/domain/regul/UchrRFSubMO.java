@@ -1,6 +1,5 @@
 package ru.hardy.udio.domain.regul;
 
-import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.Getter;
@@ -15,7 +14,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(schema = "regul", name = "uchr_rf_sub_mo")
-@XmlRootElement(name = "УчрРФСубМО")
+@XmlRootElement
 public class UchrRFSubMO {
     @Id
     private Long id;

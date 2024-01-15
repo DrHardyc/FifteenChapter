@@ -9,13 +9,11 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.util.Set;
-
 /** @version таблица 4.116 */
 @Getter
 @Setter
 @Table(schema = "regul", name = "obrem_type")
-@XmlRootElement(name = "СвОбремТип")
+@XmlRootElement
 public class ObremType {
     @Id
     private Long id;

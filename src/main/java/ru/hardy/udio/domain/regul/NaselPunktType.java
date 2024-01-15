@@ -12,7 +12,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "nasel_punkt_type")
-@XmlRootElement(name = "ТипНаселПункт")
+@XmlRootElement
 public class NaselPunktType {
     @Id
     private Long id;
@@ -26,6 +26,12 @@ public class NaselPunktType {
     }
     @XmlAttribute(name = "НаимНаселПункт")
     public void setName(String name) {
+        this.name = name;
+    }
+
+    public NaselPunktType(){}
+
+    public NaselPunktType(String name){
         this.name = name;
     }
 }

@@ -13,13 +13,19 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "region_type")
-@XmlRootElement(name = "РегионТип")
+@XmlRootElement
 public class RegionType {
     @Id
     private Long id;
 
     private String typeRegion;
     private String nameRegion;
+
+    public RegionType() {}
+
+    public RegionType(String region) {
+        this.nameRegion = region;
+    }
 
     @XmlAttribute(name = "ТипРегион")
     public void setTypeRegion(String typeRegion) {

@@ -13,7 +13,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "reg_fss")
-@XmlRootElement(name = "СвРегФСС")
+@XmlRootElement
 public class RegFSS {
     @Id
     private Long id;
@@ -38,6 +38,13 @@ public class RegFSS {
     }
     @XmlElement(name = "СвОргФСС")
     public void setOrgFSS(OrgFSS orgFSS) {
+        this.orgFSS = orgFSS;
+    }
+
+    public RegFSS() {}
+
+    public RegFSS(String regNomFSS, OrgFSS orgFSS) {
+        this.regNomFSS = regNomFSS;
         this.orgFSS = orgFSS;
     }
 }

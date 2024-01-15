@@ -17,7 +17,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(schema = "regul", name = "name_ul")
-@XmlRootElement(name = "СвНаимЮЛ")
+@XmlRootElement
 public class NameUL {
     @Id
     private Long id;
@@ -50,5 +50,13 @@ public class NameUL {
     @XmlElement(name = "СвНаимЮЛСокрИн")
     public void setNameSokrType(NameSokrType nameSokrType) {
         this.nameSokrType = nameSokrType;
+    }
+
+
+    public NameUL(){}
+
+    public NameUL(String fullName, ShortNameUlType shortName){
+        this.fullName = fullName;
+        this.shortName = shortName;
     }
 }

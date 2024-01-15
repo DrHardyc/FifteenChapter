@@ -15,7 +15,7 @@ import java.util.NavigableMap;
 @Getter
 @Setter
 @Table(schema = "regul", name = "name_pif")
-@XmlRootElement(name = "СвНаимПИФ")
+@XmlRootElement
 public class NamePIF {
     @Id
     private Long id;

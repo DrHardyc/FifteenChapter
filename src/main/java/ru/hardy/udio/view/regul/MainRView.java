@@ -8,8 +8,7 @@ import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.hardy.udio.domain.regul.FileUL;
 import ru.hardy.udio.domain.regul.SenderPeople;
-import ru.hardy.udio.domain.regul.enumul.InfoType;
-import ru.hardy.udio.service.reguiservice.FileUlService;
+import ru.hardy.udio.service.regulservice.FileUlService;
 import ru.hardy.udio.view.MainView;
 
 @Route(layout = MainView.class)

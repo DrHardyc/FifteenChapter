@@ -20,20 +20,26 @@ import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.RolesAllowed;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import ru.hardy.udio.config.DBJDBCConfig;
 import ru.hardy.udio.domain.Role;
 import ru.hardy.udio.domain.deamon.Deamon;
+import ru.hardy.udio.domain.regul.*;
+import ru.hardy.udio.domain.regul.importfromfms.Platel;
+import ru.hardy.udio.domain.regul.importfromfms.PlatelMapper;
 import ru.hardy.udio.domain.struct.People;
 import ru.hardy.udio.security.SecurityUtils;
 import ru.hardy.udio.service.*;
 import ru.hardy.udio.service.deamonservice.DeamonService;
 import ru.hardy.udio.service.deamonservice.SearchDead;
+import ru.hardy.udio.service.regulservice.FileUlService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Route(layout = MainView.class)
 @RolesAllowed("ROLE_ADMIN")
@@ -48,6 +54,8 @@ public class AdminView extends VerticalLayout{
     private DeamonService deamonService;
     @Autowired
     private SearchDead searchDead;
+    @Autowired
+    private FileUlService fileUlService;
 
     private final Grid<Deamon> gridDeamon = new Grid<>();
 
@@ -154,8 +162,96 @@ public class AdminView extends VerticalLayout{
         VerticalLayout vlToken = new VerticalLayout();
         vlToken.add(tfClearToken, tfCryptToken, tfCodeMO, btnCryptToken);
 
-
         tabSheet.add("Токен", vlToken);
+
+        VerticalLayout vlRegUL = new VerticalLayout();
+        Button btnImport = new Button("Импорт из FMS");
+        vlRegUL.add(btnImport);
+        tabSheet.add("Регистрация ЮЛ", vlRegUL);
+        btnImport.addClickListener(buttonClickEvent -> {
+            DBJDBCConfig dbjdbcConfig = new DBJDBCConfig();
+
+            JdbcTemplate jdbcTemplate = new JdbcTemplate();
+            jdbcTemplate.setDataSource(dbjdbcConfig.getFMSDataSource());
+            RowMapper<Platel> platelRowMapper = new PlatelMapper();
+            List<Platel> platelList = jdbcTemplate.query("select p.NAMEF, p.NAMESC, p.INN, p.OGRN, p.KPP, " +
+                    "p.REGORG, p.STATUS, p.VIDREG, p.DTSTART, p.DTEND, p.REGNPF, p.PF, p.REGNFSS, p.FSS, p.REGNFOMS, " +
+                    "p.FOMS, p.FILEN, p.DTPRIS, p.PRIN, p.KUSER, p.CHIS, p.VPDT, p.VPKTO, " +
+                    "b.NUM, b.BIK, b.TIP, " +
+                    "h.REGNUM, h.DTREG, h.DTZAP, " +
+                    "a.OKATO, a.INDEKS, a.REGION, a.RAION, a.GOROD, a.NASPUNKT, a.STREET, a.DOM, a.KORP, a.KVART, a.KODGOROD, a.TEL " +
+                    "from PLATEL p " +
+                    "inner join BANKREK b on b.regid = p.id " +
+                    "inner join HISTORY h on h.ORGID = p.ID " +
+                    "inner join ADDRESS a on a.ID = p.ADDRSS", platelRowMapper);
+
+            FileUL fileUL = new FileUL();
+            fileUL.setIdFile("from srz/fms ul");
+            Set<DocumentUL> documentULSet = new HashSet<>();
+            for (Platel platel : platelList) {
+                DocumentUL documentUL = new DocumentUL();
+                documentUL.setIdDoc(platel.getFilen());
+                if (!platel.getVidreg().toLowerCase().contains("глава кресть") && !platel.getVidreg().toLowerCase().contains("предприн")) {
+                    PersonUL personUL = new PersonUL();
+                    personUL.setNameUl(new NameUL(platel.getNamef(), new ShortNameUlType(platel.getNamesc())));
+                    personUL.setInn(platel.getInn());
+                    personUL.setOgrn(platel.getOgrn());
+                    personUL.setKpp(platel.getKpp());
+                    personUL.setRegOrg(new RegOrg(platel.getRegorg()));
+
+                    Set<StatusUl> statusULSet = new HashSet<>();
+                    statusULSet.add(new StatusUl(new Status(platel.getStatus())));
+                    personUL.setStatusUl(statusULSet);
+                    personUL.setObrUL(new ObrUL(new SpObrUl(platel.getVidreg()), platel.getDtreg()));
+                    Set<ZapEGRUL> zapEGRULSet = new HashSet<>();
+                    zapEGRULSet.add(new ZapEGRUL(platel.getDtzap()));
+                    personUL.setZapEGRUL(zapEGRULSet);
+                    personUL.setRegPF(new RegPF(platel.getRegnpf(), new OrgPF(platel.getPf())));
+                    personUL.setRegFSS(new RegFSS(platel.getRegnfss(), new OrgFSS(platel.getFss())));
+                    personUL.setRegNFoms(platel.getRegnfoms());
+                    personUL.setAddressUL(new AddressUL(new AdrRFEGRULType(platel.getIndeks(),
+                            new RegionType(platel.getRegion()),
+                            new RaionType(platel.getRaion()),
+                            new GorodType(platel.getGorod()),
+                            new NaselPunktType(platel.getNaspunkt()),
+                            new UlicaType(platel.getStreet()),
+                            platel.getDom(),
+                            platel.getKorp(),
+                            platel.getKvart())));
+
+                    documentUL.setPersonUL(personUL);
+                    documentULSet.add(documentUL);
+                } else {
+                    PersonIP personIP = new PersonIP();
+                    FL fl = new FL();
+                    List<String> fio = List.of(platel.getNamef().split(" "));
+                    fl.setFioRus(new FIOIP(fio.get(0), fio.get(1), fio.get(2)));
+                    personIP.setFl(fl);
+                    personIP.setInnFl(platel.getInn());
+                    personIP.setOgrnIp(platel.getOgrn());
+                    personIP.setRegOrg(new RegOrg(platel.getRegorg()));
+                    personIP.setStatus(new StatusIP(new Status(platel.getStatus())));
+                    personIP.setNameVidIp(platel.getVidreg());
+                    personIP.setRegPF(new RegPFIP(new OrgPFIP(platel.getRegnpf(), platel.getPf())));
+                    personIP.setRegFSSIP(new RegFSSIP(new OrgFSSIP(platel.getRegnfss(), platel.getFss())));
+                    personIP.setRegNFoms(platel.getRegnfoms());
+                    personIP.setAdrMJ(new AdrMJ(new AdresRF(platel.getIndeks(),
+                            new RegionType(platel.getRegion()),
+                            new RaionType(platel.getRaion()),
+                            new GorodType(platel.getGorod()),
+                            new NaselPunktType(platel.getNaspunkt()),
+                            new UlicaType(platel.getStreet()),
+                            platel.getDom(),
+                            platel.getKorp(),
+                            platel.getKvart())));
+
+                    documentUL.setPersonIP(personIP);
+                    documentULSet.add(documentUL);
+                }
+            }
+            fileUL.setDocumentUL(documentULSet);
+            fileUlService.addFromFMS(fileUL);
+        });
 
         add(tabSheet);
     }

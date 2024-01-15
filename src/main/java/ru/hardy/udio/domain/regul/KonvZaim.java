@@ -21,7 +21,7 @@ public class KonvZaim {
     private String number;
     private String date;
     @MappedCollection(idColumn = "konvzaim_id")
-    private FIOType fioType;
+    private FIOIP fioType;
     @MappedCollection(idColumn = "konvzaim_id")
     private ZaimDavFL zaimDavFL;
     @MappedCollection(idColumn = "konvzaim_id")
@@ -38,7 +38,7 @@ public class KonvZaim {
         this.date = date;
     }
     @XmlElement(name = "ФИОНотариус")
-    public void setFioType(FIOType fioType) {
+    public void setFioType(FIOIP fioType) {
         this.fioType = fioType;
     }
     @XmlElement(name = "ЗаймДавФЛ")

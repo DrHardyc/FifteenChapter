@@ -15,7 +15,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(schema = "regul", name = "address_ul")
-@XmlRootElement(name = "СвАдресЮЛ")
+@XmlRootElement
 public class AddressUL {
     @Id
     private Long id;
@@ -57,5 +57,11 @@ public class AddressUL {
     @XmlElement(name = "СвРешИзмМН")
     public void setReshIzmMN(ReshIzmMN reshIzmMN) {
         this.reshIzmMN = reshIzmMN;
+    }
+
+    public AddressUL(){}
+
+    public AddressUL(AdrRFEGRULType adrRFEGRULType){
+        this.setAdrRFEGRULType(adrRFEGRULType);
     }
 }

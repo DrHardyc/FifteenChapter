@@ -1,17 +1,17 @@
 -- create sequence regul.tablename_id_seq;
 -- create table regul.tablename
 -- (
---     id                           bigint default nextval('regul.tablename_id_seq'::regclass) not null
+--     id                           bigint default nextval('regul.tablename_id_seq'::regclass)
 --         constraint tablename_pk
 --             primary key,
---     col1                     varchar                                                 not null,
---     col2                     varchar                                                 not null,
---     col3                     varchar                                                 not null,
+--     col1                     varchar,
+--     col2                     varchar,
+--     col3                     varchar,
 --     tablenameparent_id                    bigint
 --         constraint tablenameparent_fk_id
 --             references regul.tablenameparent
 -- );
-
+-------- UL -------------
 create sequence regul.fileul_id_seq;
 create table regul.file_ul
 (
@@ -36,6 +36,16 @@ create table regul.sender_people
     fileul_id                    bigint
         constraint fileul_fk_id
         references regul.file_ul
+);
+create sequence regul.uchr_dog_inv_tov_id_seq;
+create table regul.uchr_dog_inv_tov
+(
+    id                           bigint default nextval('regul.uchr_dog_inv_tov_id_seq'::regclass) not null
+        constraint uchr_dog_inv_tov_pk
+            primary key,
+    uchrdoginvtov_id                    bigint
+        constraint uchrdoginvtov_fk_id
+            references regul.uchr_dog_inv_tov
 );
 create sequence regul.in_pr_dog_inv_tov_id_seq;
 create table regul.in_pr_dog_inv_tov
@@ -75,6 +85,9 @@ create table regul.person_ul
     opf                     varchar,
     kod_opf                 varchar,
     full_name_opf           varchar,
+    reg_n_foms              varchar,
+    date_beg                date,
+    date_edit                date,
     documentul_id           bigint
         constraint documentl_fk_id
             references regul.document_ul
@@ -202,16 +215,6 @@ create table regul.uchr_pif
     uchrediteli_id                    bigint
         constraint uchrediteli_fk_id
             references regul.uchrediteli
-);
-create sequence regul.uchr_dog_inv_tov_id_seq;
-create table regul.uchr_dog_inv_tov
-(
-    id                           bigint default nextval('regul.uchr_dog_inv_tov_id_seq'::regclass) not null
-        constraint uchr_dog_inv_tov_pk
-            primary key,
-    uchrdoginvtov_id                    bigint
-        constraint uchrdoginvtov_fk_id
-            references regul.uchr_dog_inv_tov
 );
 create sequence regul.dolia_ooo_id_seq;
 create table regul.dolia_ooo
@@ -484,8 +487,8 @@ create table regul.ned_adr_ul
             primary key,
     prizn_ned_adres_ul                     varchar,
     text_ned_adres_ul                      varchar,
-    address_ul_id                    bigint
-        constraint address_ul_fk_id
+    addressul_id                    bigint
+        constraint addressul_fk_id
             references regul.address_ul
 );
 create sequence regul.resh_sud_ned_adr_id_seq;
@@ -570,6 +573,25 @@ create table regul.reg_in_ul
         constraint obrul_fk_id
             references regul.obr_ul
 );
+create sequence regul.person_ip_id_seq;
+create table regul.person_ip
+(
+    id                           bigint default nextval('regul.person_ip_id_seq'::regclass)
+        constraint tablename_pk
+            primary key,
+    date_vip                     varchar,
+    ogrn_ip                      varchar,
+    date_ogrn_ip                  varchar,
+    inn_fl                       varchar,
+    code_vid_ip                   varchar,
+    name_vid_ip                   varchar,
+    reg_n_foms                  varchar,
+    date_beg                    date,
+    date_edit                   date,
+    documentul_id               bigint
+        constraint documentul_fk_id
+            references regul.document_ul
+);
 create sequence regul.reg_org_id_seq;
 create table regul.reg_org
 (
@@ -581,7 +603,10 @@ create table regul.reg_org
     adr_ro                     varchar,
     personul_id                bigint
         constraint personul_fk_id
-            references regul.person_ul
+            references regul.person_ul,
+    personip_id                bigint
+        constraint personip_fk_id
+            references regul.person_ip
 );
 create sequence regul.status_ul_id_seq;
 create table regul.status_ul
@@ -592,6 +617,16 @@ create table regul.status_ul
     personul_id                    bigint
         constraint personul_fk_id
             references regul.person_ul
+);
+create sequence regul.status_ip_id_seq;
+create table regul.status_ip
+(
+    id                           bigint default nextval('regul.status_ip_id_seq'::regclass)
+        constraint status_ip_pk
+            primary key,
+    personip_id                    bigint
+        constraint personip_fk_id
+            references regul.person_ip
 );
 create sequence regul.status_st_ul_id_seq;
 create table regul.status_st_ul
@@ -604,7 +639,10 @@ create table regul.status_st_ul
     srok_likv                       varchar,
     statusul_id                    bigint
         constraint statusul_fk_id
-            references regul.status_ul
+            references regul.status_ul,
+    statusip_id                    bigint
+        constraint statusip_fk_id
+            references regul.status_ip
 );
 create sequence regul.resh_isk_kul_id_seq;
 create table regul.resh_isk_kul
@@ -677,7 +715,10 @@ create table regul.uchet_ul
     date_post_uch           varchar,
     personul_id             bigint
         constraint personul_fk_id
-            references regul.person_ul
+            references regul.person_ul,
+    personip_id             bigint
+        constraint personip_fk_id
+            references regul.person_ip
 );
 create sequence regul.uchet_no_podrazd_type_id_seq;
 create table regul.uchet_no_podrazd_type
@@ -1202,7 +1243,7 @@ create sequence regul.priost_lic_id_seq;
 create table regul.priost_lic
 (
     id                           bigint default nextval('regul.priost_lic_id_seq'::regclass) not null
-        constraint tablename_pk
+        constraint priost_lic_pk
             primary key,
     date                     varchar,
     lic_org                  varchar,
@@ -1751,6 +1792,33 @@ create table regul.adr_mj_rf_egrul_type
         constraint uchrfl_fk_id
             references regul.uchr_fl
 );
+create sequence regul.adr_mj_id_seq;
+create table regul.adr_mj
+(
+    id                           bigint default nextval('regul.adr_mj_id_seq'::regclass)
+        constraint adr_mj_pk
+            primary key,
+    vid_adr_klassif                     varchar,
+    personip_id                    bigint
+        constraint personip_fk_id
+            references regul.person_ip
+);
+create sequence regul.adr_rf_type_vip_id_seq;
+create table regul.adr_rf_type_vip
+(
+    id                           bigint default nextval('regul.adr_rf_type_vip_id_seq'::regclass)
+        constraint adr_rf_type_vip_pk
+            primary key,
+    index                       varchar,
+    code_region                 varchar,
+    code_adr_kladr              varchar,
+    dom                         varchar,
+    korp                        varchar,
+    kvart                       varchar,
+    adrmj_id                    bigint
+        constraint adrmj_fk_id
+            references regul.adr_mj
+);
 create sequence regul.ulica_type_id_seq;
 create table regul.ulica_type
 (
@@ -1764,7 +1832,10 @@ create table regul.ulica_type
             references regul.adr_mj_rf_egrul_type,
     adrrfegrultype_id       bigint
         constraint adrrfegrultype_fk_id
-            references regul.adr_rf_egrul_type
+            references regul.adr_rf_egrul_type,
+    adrrftypevip_id               bigint
+        constraint adrrftypevip_fk_id
+            references regul.adr_rf_type_vip
 );
 create sequence regul.nasel_punkt_type_id_seq;
 create table regul.nasel_punkt_type
@@ -1782,7 +1853,10 @@ create table regul.nasel_punkt_type
             references regul.adr_rf_egrul_type,
     reshizmmn_id               bigint
         constraint reshizmmn_fk_id
-            references regul.resh_izm_mn
+            references regul.resh_izm_mn,
+    adrrftypevip_id               bigint
+        constraint adrrftypevip_fk_id
+            references regul.adr_rf_type_vip
 );
 create sequence regul.gorod_type_id_seq;
 create table regul.gorod_type
@@ -1800,7 +1874,10 @@ create table regul.gorod_type
             references regul.adr_rf_egrul_type,
     reshizmmn_id               bigint
         constraint reshizmmn_fk_id
-            references regul.resh_izm_mn
+            references regul.resh_izm_mn,
+    adrrftypevip_id               bigint
+        constraint adrrftypevip_fk_id
+            references regul.adr_rf_type_vip
 );
 create sequence regul.raion_type_id_seq;
 create table regul.raion_type
@@ -1818,7 +1895,10 @@ create table regul.raion_type
             references regul.adr_rf_egrul_type,
     reshizmmn_id               bigint
         constraint reshizmmn_fk_id
-            references regul.resh_izm_mn
+            references regul.resh_izm_mn,
+    adrrftypevip_id               bigint
+        constraint adrrftypevip_fk_id
+            references regul.adr_rf_type_vip
 );
 create sequence regul.region_type_id_seq;
 create table regul.region_type
@@ -1834,9 +1914,10 @@ create table regul.region_type
     adrrfegrultype_id               bigint
         constraint adrrfegrultype_fk_id
             references regul.adr_rf_egrul_type,
-    reshizmmn_id               bigint
-        constraint reshizmmn_fk_id
-            references regul.resh_izm_mn
+    adrrftypevip_id               bigint
+        constraint adrrftypevip_fk_id
+            references regul.adr_rf_type_vip
+
 );
 create sequence regul.ud_lichn_egrul_type_id_seq;
 create table regul.ud_lichn_egrul_type
@@ -1970,7 +2051,10 @@ create table regul.fio_zags
             references regul.dolj_fl,
     uchrfl_id           bigint
         constraint uchrfl_fk_id
-            references regul.uchr_fl
+            references regul.uchr_fl,
+    personip_id           bigint
+        constraint personip_fk_id
+            references regul.person_ip
 );
 create sequence regul.fl_egrul_type_id_seq;
 create table regul.fl_egrul_type
@@ -2097,7 +2181,24 @@ create table regul.org_doc
             references regul.preem,
     zapegrul_id                 bigint
         constraint zapegrul_fk_id
-            references regul.zap_egrul
+            references regul.zap_egrul,
+    statusip_id                 bigint
+        constraint statusip_fk_id
+            references regul.status_ip
+);
+create sequence regul.adr_fias_egrip_type_id_seq;
+create table regul.adr_fias_egrip_type
+(
+    id                           bigint default nextval('regul.adr_fias_egrip_type_id_seq'::regclass) not null
+        constraint adr_fias_egrip_type_pk
+            primary key,
+    id_num                      varchar,
+    index                       varchar,
+    region                      varchar,
+    name_region                 varchar,
+    adrmj_id                    bigint
+        constraint adrmj_fk_id
+            references regul.adr_mj
 );
 create sequence regul.vid_name_code_type_id_seq;
 create table regul.vid_name_code_type
@@ -2118,7 +2219,10 @@ create table regul.vid_name_code_type
             references regul.adr_mj_fias_egrul_type,
     filial_id           bigint
         constraint filial_fk_id
-            references regul.filial
+            references regul.filial,
+    adrfiasegriptype_id           bigint
+        constraint adrfiasegriptype_fk_id
+            references regul.adr_fias_egrip_type
 );
 create sequence regul.vid_name_p_type_id_seq;
 create table regul.vid_name_p_type
@@ -2136,7 +2240,10 @@ create table regul.vid_name_p_type
             references regul.adr_fias_egrul_type,
     adrmjfiasegrultype_id     bigint
         constraint adrmjfiasegrultype_fk_id
-            references regul.adr_mj_fias_egrul_type
+            references regul.adr_mj_fias_egrul_type,
+    adrfiasegriptype_id           bigint
+        constraint adrfiasegriptype_fk_id
+            references regul.adr_fias_egrip_type
 );
 create sequence regul.type_name_p_type_id_seq;
 create table regul.type_name_p_type
@@ -2151,7 +2258,10 @@ create table regul.type_name_p_type
             references regul.adr_fias_egrul_type,
     adrmjfiasegrultype_id     bigint
         constraint adrmjfiasegrultype_fk_id
-            references regul.adr_mj_fias_egrul_type
+            references regul.adr_mj_fias_egrul_type,
+    adrfiasegriptype_id           bigint
+        constraint adrfiasegriptype_fk_id
+            references regul.adr_fias_egrip_type
 );
 create sequence regul.number_p_type_id_seq;
 create table regul.number_p_type
@@ -2166,275 +2276,316 @@ create table regul.number_p_type
             references regul.adr_fias_egrul_type,
     adrmjfiasegrultype_id     bigint
         constraint adrmjfiasegrultype_fk_id
-            references regul.adr_mj_fias_egrul_type
+            references regul.adr_mj_fias_egrul_type,
+    adrfiasegriptype_id           bigint
+        constraint adrfiasegriptype_fk_id
+            references regul.adr_fias_egrip_type
 );
--- create sequence regul.grn_date_id_seq;
--- create table regul.grn_date
--- (
---     id                           bigint default nextval('regul.grn_date_id_seq'::regclass) not null
---         constraint grn_date_pk
---             primary key,
---     grn                     varchar,
---     date_write              varchar,
---     nameul_id              bigint
---         constraint nameul_fk_id
---             references regul.name_ul,
---     shortnameultype_id      bigint
---         constraint shortnameultype_fk_id
---             references regul.short_name_ul_type,
---     nameulkodokin_id      bigint
---         constraint nameulkodokin_fk_id
---             references regul.name_ul_kod_okin,
---     namepolntype_id      bigint
---         constraint namepolntype_fk_id
---             references regul.name_poln_type,
---     namesokrtype_id      bigint
---         constraint namesokrtype_fk_id
---             references regul.name_sokr_type,
---     mnul_id      bigint
---         constraint mnul_fk_id
---             references regul.mnul,
---     adrfiasegrultype_id      bigint
---         constraint adrfiasegrultype_fk_id
---         references regul.adr_fias_egrul_type,
---     adrrfegrultype_id      bigint
---         constraint adrrfegrultype_fk_id
---             references regul.adr_rf_egrul_type,
---     nedadrul_id      bigint
---         constraint nedadrul_fk_id
---             references regul.ned_adr_ul,
---     reshizmmn_id               bigint
---         constraint reshizmmn_fk_id
---             references regul.resh_izm_mn,
---     emailul_id               bigint
---         constraint emailul_fk_id
---             references regul.email_ul,
---     obrul_id               bigint
---         constraint obrul_fk_id
---             references regul.obr_ul,
---     regorg_id               bigint
---         constraint regorg_fk_id
---             references regul.reg_org,
---     orgdoc_id               bigint
---         constraint orgdoc_fk_id
---             references regul.org_doc,
---     statusul_id               bigint
---         constraint statusul_fk_id
---             references regul.status_ul,
---     prekrul_id               bigint
---         constraint prekrul_fk_id
---             references regul.prek_ul,
---     typeustav_id               bigint
---         constraint typeustav_fk_id
---             references regul.type_ustav,
---     uchetno_id               bigint
---         constraint uchetno_fk_id
---             references regul.uchet_ul,
---     regpf_id               bigint
---         constraint regpf_fk_id
---             references regul.reg_pf,
---     regfss_id               bigint
---         constraint regfss_fk_id
---             references regul.reg_fss,
---     ustkap_id               bigint
---         constraint ustkap_fk_id
---             references regul.ust_kap,
---     svedumuk_id               bigint
---         constraint svedumuk_fk_id
---             references regul.sved_umuk,
---     polnomochniy_id               bigint
---         constraint polnomochniy_fk_id
---             references regul.polnomochniy,
---     uprorg_id                    bigint
---         constraint uprorg_fk_id
---             references regul.upr_org,
---     nameinnul_id                    bigint
---         constraint nameinnul_fk_id
---             references regul.name_inn_ul,
---     reginulegrultype_id                    bigint
---         constraint reginulegrultype_fk_id
---             references regul.reg_in_ul_egrul_type,
---     neddanuprorg_id                    bigint
---         constraint neddanuprorg_fk_id
---             references regul.ned_dan_upr_org,
---     namepredultype_id                    bigint
---         constraint namepredultype_fk_id
---             references regul.name_pred_ul_type,
---     adrafptype_id                    bigint
---         constraint adrafptype_fk_id
---             references regul.ak_rafp_type,
---     doljfl_id                    bigint
---         constraint doljfl_fk_id
---             references regul.dolj_fl,
---     flegrultype_id                    bigint
---         constraint flegrultype_fk_id
---             references regul.fl_egrul_type,
---     fiozagstype_id                    bigint
---         constraint fiozagstype_fk_id
---             references regul.fio_zags,
---     dolj_id                    bigint
---         constraint dolj_fk_id
---             references regul.dolj,
---     neddandoljfl_id                    bigint
---         constraint neddandoljfl_fk_id
---             references regul.ned_dan_dolj_fl,
---     dopsvpoldoljfl_id                    bigint
---         constraint dopsvpoldoljfl_fk_id
---             references regul.dop_sv_pol_dolj_fl,
---     rojdegrultype_id                    bigint
---         constraint rojdegrultype_fk_id
---             references regul.rojd_egrul_fl_type,
---     grajdtype_id                    bigint
---         constraint grajdtype_fk_id
---             references regul.grajd_type,
---     udlichegrultype_id                    bigint
---         constraint udlichegrultype_fk_id
---             references regul.ud_lichn_egrul_type,
---     adrmjrfegrultype_id                    bigint
---         constraint adrmjrfegrultype_fk_id
---             references regul.adr_mj_rf_egrul_type,
---     adrmjfiasegrultype_id     bigint
---         constraint adrmjfiasegrultype_fk_id
---             references regul.adr_mj_fias_egrul_type,
---     diskv_id     bigint
---         constraint diskv_fk_id
---             references regul.diskv,
---     corpdogovor_id     bigint
---         constraint corpdogovor_fk_id
---             references regul.corp_dogovor,
---     zapretraspdoloami_id     bigint
---         constraint zapretraspdoloami_fk_id
---             references regul.zapret_rasp_doliami,
---     uchrulros_id                    bigint
---         constraint uchrulros_fk_id
---             references regul.uchr_ul_ros,
---     ulegrultype_id                    bigint
---         constraint ulegrultype_fk_id
---             references regul.ul_egrul_type,
---     regstarie_id                    bigint
---         constraint regstarie_fk_id
---             references regul.reg_starie,
---     neddanuchrtype_id          bigint
---         constraint neddanuchrtype_fk_id
---             references regul.ned_dan_uchr_type,
---     doliaustkapegrultype_id          bigint
---         constraint doliaustkapegrultype_fk_id
---             references regul.dolia_ust_kap_egrul_type,
---     obempravtype_id          bigint
---         constraint obempravtype_fk_id
---             references regul.obem_prav_type,
---     obremtype_id          bigint
---         constraint obremtype_fk_id
---             references regul.obrem_type,
---     polfltype_id          bigint
---         constraint polfltype_fk_id
---             references regul.pol_fl_type,
---     zalogderjul_id          bigint
---         constraint zalogderjul_fk_id
---             references regul.zalog_derj_ul,
---     upravzaltype_id          bigint
---         constraint upravzaltype_fk_id
---             references regul.uprav_zal_type,
---     dovuprultpye_id          bigint
---         constraint dovuprultpye_fk_id
---             references regul.dov_up_ul_type,
---     nameinndovupr_id          bigint
---         constraint nameinndovupr_fk_id
---             references regul.name_inn_dov_upr,
---     dovupfltype_id          bigint
---         constraint dovupfltype_fk_id
---             references regul.dov_upr_gl_type,
---     uchrulin_id           bigint
---         constraint uchrulin_fk_id
---             references regul.uchr_ul_in,
---     uchrfl_id           bigint
---         constraint uchrfl_fk_id
---             references regul.uchr_fl,
---     licouprnasl_id           bigint
---         constraint licouprnasl_fk_id
---             references regul.lico_upr_nasl,
---     uchrrfsubmo_id           bigint
---         constraint uchrrfsubmo_fk_id
---             references regul.uchr_rf_sub_mo,
---     orgosushpr_id           bigint
---         constraint orgosushpr_fk_id
---             references regul.org_osush_pr,
---     uchrpif_id           bigint
---         constraint uchrpif_fk_id
---             references regul.uchr_pif,
---     namepif_id           bigint
---         constraint namepif_fk_id
---             references regul.name_pif,
---     uchrdoginvtov_id           bigint
---         constraint uchrdoginvtov_fk_id
---             references regul.uchr_dog_inv_tov,
---     inprdoginvtov_id                    bigint
---         constraint inprdoginvtov_fk_id
---             references regul.in_pr_dog_inv_tov,
---     konvzaim_id                    bigint
---         constraint konvzaim_fk_id
---             references regul.konv_zaim,
---     zaimdavfl_id                    bigint
---         constraint zaimdavfl_fk_id
---             references regul.zaim_dav_fl,
---     zaimdavul_id                    bigint
---         constraint zaimdavul_fk_id
---             references regul.zaim_dav_ul,
---     doliaooo_id           bigint
---         constraint doliaooo_fk_id
---             references regul.dolia_ooo,
---     derjreestrao_id           bigint
---         constraint derjreestrao_fk_id
---             references regul.derj_reestr_ao,
---     okvedtype_id           bigint
---         constraint okvedtype_fk_id
---             references regul.okved_type,
---     doliaokved_id           bigint
---         constraint doliaokved_fk_id
---             references regul.dolia_okved,
---     priostlic_id           bigint
---         constraint priostlic_fk_id
---             references regul.priost_lic,
---     license_id           bigint
---         constraint license_fk_id
---             references regul.license,
---     filial_id           bigint
---         constraint filial_fk_id
---             references regul.filial,
---     adrinegrultype_id           bigint
---         constraint adrinegrultype_fk_id
---             references regul.adr_in_egrul_type,
---     akrfilpredtype_id           bigint
---         constraint akrfilpredtype_fk_id
---             references regul.akr_fil_pred_type,
---     uchetnopodrazdtype_id       bigint
---         constraint uchetnopodrazdtype_fk_id
---             references regul.uchet_no_podrazd_type,
---     predst_id           bigint
---         constraint predst_fk_id
---             references regul.predst,
---     reorgul_id           bigint
---         constraint reorgul_fk_id
---             references regul.reorg_ul,
---     reorg_id                 bigint
---         constraint reorg_fk_id
---             references regul.reorg,
---     predsh_id                 bigint
---         constraint predsh_fk_id
---             references regul.predsh,
---     preem_id                bigint
---         constraint preem_fk_id
---             references regul.preem,
---     fioinn_id                bigint
---         constraint fioinn_fk_id
---             references regul.fio_inn,
---     rojdfl_id                bigint
---         constraint rojdfl_fk_id
---             references regul.rojd_fl,
---     udlichfl_id                bigint
---         constraint udlichfl_fk_id
---             references regul.ud_lich_fl,
---     svid_id                bigint
---         constraint svid_fk_id
---             references regul.svid
--- );
+----- IP --------
+create sequence regul.fl_id_seq;
+create table regul.fl
+(
+    id                           bigint default nextval('regul.fl_id_seq'::regclass)
+        constraint fl_pk
+            primary key,
+    sex                     varchar,
+    personip_id                   bigint
+        constraint personip_fk_id
+            references regul.person_ip
+);
+create sequence regul.fio_ip_id_seq;
+create table regul.fio_ip
+(
+    id                           bigint default nextval('regul.fio_ip_id_seq'::regclass)
+        constraint fio_ip_pk
+            primary key,
+    surname                         varchar,
+    name                            varchar,
+    patronymic                      varchar,
+    fl_id              bigint
+        constraint fl_fk_id
+            references regul.fl,
+    senderpeople_id              bigint
+        constraint sender_people_id
+            references regul.sender_people
+);
+create sequence regul.rojd_id_seq;
+create table regul.rojd
+(
+    id                           bigint default nextval('regul.rojd_id_seq'::regclass)
+        constraint rojd_pk
+            primary key,
+    date                        varchar,
+    mesto                       varchar,
+    pr_date                      varchar,
+    personip_id                    bigint
+        constraint personip_fk_id
+            references regul.person_ip
+);
+create sequence regul.grajd_id_seq;
+create table regul.grajd
+(
+    id                           bigint default nextval('regul.grajd_id_seq'::regclass)
+        constraint tgrajd_pk
+            primary key,
+    vid_grajd                        varchar,
+    oksm                            varchar,
+    name_country                     varchar,
+    personip_id                    bigint
+        constraint personip_fk_id
+            references regul.person_ip
+);
+create sequence regul.ud_lichn_id_seq;
+create table regul.ud_lichn
+(
+    id                           bigint default nextval('regul.ud_lichn_id_seq'::regclass)
+        constraint ud_lichn_pk
+            primary key,
+    personip_id                    bigint
+        constraint personip_fk_id
+            references regul.person_ip
+);
+create sequence regul.prav_jit_rf_id_seq;
+create table regul.prav_jit_rf
+(
+    id                           bigint default nextval('regul.prav_jit_rf_id_seq'::regclass)
+        constraint prav_jit_rf_pk
+            primary key,
+    srok_deistv_doc                     varchar,
+    personip_id                    bigint
+        constraint personip_fk_id
+            references regul.person_ip
+);
+create sequence regul.ud_lichn_type_p_id_seq;
+create table regul.ud_lichn_type_p
+(
+    id                           bigint default nextval('regul.ud_lichn_type_p_id_seq'::regclass)
+        constraint ud_lichn_type_p_pk
+            primary key,
+    code_vid_doc               varchar,
+    name_doc                  varchar,
+    ser_num_doc                varchar,
+    date_doc                  varchar,
+    vidach_doc                varchar,
+    code_vidach_doc            varchar,
+    udlichn_id                    bigint
+        constraint udlichn_fk_id
+            references regul.ud_lichn,
+    pravjitrf_id                    bigint
+        constraint pravjitrf_fk_id
+            references regul.prav_jit_rf
+);
+create sequence regul.adr_mail_id_seq;
+create table regul.adr_mail
+(
+    id                           bigint default nextval('regul.adr_mail_id_seq'::regclass)
+        constraint adr_mail_pk
+            primary key,
+    email                     varchar,
+    personip_id                    bigint
+        constraint personip_fk_id
+            references regul.person_ip
+);
+create sequence regul.reg_ip_id_seq;
+create table regul.reg_ip
+(
+    id                           bigint default nextval('regul.reg_ip_id_seq'::regclass)
+        constraint reg_ip_pk
+            primary key,
+    ogrn_ip                     varchar,
+    date_ogrn_ip                     varchar,
+    reg_num                     varchar,
+    date_reg                     varchar,
+    name_ro                     varchar,
+    personip_id                    bigint
+        constraint personip_fk_id
+            references regul.person_ip
+);
+create sequence regul.kfh_id_seq;
+create table regul.kfh
+(
+    id                           bigint default nextval('regul.kfh_id_seq'::regclass)
+        constraint kfh_pk
+            primary key,
+    ogrn                     varchar,
+    inn                     varchar,
+    name_ul_poln                     varchar,
+    reg_ip_id                    bigint
+        constraint reg_ip_fk_id
+            references regul.reg_ip
+);
+create sequence regul.gl_kfh_id_seq;
+create table regul.gl_kfh
+(
+    id                           bigint default nextval('regul.gl_kfh_id_seq'::regclass)
+        constraint gl_kfh_pk
+            primary key,
+    text_gl_kfh                     varchar,
+    personip_id                    bigint
+        constraint personip_fk_id
+            references regul.person_ip
+);
+create sequence regul.resh_iskl_ip_id_seq;
+create table regul.resh_iskl_ip
+(
+    id                           bigint default nextval('regul.resh_iskl_ip_id_seq'::regclass)
+        constraint resh_iskl_ip_pk
+            primary key,
+    date_resh                       varchar,
+    number                          varchar,
+    date_publication                varchar,
+    number_jurnal                   varchar,
+    statusip_id                    bigint
+        constraint statusip_fk_id
+            references regul.status_ip
+);
+create sequence regul.reg_pf_ip_id_seq;
+create table regul.reg_pf_ip
+(
+    id                           bigint default nextval('regul.reg_pf_ip_id_seq'::regclass)
+        constraint reg_pf_ip_pk
+            primary key,
+    reg_nom_pf                      varchar,
+    date_prisv_nom                  varchar,
+    date_reg                        varchar,
+    personip_id                    bigint
+        constraint personip_fk_id
+            references regul.person_ip
+);
+create sequence regul.org_pf_ip_id_seq;
+create table regul.org_pf_ip
+(
+    id                           bigint default nextval('regul.org_pf_ip_id_seq'::regclass)
+        constraint org_pf_ip_pk
+            primary key,
+    code                     varchar,
+    name                     varchar,
+    regpfip_id                    bigint
+        constraint regpfip_fk_id
+            references regul.reg_pf_ip
+);
+create sequence regul.reg_fss_ip_id_seq;
+create table regul.reg_fss_ip
+(
+    id                           bigint default nextval('regul.reg_fss_ip_id_seq'::regclass)
+        constraint reg_fss_ip_pk
+            primary key,
+    reg_nom_fss                     varchar,
+    date_prisv_nom                  varchar,
+    date_reg                        varchar,
+    date_sn_reg                     varchar,
+    personip_id                     bigint
+        constraint personip_fk_id
+            references regul.person_ip
+);
+create sequence regul.org_fss_ip_id_seq;
+create table regul.org_fss_ip
+(
+    id                           bigint default nextval('regul.org_fss_ip_id_seq'::regclass)
+        constraint org_fss_ip_pk
+            primary key,
+    code                     varchar,
+    name                     varchar,
+    regfssip_id                    bigint
+        constraint regfssip_fk_id
+            references regul.reg_fss_ip
+);
+create sequence regul.okved_ip_id_seq;
+create table regul.okved_ip
+(
+    id                           bigint default nextval('regul.okved_ip_id_seq'::regclass)
+        constraint okved_ip_pk
+            primary key,
+    osn                     varchar,
+    dop                     varchar,
+    personip_id                    bigint
+        constraint personip_fk_id
+            references regul.person_ip
+);
+create sequence regul.license_ip_id_seq;
+create table regul.license_ip
+(
+    id                           bigint default nextval('regul.license_ip_id_seq'::regclass)
+        constraint license_ip_pk
+            primary key,
+    number_erul                      varchar,
+    nom_lic                          varchar,
+    date_lic                         varchar,
+    date_nach_lic                     varchar,
+    date_okonch_lic                   varchar,
+    name_vid_lic                      varchar,
+    lic_org_vid_lic                    varchar,
+    personip_id                    bigint
+        constraint personip_fk_id
+            references regul.person_ip
+);
+create sequence regul.priost_lic_ip_id_seq;
+create table regul.priost_lic_ip
+(
+    id                           bigint default nextval('regul.priost_lic_ip_id_seq'::regclass)
+        constraint priost_lic_ip_pk
+            primary key,
+    date_priost_lic                     varchar,
+    lic_org_priost_lic                     varchar,
+    licenseip_id                    bigint
+        constraint licenseip_fk_id
+            references regul.license_ip
+);
+create sequence regul.zap_egrip_id_seq;
+create table regul.zap_egrip
+(
+    id                           bigint default nextval('regul.zap_egrip_id_seq'::regclass)
+        constraint zap_egrip_pk
+            primary key,
+    id_zap                      varchar,
+    grnip                       varchar,
+    date_zap                    varchar,
+    vid_zap                     varchar,
+    reg_org                     varchar,
+    sved_pred_doc               varchar,
+    svid                        varchar,
+    personip_id                    bigint
+        constraint personip_fk_id
+            references regul.person_ip
+);
+create sequence regul.prekrash_id_seq;
+create table regul.prekrash
+(
+    id                           bigint default nextval('regul.prekrash_id_seq'::regclass)
+        constraint prekrash_pk
+            primary key,
+    personip_id                    bigint
+        constraint personip_fk_id
+            references regul.person_ip
+);
+create sequence regul.status_pr_id_seq;
+create table regul.status_pr
+(
+    id                           bigint default nextval('regul.status_pr_id_seq'::regclass)
+        constraint status_pr_pk
+            primary key,
+    code                     varchar,
+    name                     varchar,
+    date_prekr                     varchar,
+    prekrash_id                    bigint
+        constraint prekrash_fk_id
+            references regul.prekrash
+);
+create sequence regul.nov_ul_id_seq;
+create table regul.nov_ul
+(
+    id                           bigint default nextval('regul.nov_ul_id_seq'::regclass)
+        constraint nov_ul_pk
+            primary key,
+    ogrn                     varchar,
+    inn                     varchar,
+    name_full                     varchar,
+    prekrash_id                    bigint
+        constraint prekrash_fk_id
+            references regul.prekrash
+);
+create table regul.reg_n_foms
+(
+    last_number int not null
+);
+insert into regul.reg_n_foms (last_number) values (1);

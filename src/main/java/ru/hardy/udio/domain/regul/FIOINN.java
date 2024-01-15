@@ -14,7 +14,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "fio_inn")
-@XmlRootElement(name = "СвФИОИНН")
+@XmlRootElement
 public class FIOINN {
     @Id
     private Long id;
@@ -22,8 +22,7 @@ public class FIOINN {
     private String surname;
     private String name;
     private String patronymic;
-    @Column("inn_fl")
-    private String innfl;
+    private String innFl;
 
     @XmlAttribute(name = "Фамилия")
     public void setSurname(String surname) {
@@ -39,7 +38,7 @@ public class FIOINN {
     }
     @XmlAttribute(name = "ИННФЛ")
     public void setInnfl(String innfl) {
-        this.innfl = innfl;
+        this.innFl = innfl;
     }
 
 }

@@ -13,7 +13,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "document_ul")
-@XmlRootElement(name = "Документ")
+@XmlRootElement
 public class DocumentUL {
     @Id
     private Long id;
@@ -21,6 +21,8 @@ public class DocumentUL {
     private String idDoc;
     @MappedCollection(idColumn = "documentul_id")
     private PersonUL personUL;
+    @MappedCollection(idColumn = "documentul_id")
+    private PersonIP personIP;
 
     @XmlAttribute(name = "ИдДок")
     public void setIdDoc(String idDoc) {
@@ -30,4 +32,9 @@ public class DocumentUL {
     public void setPersonUL(PersonUL personUL) {
         this.personUL = personUL;
     }
+    @XmlElement(name = "СвИП")
+    public void setPersonIP(PersonIP personIP) {
+        this.personIP = personIP;
+    }
+
 }

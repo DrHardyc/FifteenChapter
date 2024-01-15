@@ -13,7 +13,7 @@ import org.springframework.data.relational.core.mapping.MappedCollection;
 @Getter
 @Setter
 @Table(schema = "regul", name = "org_doc")
-@XmlRootElement(name = "ОгрДосСвТип")
+@XmlRootElement
 public class OgrDoc {
     @Id
     private Long id;

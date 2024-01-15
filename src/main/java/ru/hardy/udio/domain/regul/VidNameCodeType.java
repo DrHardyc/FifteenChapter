@@ -12,7 +12,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table(schema = "regul", name = "vid_name_code_type")
-@XmlRootElement(name = "ВидНаимКодТип")
+@XmlRootElement
 public class VidNameCodeType {
     @Id
     private Long id;

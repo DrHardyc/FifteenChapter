@@ -14,7 +14,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(schema = "regul", name = "uchr_pif")
-@XmlRootElement(name = "УчрПИФ")
+@XmlRootElement
 public class UchrPIF {
     @Id
     private Long id;
@@ -45,12 +45,12 @@ public class UchrPIF {
         this.namePIF = namePIF;
     }
     @XmlElement(name = "СвНедДанУчр")
-    public void setUprKompPIF(UprKompPIF uprKompPIF) {
-        this.uprKompPIF = uprKompPIF;
-    }
-    @XmlElement(name = "СвУпрКомпПИФ")
     public void setNedDanUchrType(Set<NedDanUchrType> nedDanUchrType) {
         this.nedDanUchrType = nedDanUchrType;
+    }
+    @XmlElement(name = "СвУпрКомпПИФ")
+    public void setUprKompPIF(UprKompPIF uprKompPIF) {
+        this.uprKompPIF = uprKompPIF;
     }
     @XmlElement(name = "ДоляУстКап")
     public void setDoliaUstKapEGRULType(DoliaUstKapEGRULType doliaUstKapEGRULType) {
