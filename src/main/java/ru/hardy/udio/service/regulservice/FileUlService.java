@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.hardy.udio.config.DBJDBCConfig;
 import ru.hardy.udio.domain.regul.FileUL;
+import ru.hardy.udio.domain.regul.VidRegUl;
 import ru.hardy.udio.repo.regulrepo.FileUlRepo;
 
 import java.sql.ResultSet;
@@ -21,8 +22,10 @@ public class FileUlService {
     @Transactional
     public void add(FileUL fileUl){
         fileUl.getDocumentUL().forEach(documentUL -> {
-            if (documentUL.getPersonIP() != null) documentUL.getPersonIP().setRegNFoms(getRegNTfoms());
-            if (documentUL.getPersonUL() !=null) documentUL.getPersonUL().setRegNFoms(getRegNTfoms());
+            if (documentUL.getPersonIP() != null)
+                documentUL.getPersonIP().setRegNFoms(getRegNTfoms(VidRegUl.IP, documentUL.getPersonIP().getInnFl()));
+            if (documentUL.getPersonUL() !=null)
+                documentUL.getPersonUL().setRegNFoms(getRegNTfoms(VidRegUl.UL, documentUL.getPersonUL().getInn()));
             fileUl.setQuantityDoc(fileUl.getQuantityDoc().trim());
         });
         fileUlRepo.save(fileUl);
@@ -50,20 +53,33 @@ public class FileUlService {
     }
 
 
-    public String getRegNTfoms(){
+    public String getRegNTfoms(VidRegUl vidRegUl, String inn){
         try {
+            String strQuery;
+            switch (vidRegUl){
+                case IP -> strQuery = "select reg_n_foms from regul.person_ip where inn_fl = '" + inn + "' group by reg_n_foms";
+                case UL -> strQuery = "select reg_n_foms from regul.person_ul where inn = '" + inn + "' group by reg_n_foms";
+                case null, default -> strQuery = "select reg_n_foms from regul.person_ul";
+            }
             ResultSet resultSet = new DBJDBCConfig()
                     .getUDIO()
-                    .executeQuery("select last_number from regul.reg_n_foms");
-            resultSet.next();
-            int lastNumber = resultSet.getInt(1);
+                    .executeQuery(strQuery);
+            if (resultSet.next()){
+               return resultSet.getString(1);
+            }  else {
+                resultSet = new DBJDBCConfig()
+                        .getUDIO()
+                        .executeQuery("select last_number from regul.reg_n_foms");
+                resultSet.next();
+                int lastNumber = resultSet.getInt(1);
 
-            if (getByRegNFomsUL(lustNumberToRegNFoms(lastNumber))){
-                updateLustNumber(lastNumber);
-                return lustNumberToRegNFoms(lastNumber);
-            }else {
-                updateLustNumber(lastNumber);
-                return getRegNTfoms();
+                if (getByRegNFomsUL(lustNumberToRegNFoms(lastNumber))){
+                    updateLustNumber(lastNumber);
+                    return lustNumberToRegNFoms(lastNumber);
+                }else {
+                    updateLustNumber(lastNumber);
+                    return getRegNTfoms(vidRegUl, inn);
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
