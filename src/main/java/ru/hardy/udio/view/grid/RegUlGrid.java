@@ -29,6 +29,10 @@ public class RegUlGrid {
                 .addColumn(RegULUI::getName)
                 .setResizable(true)
                 .setSortable(true);
+        Grid.Column<RegULUI> statusCol = grid
+                .addColumn(RegULUI::getStatus)
+                .setResizable(true)
+                .setSortable(true);
         Grid.Column<RegULUI> dateCol = grid
                 .addColumn(new LocalDateRenderer<>(
                         RegULUI::getLocalDateDate, "dd.MM.yyyy"))
@@ -57,6 +61,10 @@ public class RegUlGrid {
                 .setComponent(GridUtils
                         .createFilterHeader(
                                 "Наименование/ФИО", regULUIGridFilter::setName));
+        headerRow.getCell(statusCol)
+                .setComponent(GridUtils
+                        .createFilterHeader(
+                                "Статус", regULUIGridFilter::setStatus));
         headerRow.getCell(dateCol)
                 .setComponent(GridUtils
                         .createFilterHeader(
@@ -70,6 +78,7 @@ public class RegUlGrid {
         private String ogrn;
         private String regNFoms;
         private String name;
+        private String status;
         private String date;
 
         public void setInn(String inn) {
@@ -91,7 +100,10 @@ public class RegUlGrid {
             this.name = name;
             this.dataView.refreshAll();
         }
-
+        public void setStatus(String status) {
+            this.status = status;
+            this.dataView.refreshAll();
+        }
         public void setDate(String date) {
             this.date = date;
             this.dataView.refreshAll();
@@ -108,9 +120,10 @@ public class RegUlGrid {
             boolean matchesOgrn = matches(regULUI.getOgrn(), ogrn);
             boolean matchesRegNFoms = matches(regULUI.getRegNFoms(), regNFoms);
             boolean matchesName = matches(regULUI.getName(), name);
+            boolean matchesStatus = matches(regULUI.getStatus(), status);
             boolean matchesDate = matches(dateFormat.format(regULUI.getDate()), date);
 
-            return matchesInn && matchesOgrn && matchesRegNFoms && matchesName && matchesDate;
+            return matchesInn && matchesOgrn && matchesRegNFoms && matchesName && matchesStatus && matchesDate;
         }
 
         private boolean matches(String value, String searchTerm) {

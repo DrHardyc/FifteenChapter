@@ -1,7 +1,6 @@
 package ru.hardy.udio.domain.regul.grid;
 
 import org.springframework.jdbc.core.RowMapper;
-import ru.hardy.udio.domain.regul.importfromfms.Platel;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,6 +14,7 @@ public class RegULUIMapper implements RowMapper<RegULUI> {
         regULUI.setOgrn(rs.getString("ogrn"));
         regULUI.setRegNFoms(rs.getString("regnum"));
         regULUI.setName(rs.getString("name"));
+        regULUI.setStatus(rs.getString("status"));
         regULUI.setDate(rs.getDate("date"));
         return regULUI;
     }
