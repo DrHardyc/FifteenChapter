@@ -2589,3 +2589,14 @@ create table regul.reg_n_foms
     last_number int not null
 );
 insert into regul.reg_n_foms (last_number) values (1);
+
+create sequence regul.user_dir_file_id_seq;
+create table regul.user_dir_file
+(
+    id  bigint default nextval('regul.user_dir_file_id_seq'::regclass)
+        constraint user_dir_file_pk
+            primary key,
+    path_in                     varchar,
+    path_out                    varchar,
+    user_id                     bigint
+);

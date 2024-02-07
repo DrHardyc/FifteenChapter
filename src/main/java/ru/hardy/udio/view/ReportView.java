@@ -23,7 +23,7 @@ import ru.hardy.udio.service.DNOutService;
 import ru.hardy.udio.service.ExcelService;
 import ru.hardy.udio.service.taskservice.ReportTaskService;
 import ru.hardy.udio.view.dateinterval.DateInterval;
-import ru.hardy.udio.view.dialog.DialogGridGen;
+import ru.hardy.udio.view.dialog.DialogGen;
 
 import java.time.Month;
 import java.util.ArrayList;
@@ -106,16 +106,16 @@ public class ReportView extends VerticalLayout {
     public void onAttach(AttachEvent attachEvent) {
 
         btnSearch.addClickListener(e -> {
-            DialogGridGen dialogGridGen = new DialogGridGen();
+            DialogGen dialogGen = new DialogGen();
             if (comboBox.getValue().equals("Файлы")){
 
             }else if (comboBox.getValue().equals("Снятые")){
                 List<DNOutDto> dnOutsDtos = dnOutService.getAll();
-                Dialog dialog = dialogGridGen.getDieReportDialog(dnOutsDtos);
+                Dialog dialog = dialogGen.getDieReportDialog(dnOutsDtos);
                 add(dialog);
                 dialog.open();
             } else if (comboBox.getValue().equals("Все")) {
-                Dialog dialog = dialogGridGen.getMainReportDialog(dnGetService.getAll());
+                Dialog dialog = dialogGen.getMainReportDialog(dnGetService.getAll());
                 add(dialog);
                 dialog.open();
             } else {

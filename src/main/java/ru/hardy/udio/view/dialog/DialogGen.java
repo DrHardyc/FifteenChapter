@@ -8,10 +8,12 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.dataview.GridListDataView;
+import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.theme.lumo.LumoUtility;
@@ -36,29 +38,46 @@ import ru.hardy.udio.view.span.CMSpan;
 import java.util.List;
 
 @Service
-public class DialogGridGen {
+public class DialogGen extends Dialog {
 
-    private final Dialog dialog = new Dialog();
+    //private final Dialog dialog = new Dialog();
     private final HorizontalLayout horizontalLayout = new HorizontalLayout();//Костыль Excel
     private final Span label = new Span();
     private UdioButton btnExcel;
     private UdioButton btnChart;
 
 
-    public DialogGridGen(){
+    public DialogGen(){
         Button closeButton = new Button(new Icon(VaadinIcon.CLOSE_SMALL),
-                (event) -> dialog.close());
+                (event) -> this.close());
         label.getStyle().set("margin-right", "auto");
         closeButton.getStyle().set("margin-left", "auto");
         closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-        dialog.setHeight("100vh");
-        dialog.setWidth("100vw");
-        dialog.getHeader().add(horizontalLayout);//Костыль Excel
-        dialog.getHeader().add(closeButton);
-        dialog.setCloseOnOutsideClick(false);
-        dialog.setDraggable(true);
-        dialog.setResizable(true);
-        dialog.setModal(false);
+        this.setHeight("100vh");
+        this.setWidth("100vw");
+        this.getHeader().add(horizontalLayout);//Костыль Excel
+        this.getHeader().add(closeButton);
+        this.setCloseOnOutsideClick(false);
+        this.setDraggable(true);
+        this.setResizable(true);
+        this.setModal(false);
+    }
+
+    public DialogGen(String height, String width){
+        Button closeButton = new Button(new Icon(VaadinIcon.CLOSE_SMALL),
+                (event) -> this.close());
+        label.getStyle().set("margin-right", "auto");
+        closeButton.getStyle().set("margin-left", "auto");
+        closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        this.setHeight(height + "vh");
+        this.setWidth(width + "vw");
+        this.getHeader().add(horizontalLayout);//Костыль Excel
+        horizontalLayout.add(new H4("Настройки каталогов"));
+        this.getHeader().add(closeButton);
+        this.setCloseOnOutsideClick(false);
+        this.setDraggable(true);
+        this.setResizable(true);
+        this.setModal(false);
     }
 
     private void initFooter(){
@@ -66,7 +85,7 @@ public class DialogGridGen {
         btnExcel.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         btnChart = new UdioButton("график", BtnVariant.CHART);
         btnChart.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        dialog.getFooter().add(label, btnChart, btnExcel);
+        this.getFooter().add(label, btnChart, btnExcel);
     }
 
     public Dialog getSchedulePIAndDispPlotResponseRecordDialog(List<SchedulePIAndDispPlotRequestRecord> schedulePIAndDispPlotRequestRecords) {
@@ -76,9 +95,9 @@ public class DialogGridGen {
         SchedulePIAndDispPlotGrid schedulePIAndDispPlotGrid = new SchedulePIAndDispPlotGrid();
 
         schedulePIAndDispPlotGrid.getGrid(grid, schedulePIAndDispPlotRequestRecords);
-        dialog.add(grid);
+        this.add(grid);
 
-        return dialog;
+        return this;
     }
 
     public Dialog getPADataPatientRequestRecordDialog(List<PADataPatientRequestRecord> paDataPatientRequestRecords) {
@@ -92,9 +111,9 @@ public class DialogGridGen {
         paDataPatientRequestRecordGridListDataView.addItemCountChangeListener(ev -> {
             label.setText(String.valueOf(paDataPatientRequestRecordGridListDataView.getItemCount()));
         });
-        dialog.add(grid);
+        this.add(grid);
 
-        return dialog;
+        return this;
     }
     public Dialog getIndividualInformingRequestRecordDialog(List<IndividualInformingRequestRecord> individualInformingRequestRecords){
         initFooter();
@@ -107,9 +126,9 @@ public class DialogGridGen {
         individualInformingRequestRecordGridListDataView.addItemCountChangeListener(ev -> {
             label.setText(String.valueOf(individualInformingRequestRecordGridListDataView.getItemCount()));
         });
-        dialog.add(grid);
+        this.add(grid);
 
-        return dialog;
+        return this;
     }
 
     public Dialog getOperatingScheduleResponseRecordDialog(List<OperatingScheduleRequestRecord> operatingScheduleRequestRecords){
@@ -122,9 +141,9 @@ public class DialogGridGen {
         operatingScheduleRequestRecordGridListDataView.addItemCountChangeListener(ev -> {
             label.setText(String.valueOf(operatingScheduleRequestRecordGridListDataView.getItemCount()));
         });
-        dialog.add(grid);
+        this.add(grid);
 
-        return dialog;
+        return this;
     }
 
     public Dialog getInsuranceCases(List<InsuranceCase> insuranceCases) {
@@ -138,9 +157,9 @@ public class DialogGridGen {
         insuranceCaseGridListDataView.addItemCountChangeListener(ev -> {
             label.setText(String.valueOf(insuranceCaseGridListDataView.getItemCount()));
         });
-        dialog.add(grid);
+        this.add(grid);
 
-        return dialog;
+        return this;
     }
     public Dialog getPeopleInfo(List<IndividualInformingRequestRecord> individualInformingRequestRecordList,
                                 List<PADataPatientRequestRecord> paDataPatientRequestRecordList,
@@ -155,7 +174,7 @@ public class DialogGridGen {
         HorizontalLayout hlII = new HorizontalLayout();
         Button btnII = new Button("Информирование");
         btnII.addClickListener(e -> {
-            new DialogGridGen().getIndividualInformingRequestRecordDialog(individualInformingRequestRecordList).open();
+            new DialogGen().getIndividualInformingRequestRecordDialog(individualInformingRequestRecordList).open();
         });
         Span spanII = new CMSpan(String.valueOf(individualInformingRequestRecordList.size()));
         hlII.add(btnII, spanII);
@@ -164,7 +183,7 @@ public class DialogGridGen {
         Span spanPA = new CMSpan(String.valueOf(paDataPatientRequestRecordList.size()));
         Button btnPa = new Button("Посещения/Обращения");
         btnPa.addClickListener(e -> {
-            new DialogGridGen().getPADataPatientRequestRecordDialog(paDataPatientRequestRecordList).open();
+            new DialogGen().getPADataPatientRequestRecordDialog(paDataPatientRequestRecordList).open();
         });
         hlPA.add(btnPa, spanPA);
 
@@ -172,7 +191,7 @@ public class DialogGridGen {
         Span spanOnko = new CMSpan(String.valueOf(insuranceCaseList.size()));
         Button btnOnko = new Button("История онко-случаев");
         btnOnko.addClickListener(e -> {
-            new DialogGridGen().getInsuranceCases(insuranceCaseList).open();
+            new DialogGen().getInsuranceCases(insuranceCaseList).open();
         });
         hlOnko.add(btnOnko, spanOnko);
 
@@ -180,7 +199,7 @@ public class DialogGridGen {
         Span spanHospitalization = new CMSpan(String.valueOf(hospitalizationPatientDTOS.size()));
         Button btnHospitalization = new Button("Госпитализация");
         btnHospitalization.addClickListener(e -> {
-            new DialogGridGen().getHospitalization(hospitalizationPatientDTOS).open();
+            new DialogGen().getHospitalization(hospitalizationPatientDTOS).open();
         });
         hlHospitalization.add(btnHospitalization, spanHospitalization);
 
@@ -205,9 +224,9 @@ public class DialogGridGen {
         HospitalizationGrid hospitalizationGrid = new HospitalizationGrid();
 
         hospitalizationGrid.getGrid(grid, hospitalizationPatientDTOS);
-        dialog.add(grid);
+        this.add(grid);
 
-        return dialog;
+        return this;
     }
 
     public Dialog getDieReportDialog(List<DNOutDto> dnOutDtos){
@@ -220,9 +239,9 @@ public class DialogGridGen {
         dnOutGridListDataView.addItemCountChangeListener(ev -> {
             label.setText(String.valueOf(dnOutGridListDataView.getItemCount()));
         });
-        dialog.add(grid);
+        this.add(grid);
 
-        return dialog;
+        return this;
     }
 
     public Dialog getMainReportDialog(List<DNGet> dnGets){
@@ -235,14 +254,14 @@ public class DialogGridGen {
         dnGetGridListDataView.addItemCountChangeListener(ev -> {
             label.setText(String.valueOf(dnGetGridListDataView.getItemCount()));
         });
-        dialog.add(grid);
+        this.add(grid);
 
-        return dialog;
+        return this;
     }
 
     public Dialog getDetailDialog(boolean bPolicy){
-        dialog.setHeight("50vh");
-        dialog.setWidth("50vw");
+        this.setHeight("50vh");
+        this.setWidth("50vw");
 
         FormLayout formLayout = new FormLayout();
 
@@ -277,9 +296,9 @@ public class DialogGridGen {
         formLayout.addFormItem(tfMOAttach, "МО прикрепления");
         formLayout.addFormItem(spPolicy, "Полис");
         formLayout.addFormItem(tfCause, "Причина");
-        dialog.add(formLayout);
+        this.add(formLayout);
 
-        return dialog;
+        return this;
     }
 
     private Icon createIcon(VaadinIcon vaadinIcon) {
@@ -299,9 +318,9 @@ public class DialogGridGen {
         });
 
         volumeMedicalCareDTOGrid.getGrid(grid, volumeMedicalCareDTOS);
-        dialog.add(grid);
+        this.add(grid);
 
-        return dialog;
+        return this;
     }
 
     public Dialog getNumberAvailableSeatsDialog(List<NumberAvailableSeatsDTO> numberAvailableSeatsDTOS) {
@@ -311,8 +330,14 @@ public class DialogGridGen {
         NumberAvailableSeatsGrid numberAvailableSeatsGrid = new NumberAvailableSeatsGrid();
 
         numberAvailableSeatsGrid.getGrid(grid, numberAvailableSeatsDTOS);
-        dialog.add(grid);
+        this.add(grid);
 
-        return dialog;
+        return this;
+    }
+
+    public Dialog getLoadSettingDialog(TextField tfPathIn, TextField tfPathOut, Button btnSave){
+        VerticalLayout verticalLayout = new VerticalLayout(tfPathIn, tfPathOut, btnSave);
+        this.add(verticalLayout);
+        return this;
     }
 }

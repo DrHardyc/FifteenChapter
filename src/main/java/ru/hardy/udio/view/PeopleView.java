@@ -23,7 +23,7 @@ import ru.hardy.udio.service.apiservice.individualinformingservice.IndividualInf
 import ru.hardy.udio.service.apiservice.padatapatientsservice.mo.PADataPatientRequestRecordService;
 import ru.hardy.udio.service.apiservice.padatapatientsservice.mo.PADataPatientService;
 import ru.hardy.udio.service.apiservice.recommendationspatientservice.so.RecommendationsPatientService;
-import ru.hardy.udio.view.dialog.DialogGridGen;
+import ru.hardy.udio.view.dialog.DialogGen;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -124,8 +124,8 @@ public class PeopleView extends VerticalLayout {
         });
 
         grid.addItemDoubleClickListener(ev -> {
-            DialogGridGen dialogGridGen = new DialogGridGen();
-            dialogGridGen.getPeopleInfo(individualInformingRequestRecordService.getAllByPeople(ev.getItem()),
+            DialogGen dialogGen = new DialogGen();
+            dialogGen.getPeopleInfo(individualInformingRequestRecordService.getAllByPeople(ev.getItem()),
                     paDataPatientRequestRecordService.getAllByPeople(ev.getItem()),
                     individualHistoryOnkoCaseResponseRecordService.getInsuredCases(ev.getItem()),
                     hospitalizationPatientDTOService.getAllByPeople(ev.getItem())).open();

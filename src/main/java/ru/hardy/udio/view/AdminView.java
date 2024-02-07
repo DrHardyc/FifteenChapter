@@ -1,17 +1,10 @@
 package ru.hardy.udio.view;
 
-import com.github.appreciated.apexcharts.ApexCharts;
-import com.github.appreciated.apexcharts.config.builder.TitleSubtitleBuilder;
-import com.linuxense.javadbf.DBFReader;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Footer;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.textfield.PasswordField;
@@ -20,7 +13,7 @@ import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.RolesAllowed;
-import org.jetbrains.annotations.NotNull;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -37,9 +30,15 @@ import ru.hardy.udio.service.deamonservice.DeamonService;
 import ru.hardy.udio.service.deamonservice.SearchDead;
 import ru.hardy.udio.service.regulservice.FileUlService;
 
-import java.text.ParseException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Route(layout = MainView.class)
 @RolesAllowed("ROLE_ADMIN")
@@ -67,11 +66,53 @@ public class AdminView extends VerticalLayout{
     public AdminView(){
 
         TabSheet tabSheet = new TabSheet();
-        Button btnTest = new UIUtilService().InitButtonOK(new Button("Test"));
 
-        VerticalLayout vlTestExcel = new VerticalLayout();
-        vlTestExcel.add(btnTest);
-        tabSheet.add("Тест excel", vlTestExcel);
+        Button btnTest = new UIUtilService().InitButtonOK(new Button("Test"));
+        VerticalLayout vlTesting = new VerticalLayout();
+
+        MemoryBuffer buffer = new MemoryBuffer();
+        Upload upload = new Upload(buffer);
+
+        vlTesting.add(upload);
+        upload.addSucceededListener(e -> {
+            System.out.println(buffer.getFileName());
+        });
+        btnTest.addClickListener(e -> {
+
+        });
+        btnTest.addClickListener(buttonClickEvent -> {
+            String file1 = "src/main/resources/zipTest/test1.txt";
+            String file2 = "src/main/resources/zipTest/test2.txt";
+            final List<String> srcFiles = Arrays.asList(file1, file2);
+            final FileOutputStream fos;
+            try {
+                fos = new FileOutputStream(Paths.get(file1).getParent().toAbsolutePath() + "/sucess_" + new SimpleDateFormat("dd_MM_yy__HH_mm_ss").format(Date.from(Instant.now())) + ".zip");
+                ZipOutputStream zipOut = new ZipOutputStream(fos);
+                for (String srcFile : srcFiles) {
+                    File fileToZip = new File(srcFile);
+                    FileInputStream fis = new FileInputStream(fileToZip);
+                    ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
+                    zipOut.putNextEntry(zipEntry);
+
+                    byte[] bytes = new byte[1024];
+                    int length;
+                    while ((length = fis.read(bytes)) >= 0) {
+                        zipOut.write(bytes, 0, length);
+                    }
+                    fis.close();
+                    if (!new File(srcFile).delete()){
+                        System.out.println(srcFile + " no delete");
+                    };
+                }
+                zipOut.close();
+                fos.close();
+            } catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        });
+        vlTesting.add(btnTest);
+
+        tabSheet.add("Тестирование", vlTesting);
 
         VerticalLayout vlTestGrid = new VerticalLayout();
         Grid<People> grid = new Grid<>(People.class, false);
@@ -109,17 +150,6 @@ public class AdminView extends VerticalLayout{
 
         vlTestGrid.add(btnTestGrid);
         tabSheet.add("Тест Grid", vlTestGrid);
-
-        MemoryBuffer buffer = new MemoryBuffer();
-        Upload upload = new Upload(buffer);
-
-        vlTestExcel.add(upload);
-        upload.addSucceededListener(e -> {
-            DBFReader reader = new DBFReader(buffer.getInputStream());
-        });
-        btnTest.addClickListener(e -> {
-
-        });
 
         grid.addColumn(People::getSurname);
         grid.addColumn(People::getName);
@@ -252,6 +282,8 @@ public class AdminView extends VerticalLayout{
             fileUL.setDocumentUL(documentULSet);
             fileUlService.addFromFMS(fileUL);
         });
+
+
 
         add(tabSheet);
     }

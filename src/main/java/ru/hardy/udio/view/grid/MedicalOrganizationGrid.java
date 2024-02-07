@@ -16,7 +16,7 @@ import ru.hardy.udio.service.apiservice.operatingscheduleservice.OperatingSchedu
 import ru.hardy.udio.service.apiservice.schedulepianddispplotservice.mo.SchedulePIAndDispPlotRequestRecordService;
 import ru.hardy.udio.service.apiservice.volumemedicalcareservice.dto.VolumeMedicalCareDTOService;
 import ru.hardy.udio.service.nsiservice.MedicalOrganizationService;
-import ru.hardy.udio.view.dialog.DialogGridGen;
+import ru.hardy.udio.view.dialog.DialogGen;
 
 @Service
 public class MedicalOrganizationGrid {
@@ -51,7 +51,7 @@ public class MedicalOrganizationGrid {
                 .addColumn(new ComponentRenderer<>(Button::new, (button, medicalOrganization) -> {
                     button.setIcon(new Icon(VaadinIcon.CHART_LINE));
                     button.addClickListener(event -> {
-                        new DialogGridGen()
+                        new DialogGen()
                                 .getSchedulePIAndDispPlotResponseRecordDialog(schedulePIAndDispPlotRequestRecordService.getAllByMO(
                                         medicalOrganizationService.getByCode(medicalOrganization.getCodeMO())
                                 )).open();
@@ -61,7 +61,7 @@ public class MedicalOrganizationGrid {
                 .addColumn(new ComponentRenderer<>(Button::new, (button, medicalOrganization) -> {
                     button.setIcon(new Icon(VaadinIcon.CALENDAR));
                     button.addClickListener(event -> {
-                        new DialogGridGen().getOperatingScheduleResponseRecordDialog(
+                        new DialogGen().getOperatingScheduleResponseRecordDialog(
                                 operatingScheduleRequestRecordService.getAllByMO(
                                         medicalOrganizationService.getByCode(medicalOrganization.getCodeMO()))).open();
                     });
@@ -70,7 +70,7 @@ public class MedicalOrganizationGrid {
                 .addColumn(new ComponentRenderer<>(Button::new, (button, medicalOrganization) -> {
                     button.setIcon(new Icon(VaadinIcon.DOCTOR));
                     button.addClickListener(event -> {
-                        new DialogGridGen().getVolumeMedicalCareDialog(
+                        new DialogGen().getVolumeMedicalCareDialog(
                                 volumeMedicalCareDTOService.getAllByDateInterval(medicalOrganization)).open();
                     });
                 }));
@@ -78,7 +78,7 @@ public class MedicalOrganizationGrid {
                 .addColumn(new ComponentRenderer<>(Button::new, (button, medicalOrganization) -> {
                     button.setIcon(new Icon(VaadinIcon.BED));
                     button.addClickListener(event -> {
-                        new DialogGridGen().getNumberAvailableSeatsDialog(
+                        new DialogGen().getNumberAvailableSeatsDialog(
                                 numberAvailableSeatsDTOService.getAllByMO(medicalOrganization.getCodeMO())).open();
                     });
                 }));

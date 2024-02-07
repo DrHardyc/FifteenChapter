@@ -61,9 +61,9 @@ public class DBJDBCConfig{
         dataSource.setUrl("jdbc:postgresql://192.168.2.157/udio");
         dataSource.setUsername("mcherchesov");
         dataSource.setPassword("123");
-//        dataSource.setUrl("jdbc:postgresql://localhost:5433/testudio");
-//        dataSource.setUsername("hardy");
-//        dataSource.setPassword("Byntuhf84");
+//        dataSource.setUrl("jdbc:postgresql://localhost:5432/udio");
+//        dataSource.setUsername("postgres");
+//        dataSource.setPassword("Zaq1@wsx");
 
         try {
             Connection connection = dataSource.getConnection();
@@ -88,6 +88,9 @@ public class DBJDBCConfig{
         dataSource.setUrl("jdbc:postgresql://192.168.2.157/udio");
         dataSource.setUsername("mcherchesov");
         dataSource.setPassword("123");
+//        dataSource.setUrl("jdbc:postgresql://localhost:5432/udio");
+//        dataSource.setUsername("postgres");
+//        dataSource.setPassword("Zaq1@wsx");
         return dataSource;
     }
 

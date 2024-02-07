@@ -2,7 +2,8 @@ package ru.hardy.udio.domain;
 
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -10,7 +11,8 @@ import java.util.Collection;
 import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "usr", schema = "udio_sec")
 public class User implements UserDetails {
     @Id
