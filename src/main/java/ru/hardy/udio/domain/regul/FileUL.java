@@ -23,6 +23,7 @@ public class FileUL {
     private String infoType;
     private String transmissionProgramVersion;
     private String quantityDoc;
+    private Long user_id;
     @MappedCollection(idColumn = "fileul_id")
     private SenderPeople senderPeople;
     @MappedCollection(idColumn = "fileul_id")

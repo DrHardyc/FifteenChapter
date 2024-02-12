@@ -22,7 +22,9 @@ create table regul.file_ul
     format_version               varchar,
     info_type                    varchar,
     transmission_program_version varchar,
-    quantity_doc                 varchar
+    quantity_doc                 varchar,
+    user_id                     bigint -- 1.5.6,
+    date_beg                    date -- 1.5.6
 );
 create sequence regul.sender_people_id_seq;
 create table regul.sender_people
@@ -2590,6 +2592,7 @@ create table regul.reg_n_foms
 );
 insert into regul.reg_n_foms (last_number) values (1);
 
+--1.5.6
 create sequence regul.user_dir_file_id_seq;
 create table regul.user_dir_file
 (

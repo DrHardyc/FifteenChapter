@@ -27,14 +27,12 @@ public class RegULUIService {
                 "    inner join regul.status_st_ul ssu on su.id = ssu.statusul_id " +
                 "group by ul.inn, ul.ogrn, ul.reg_n_foms, snut.name_sokr, nu.full_name, ssu.name " +
                 "union all " +
-                "select ip.inn_fl, ip.ogrn_ip, ip.reg_n_foms, fi.surname || ' ' || fi.name || ' ' || fi.patronymic, coalesce(sp.name, ssu.name), max(ip.date_beg) " +
+                "select ip.inn_fl, ip.ogrn_ip, ip.reg_n_foms, fi.surname || ' ' || fi.name || ' ' || fi.patronymic, ssu.name, max(ip.date_beg) " +
                 "from regul.person_ip ip " +
                 "    inner join regul.fl f on ip.id = f.personip_id " +
                 "    inner join regul.fio_ip fi on f.id = fi.fl_id " +
                 "    inner join regul.status_ip si on f.personip_id = si.personip_id " +
                 "    inner join regul.status_st_ul ssu on si.id = ssu.statusip_id " +
-                "    inner join regul.prekrash p on ip.id = p.personip_id " +
-                "    inner join regul.status_pr sp on p.id = sp.prekrash_id " +
-                "group by ip.inn_fl, ip.ogrn_ip, ip.reg_n_foms, fi.surname || ' ' || fi.name || ' ' || fi.patronymic, coalesce(sp.name, ssu.name)", regULUIMapper);
+                "group by ip.inn_fl, ip.ogrn_ip, ip.reg_n_foms, fi.surname || ' ' || fi.name || ' ' || fi.patronymic, ssu.name", regULUIMapper);
     }
 }

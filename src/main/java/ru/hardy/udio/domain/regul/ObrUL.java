@@ -9,6 +9,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 /** @version  таблица 4.12 */
 @Getter
 @Setter
@@ -73,4 +76,10 @@ public class ObrUL {
         this.obrUl = obrUl;
         this.dateReg = dateReg;
     }
+
+    public ObrUL(LocalDate dateReg){
+        this.dateReg = dateReg.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+    }
+
+
 }

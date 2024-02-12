@@ -1,8 +1,12 @@
 package ru.hardy.udio.view.dialog;
 
 
+import ch.qos.logback.core.util.Loader;
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
@@ -14,10 +18,13 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.theme.lumo.LumoUtility;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.hardy.udio.domain.User;
 import ru.hardy.udio.domain.api.hospitalization.dto.HospitalizationPatientDTO;
 import ru.hardy.udio.domain.api.individualhistoryonkocase.InsuranceCase;
 import ru.hardy.udio.domain.api.individualinforming.IndividualInformingRequestRecord;
@@ -29,12 +36,17 @@ import ru.hardy.udio.domain.api.schedulepianddispplot.mo.SchedulePIAndDispPlotRe
 import ru.hardy.udio.domain.api.volumemedicalcare.dto.VolumeMedicalCareDTO;
 import ru.hardy.udio.domain.button.BtnVariant;
 import ru.hardy.udio.domain.button.UdioButton;
+import ru.hardy.udio.domain.regul.*;
 import ru.hardy.udio.domain.struct.DNGet;
 import ru.hardy.udio.domain.struct.dto.DNOutDto;
 import ru.hardy.udio.service.AChartService;
+import ru.hardy.udio.service.regulservice.FileUlService;
 import ru.hardy.udio.view.grid.*;
 import ru.hardy.udio.view.span.CMSpan;
 
+import java.text.Normalizer;
+import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -45,7 +57,6 @@ public class DialogGen extends Dialog {
     private final Span label = new Span();
     private UdioButton btnExcel;
     private UdioButton btnChart;
-
 
     public DialogGen(){
         Button closeButton = new Button(new Icon(VaadinIcon.CLOSE_SMALL),
@@ -63,7 +74,7 @@ public class DialogGen extends Dialog {
         this.setModal(false);
     }
 
-    public DialogGen(String height, String width){
+    public DialogGen(String height, String width, String caption){
         Button closeButton = new Button(new Icon(VaadinIcon.CLOSE_SMALL),
                 (event) -> this.close());
         label.getStyle().set("margin-right", "auto");
@@ -72,7 +83,7 @@ public class DialogGen extends Dialog {
         this.setHeight(height + "vh");
         this.setWidth(width + "vw");
         this.getHeader().add(horizontalLayout);//Костыль Excel
-        horizontalLayout.add(new H4("Настройки каталогов"));
+        horizontalLayout.add(new H4(caption));
         this.getHeader().add(closeButton);
         this.setCloseOnOutsideClick(false);
         this.setDraggable(true);
@@ -338,6 +349,124 @@ public class DialogGen extends Dialog {
     public Dialog getLoadSettingDialog(TextField tfPathIn, TextField tfPathOut, Button btnSave){
         VerticalLayout verticalLayout = new VerticalLayout(tfPathIn, tfPathOut, btnSave);
         this.add(verticalLayout);
+        return this;
+    }
+
+    public Dialog getAddNewRegUL(FileUlService fileUlService, User user){
+        TabSheet tabSheet = new TabSheet();
+
+        TextField tfFullName = new TextField("Название");
+        TextField tfShortName = new TextField("Сокращенное");
+        TextField tfStatus = new TextField("Статус");
+        ComboBox<String> cbType = new ComboBox<>("Вид");
+        cbType.setItems("ИП", "ЮЛ");
+        TextField tfINN = new TextField("ИНН");
+        TextField tfOGRN = new TextField("ОГРН");
+        TextField tfKPP = new TextField("КПП");
+
+        FormLayout flMain = new FormLayout(tfFullName, tfShortName, tfStatus, cbType, tfINN, tfOGRN,
+                tfKPP);
+        flMain.setColspan(tfFullName, 4);
+        flMain.setColspan(tfShortName, 2);
+        flMain.setResponsiveSteps(new FormLayout.ResponsiveStep("0", 4));
+        tabSheet.add("Основные", flMain);
+
+        TextField tfRegion = new TextField("Регион");
+        TextField tfRaion = new TextField("Район");
+        TextField tfGorod = new TextField("Город");
+        TextField tfNasPunkt = new TextField("Населенный пункт");
+        TextField tfUlica = new TextField("Улица");
+        TextField tfDom = new TextField("Дом");
+        TextField tfKorpus = new TextField("Корпус");
+        TextField tfKvartira = new TextField("Квартира");
+        TextField tfIndex = new TextField("Индекс");
+
+        FormLayout flAddress = new FormLayout(tfRegion, tfRaion,
+                tfGorod, tfNasPunkt, tfUlica, tfDom, tfKorpus, tfKvartira, tfIndex);
+        flAddress.setResponsiveSteps(new FormLayout.ResponsiveStep("0", 5));
+        tabSheet.add("Адрес", flAddress);
+
+
+        TextField tfRegNO = new TextField("Орган выполневший регистрацию");
+        DatePicker dpDateRegNO = new DatePicker("Дата регистрации");
+        TextField tfPFR = new TextField("Орган ПФР");
+        TextField tfNumberPFR = new TextField("Номер");
+        TextField tfFSS = new TextField("Орган ФСС");
+        TextField tfNumberFSS = new TextField("Номер");
+
+        FormLayout flRegistration = new FormLayout(tfRegNO, dpDateRegNO, tfPFR, tfNumberPFR,
+                tfFSS, tfNumberFSS);
+        flRegistration.setResponsiveSteps(new FormLayout.ResponsiveStep("0", 3));
+        flRegistration.setColspan(tfRegNO, 2);
+        flRegistration.setColspan(tfPFR, 2);
+        flRegistration.setColspan(tfFSS, 2);
+        tabSheet.add("Регистрационные органы", flRegistration);
+
+        TextField tfSurname = new TextField("Фамилия");
+        TextField tfName = new TextField("Имя");
+        TextField tfPatronymic = new TextField("Отчество");
+        TextField tfDolj = new TextField("Должность");
+        FormLayout flFizLico = new FormLayout(tfSurname, tfName, tfPatronymic, tfDolj);
+        flFizLico.setResponsiveSteps(new FormLayout.ResponsiveStep("0", 4));
+        tabSheet.add("Физическое лицо", flFizLico);
+
+        Button btnSave = new Button("Сохранить");
+        btnSave.addClickListener(event -> {
+            FileUL fileUL = new FileUL();
+            fileUL.setIdFile("0");
+            fileUL.setUser_id(user.getId());
+            fileUL.setQuantityDoc("1");
+            fileUL.setInfoType("Добавлено вручную");
+            DocumentUL documentUL = new DocumentUL();
+            if (cbType.getValue().equals("ИП")){
+                PersonIP personIP = new PersonIP();
+                personIP.setFl(new FL(new FIOIP(tfSurname.getValue(), tfName.getValue(), tfPatronymic.getValue())));
+                personIP.setStatus(new StatusIP(new Status(tfStatus.getValue())));
+                personIP.setInnFl(tfINN.getValue());
+                personIP.setOgrnIp(tfOGRN.getValue());
+                personIP.setAdrMJ(new AdrMJ(new AdresRF(tfIndex.getValue(),
+                        new RegionType(tfRegion.getValue()),
+                        new RaionType(tfRaion.getValue()),
+                        new GorodType(tfGorod.getValue()),
+                        new NaselPunktType(tfNasPunkt.getValue()),
+                        new UlicaType(tfUlica.getValue()),
+                        tfDom.getValue(),
+                        tfKorpus.getValue(),
+                        tfKvartira.getValue())));
+
+                personIP.setRegOrg(new RegOrg(tfRegNO.getValue()));
+                personIP.setRegIP(new RegIP(dpDateRegNO.getValue()));
+                personIP.setRegPF(new RegPFIP(new OrgPFIP(tfNumberPFR.getValue(), tfPFR.getValue())));
+                personIP.setRegFSSIP(new RegFSSIP(new OrgFSSIP(tfNumberFSS.getValue(), tfFSS.getValue())));
+                documentUL.setPersonIP(personIP);
+            } else {
+                PersonUL personUL = new PersonUL();
+                personUL.setNameUl(new NameUL(tfFullName.getValue(), new ShortNameUlType(tfShortName.getValue())));
+                personUL.setStatusUl(Collections.singleton(new StatusUl(new Status(tfStatus.getValue()))));
+                personUL.setInn(tfINN.getValue());
+                personUL.setOgrn(tfOGRN.getValue());
+                personUL.setKpp(tfKPP.getValue());
+                personUL.setAddressUL(new AddressUL(new AdrRFEGRULType(tfIndex.getValue(),
+                        new RegionType(tfRegion.getValue()),
+                        new RaionType(tfRaion.getValue()),
+                        new GorodType(tfGorod.getValue()),
+                        new NaselPunktType(tfNasPunkt.getValue()),
+                        new UlicaType(tfUlica.getValue()),
+                        tfDom.getValue(),
+                        tfKorpus.getValue(),
+                        tfKvartira.getValue())));
+                personUL.setRegOrg(new RegOrg(tfRegNO.getValue()));
+                personUL.setObrUL(new ObrUL(dpDateRegNO.getValue()));
+                personUL.setRegPF(new RegPF(tfNumberPFR.getValue(), new OrgPF(tfPFR.getValue())));
+                personUL.setRegFSS(new RegFSS(tfNumberFSS.getValue(), new OrgFSS(tfFSS.getValue())));
+                documentUL.setPersonUL(personUL);
+            }
+            fileUL.setDocumentUL(Collections.singleton(documentUL));
+            fileUlService.add(fileUL);
+        });
+
+        this.getFooter().add(btnSave);
+        this.add(tabSheet);
         return this;
     }
 }

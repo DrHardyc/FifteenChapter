@@ -23,6 +23,12 @@ public class FL {
     @MappedCollection(idColumn = "fl_id")
     private FIOIP fioLat;
 
+    public FL(){}
+
+    public FL(FIOIP fioRus){
+        this.setFioRus(fioRus);
+    }
+
     @XmlAttribute(name = "Пол")
     public void setSex(String sex) {
         this.sex = sex;

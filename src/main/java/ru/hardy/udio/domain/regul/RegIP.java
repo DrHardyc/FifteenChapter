@@ -9,6 +9,10 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+
 @Getter
 @Setter
 @Table(schema = "regul", name = "reg_ip")
@@ -23,6 +27,12 @@ public class RegIP {
     private String nameRo;
     @MappedCollection(idColumn = "regip_id")
     private KFH kfh;
+
+    public RegIP(){}
+
+    public RegIP(LocalDate date){
+        this.dateReg = date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+    }
 
     @XmlAttribute(name = "ОГРНИП")
     public void setOgrnIp(String ogrnIp) {

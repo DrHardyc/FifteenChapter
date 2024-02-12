@@ -274,7 +274,6 @@ public class AdminView extends VerticalLayout{
                             platel.getDom(),
                             platel.getKorp(),
                             platel.getKvart())));
-
                     documentUL.setPersonIP(personIP);
                     documentULSet.add(documentUL);
                 }

@@ -1,12 +1,14 @@
 package ru.hardy.udio.view;
 
 import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
@@ -25,6 +27,8 @@ import ru.hardy.udio.service.regulservice.FileUlService;
 import ru.hardy.udio.service.regulservice.LoadSettingsService;
 import ru.hardy.udio.view.dialog.DialogGen;
 
+import javax.print.PrintService;
+import java.awt.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -53,10 +57,16 @@ public class RegULUploadView extends VerticalLayout {
     private LoadSettings loadSettings = null;
     private User user = null;
     public RegULUploadView() {
+        Button btnAdd = new Button(new Icon(VaadinIcon.PLUS));
+        btnAdd.addClickListener(event -> {
+            new DialogGen("50", "50", "Добавление новой записи")
+                    .getAddNewRegUL(fileUlService, user).open();
+        });
+        add(btnAdd);
         tfPathIn.setWidth("30vw");
         tfPathOut.setWidth("30vw");
         Button btnSave = new Button("Ок");
-        Dialog dialog = new DialogGen("40", "35")
+        Dialog dialog = new DialogGen("40", "35", "Настройка каталогов")
                 .getLoadSettingDialog(tfPathIn, tfPathOut, btnSave);
         btnSave.addClickListener(event -> {
             if (loadSettings != null){
@@ -77,11 +87,16 @@ public class RegULUploadView extends VerticalLayout {
                 }
             }
         });
+        Button btnPrint = new Button("Печать");
+        btnPrint.addClickListener(event -> {
+
+
+        });
 
         Button btnSettings = savePaths(dialog);
         Upload multiFileUpload = uploadFiles();
 
-        add(btnSettings, btnSettings, multiFileUpload);
+        add(btnPrint, btnSettings, btnSettings, multiFileUpload);
     }
 
     private Button savePaths(Dialog dialog) {
@@ -102,7 +117,6 @@ public class RegULUploadView extends VerticalLayout {
         MultiFileMemoryBuffer multiFileMemoryBuffer = new MultiFileMemoryBuffer();
         Upload multiFileUpload = new Upload(multiFileMemoryBuffer);
 
-        AtomicInteger iCountFiles = new AtomicInteger(0);
         multiFileUpload.setAcceptedFileTypes(".xml");
         multiFileUpload.addSucceededListener(succeededEvent -> {
             if (loadSettings == null){
