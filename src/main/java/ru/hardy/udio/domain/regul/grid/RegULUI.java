@@ -12,8 +12,10 @@ public class RegULUI {
 
     private String inn;
     private String ogrn;
+    private String kpp;
     private String regNFoms;
     private String name;
+    private String address;
     private String status;
     private Date date;
 

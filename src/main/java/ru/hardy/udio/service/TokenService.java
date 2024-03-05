@@ -21,7 +21,7 @@ public class TokenService {
     }
 
     private String getKeyWithLpu(String lpu){
-        return tokenRepo.findByLpu(lpu).getKey();
+        return tokenRepo.findByLpu(Integer.valueOf(lpu)).getKey();
     }
 
     public int getCodeMOWithToken(String token) {

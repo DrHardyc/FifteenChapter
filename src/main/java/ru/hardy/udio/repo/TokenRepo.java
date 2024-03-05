@@ -7,7 +7,7 @@ import ru.hardy.udio.domain.Token;
 
 @Repository
 public interface TokenRepo extends JpaRepository<Token, Long> {
-    Token findByLpu(String lpu);
+    Token findByLpu(Integer lpu);
 
     @Query("select t from Token t where t.key = :token")
     Token findToken(String token);

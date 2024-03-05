@@ -16,6 +16,8 @@ public class RegULUIMapper implements RowMapper<RegULUI> {
         regULUI.setName(rs.getString("name"));
         regULUI.setStatus(rs.getString("status"));
         regULUI.setDate(rs.getDate("date"));
+        regULUI.setKpp(rs.getString("kpp"));
+        regULUI.setAddress(rs.getString("address"));
         return regULUI;
     }
 }
